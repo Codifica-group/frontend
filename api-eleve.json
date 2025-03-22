@@ -1,0 +1,10 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "nome": "Bruno",
+      "email": "bruno@eleve.com",
+      "senha": "3leve2025"  
+    }
+  ]
+}

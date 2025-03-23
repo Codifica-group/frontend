@@ -40,9 +40,9 @@ const realizarLogin = async () => {
         const dados = await response.json();
 
         if (dados.length === 0) {
-            alert('Nenhum dado retornado!');
+            alert('Login inválido!');
         } else {
-            alert('Login bem-sucedido: ' + JSON.stringify(dados));
+            alert('Login bem-sucedido!');
             if (lembrarAcesso) {
                 const novoLogin = {
                     email: email_acesso.value,

@@ -36,13 +36,12 @@ const realizarLogin = async () => {
     const url = `http://localhost:3000/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`;
 
     try {
-        const response = await fetch(url);  
-        const dados = await response.json();
-
-        if (dados.length === 0) {
-            alert('Login inválido!');
+        const dados = await Util.get(url);
+        
+        if (!dados || dados.length === 0) {
+            Util.modal('Login inválido!');
         } else {
-            alert('Login bem-sucedido!');
+            Util.modal('Login bem-sucedido!');
             if (lembrarAcesso) {
                 const novoLogin = {
                     email: email_acesso.value,
@@ -51,10 +50,12 @@ const realizarLogin = async () => {
                 };
                 localStorage.setItem('login_lembrado', JSON.stringify(novoLogin));
             }
-            window.location.href = './dashboard.html';
+            setTimeout(() => {
+                window.location.href = './dashboard.html';
+            }, 3000);  
         }
     } catch (error) {
         console.error('Erro no login: ', error);
-        alert('Erro ao realizar login.');
+        Util.modal('Erro ao realizar login. <br> Motivo: ' + error);
     }
 };

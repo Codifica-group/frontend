@@ -2,7 +2,7 @@ const ctxEntrada = document.getElementById('graficoEntrada').getContext('2d');
     new Chart(ctxEntrada, {
       type: 'pie',
       data: {
-        labels: ['Salário', 'Freelas', 'Outros'],
+        labels: ['Salário', 'Caixinhas', 'Outros'],
         datasets: [{
           label: 'Entradas',
           data: [500, 800, 200],

@@ -123,13 +123,21 @@
     align-items: center;
     justify-content: center;
     margin-top: 160px;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 2px 2px 2px 2px rgba(0.2, 0.2, 0.2, 0.2);
+    cursor: pointer;
+    
+  }
+  .grafico-central:focus{
+    box-shadow: 0px 0px 0px 0px;
+background-color: white;
   }
 
   .grafico-central button {
-    font-size: 80px;
+    font-size: 60px;
     background: none;
     border: none;
-    cursor: pointer;
     transition: transform 0.5s ease;
   }
 
@@ -188,4 +196,20 @@
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
+  }
+  .btnAddSaida, .btnAddEntrada{
+    border-radius: 50px;
+    width: 40px;
+    font-size: 24px;
+    height: 40px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
+
+  }
+  .btnAddSaida:hover{
+    background-color:#ffbcbc;
+  }
+  .btnAddEntrada:hover{
+    background-color: #ace58d;
   }

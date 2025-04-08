@@ -18,21 +18,31 @@
     overflow: hidden;
   }
 
-  .sidebar:hover {
-    width: 200px;
-  }
+
 
   .sidebar .logo {
     text-align: center;
     padding: 20px 0;
     margin-bottom: 20vh;
     margin-top: 5vh;
-    transition: width 0.3s ease;
+    
   }
 
   .logo img{
-    width: 50px;
+    width: 65px;
+    height:90px;
   }
+
+  .sidebar:hover {
+    width: 220px;
+    .logo img{
+      content: url(./assets/logo.png);
+      width: 200px;
+      transition: 0.3s;
+      
+    }
+  }
+
   .sidebar ul {
     list-style: none;
     padding: 0;

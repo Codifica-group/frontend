@@ -24,7 +24,7 @@
   .sidebar .logo {
   margin-left: 2px;
     padding: 20px 0;
-    margin-bottom: 20vh;
+    margin-bottom: 18vh;
     margin-top: 5vh;
     
   }
@@ -49,15 +49,17 @@
     padding: 15px;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 20px;
+    text-align: center;
+ 
   }
-
   .sidebar li:hover {
     background-color: #307E95;
   }
 
   .sidebar li i {
     margin-right: 15px;
-    font-size: 24px;
+    font-size: 30px;
   }
 
   /* Estilo do corpo da página */
@@ -77,6 +79,7 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    align-items: center;
 }
 
 .filter-section label {

@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+  }
+
+  body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #e8f6fc;
+  }
+
+  .sidebar {
+    background-color: #68C9E5;
+    width: 75px;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    position: fixed;
+    height: 100%;
+  }
+
+
+
+  .sidebar .logo {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20vh;
+    margin-top: 5vh;
+    min-width: 200px;
+    
+  }
+
+  .logo img{
+    width: 200px;
+    height:90px;
+    
+  }
+
+  .sidebar:hover {
+    width: 220px;
+ 
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 20px;
+    
+  }
+
+  .sidebar li:hover {
+    background-color: #307E95;
+  }
+
+  .sidebar li i {
+    margin-right: 15px;
+    font-size: 24px;
+  }
+
+  .main {
+    flex: 1;
+    padding: 2rem 3rem;
+    width: 100%;
+    margin-left: 12vw;
+  }
+
+  .saldo-topo {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #58873e;
+    margin-bottom: 2rem;
+    line-height: 1;
+  }
+
+  .bloco-financas-e-graficos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .grafico-coluna {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 360px;
+  }
+
+  .grafico-titulo {
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .grafico-titulo.saida {
+    color: #c26363;
+  }
+
+  .grafico-titulo.entrada {
+    color: #58873e;
+  }
+
+  .grafico-pizza {
+    width: 360px;
+    height: 360px;
+    text-align: center;
+  }
+
+  .grafico-central {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 160px;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 2px 2px 2px 2px rgba(0.2, 0.2, 0.2, 0.2);
+    cursor: pointer;
+    
+  }
+  .grafico-central:focus{
+    box-shadow: 0px 0px 0px 0px;
+background-color: white;
+  }
+
+  .grafico-central button {
+    font-size: 60px;
+    background: none;
+    border: none;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+  }
+
+  .grafico-central button.ativo {
+    transform: rotateY(180deg);
+  }
+
+  .categorias-container {
+    display: flex;
+    justify-content: center;
+    gap: 6rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .entrada-wrapper,
+  .saida-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .entrada-container,
+  .saida-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .categoria {
+    background-color: #307E95;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .categoria summary {
+    padding: 10px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-weight: 400;
+  }
+
+  .gastos {
+    background-color: #68C9E5;
+    padding: 10px;
+  }
+
+  .gasto {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .btnAddSaida, .btnAddEntrada{
+    border-radius: 50px;
+    width: 40px;
+    font-size: 24px;
+    height: 40px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
+
+  }
+  .btnAddSaida:hover{
+    background-color:#ffbcbc;
+  }
+  .btnAddEntrada:hover{
+    background-color: #ace58d;
+  }

@@ -19,18 +19,22 @@ export function LoginPage() {
 
         fetch("http://localhost:8080/api/usuarios/login", {
             method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+              },
             body: usuarioString
         })
-        .then((response) => {
+        .then(async (response) => {
             if (response.ok) {
                 window.location.href = "/dashboard";
             } else {
-                console.log(response);
+                const errorData = await response.json();
+                console.log(errorData);
             }
         })
         .catch((error) => {
             console.error("Erro:", error);
-            alert("Erro ao fazer login. Tente novamente mais tarde." + error.message);
+            console.log("Erro ao fazer login. Tente novamente mais tarde." + error.message);
         });
         
     }

@@ -9,7 +9,7 @@ const Historico = () => {
     <><div className="sidebar">
           <div className="logo">
               <img src={logo} alt="Logo" />
-
+    
           </div>
           <ul>
               <li><i><svg width="45" height="45" viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,7 +34,7 @@ const Historico = () => {
       </div><div className="content">
               <h1 className="titulo">Histórico</h1>
               <div className="filter-section">
-                 <button> <Link className="link" to="/">⬅ Voltar</Link></button>
+                 <button> <Link className="link" to="/dashboard">⬅ Voltar</Link></button>
                   <label htmlFor="start-date">Data Início:</label>
       <input type="date" id="start-date" />
 
@@ -70,7 +70,6 @@ const Historico = () => {
                       </tr>
                   </thead>
                   <tbody>
-
                       <tr>
                           <td>21/03/2025</td>
                           <td>08:00 - 09:00</td>

@@ -28,7 +28,10 @@
     font-weight: bolder;
  
   }
-
+  .historico{
+    background-color:#307E95 ;
+    font-weight: 800;
+  }
 
 
   .sidebar .logo {

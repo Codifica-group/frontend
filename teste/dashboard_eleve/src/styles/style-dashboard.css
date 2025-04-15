@@ -1,90 +1,85 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+@import "tailwindcss";
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Quicksand', sans-serif;
-  }
+}
 
-  body {
+body {
     display: flex;
     min-height: 100vh;
     background-color: #e8f6fc;
-  }
+}
 
-  .sidebar {
+.sidebar {
     background-color: #68C9E5;
     width: 75px;
     transition: width 0.3s ease;
     overflow: hidden;
     position: fixed;
     height: 100%;
-  }
+}
 
-
-
-  .sidebar .logo {
+.sidebar .logo {
     text-align: center;
     padding: 20px 0;
     margin-bottom: 20vh;
     margin-top: 5vh;
     min-width: 200px;
-    
-  }
+}
 
-  .logo img{
+.logo img {
     width: 200px;
-    height:90px;
-    
-  }
+    height: 90px;
+}
 
-  .sidebar:hover {
+.sidebar:hover {
     width: 220px;
- 
-  }
+}
 
-  .sidebar ul {
+.sidebar ul {
     list-style: none;
     padding: 0;
-  }
+}
 
-  .sidebar li {
+.sidebar li {
     display: flex;
     align-items: center;
     padding: 15px;
     cursor: pointer;
     transition: background 0.3s;
     font-size: 20px;
-    
-  }
+}
 
-  .sidebar li:hover {
+.sidebar li:hover {
     background-color: #307E95;
-  }
+}
 
-  .sidebar li i {
+.sidebar li i {
     margin-right: 15px;
     font-size: 24px;
-  }
+}
 
-  .main {
+.main {
     flex: 1;
     padding: 2rem 3rem;
     width: 100%;
     margin-left: 12vw;
-  }
+}
 
-  .saldo-topo {
+.saldo-topo {
     text-align: center;
     font-size: 28px;
     font-weight: bold;
     color: #58873e;
     margin-bottom: 2rem;
     line-height: 1;
-  }
+}
 
-  .bloco-financas-e-graficos {
+.bloco-financas-e-graficos {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -92,117 +87,123 @@
     gap: 12rem;
     flex-wrap: wrap;
     margin-bottom: 3rem;
-  }
+}
 
-  .grafico-coluna {
+.grafico-coluna {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 360px;
-  }
+}
 
-  .grafico-titulo {
+.grafico-titulo {
     font-size: 36px;
     font-weight: 400;
     margin-bottom: 10px;
     text-align: center;
-  }
+}
 
-  .grafico-titulo.saida {
+.grafico-titulo.saida {
     color: #c26363;
-  }
+}
 
-  .grafico-titulo.entrada {
+.grafico-titulo.entrada {
     color: #58873e;
-  }
+}
 
-  .grafico-pizza {
+.grafico-pizza {
     width: 360px;
     height: 360px;
     text-align: center;
-  }
+}
 
-  .grafico-central {
+.grafico-central {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 160px;
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 2px 2px 2px 2px rgba(0.2, 0.2, 0.2, 0.2);
+    box-shadow: 0px 0px 2px 4px rgba(0.1, 0.1, 0.1, 0.1);
     cursor: pointer;
-    
-  }
-  .grafico-central:focus{
-    box-shadow: 0px 0px 0px 0px;
-background-color: white;
-  }
+}
 
-  .grafico-central button {
+.grafico-central:focus {
+    box-shadow: 0px 0px 0px 0px;
+    background-color: white;
+}
+
+.grafico-central button {
     font-size: 60px;
     background: none;
     border: none;
     transition: transform 0.5s ease;
     cursor: pointer;
-  }
+}
 
-  .grafico-central button.ativo {
+.grafico-central button.ativo {
     transform: rotateY(180deg);
-  }
+}
 
-  .categorias-container {
+.categorias-container {
     display: flex;
     justify-content: center;
     gap: 6rem;
-    flex-wrap: wrap;
     margin-top: 2rem;
     font-size: 20px;
     font-weight: 300;
-  }
+}
 
-  .entrada-wrapper,
-  .saida-wrapper {
+.entrada-wrapper,
+.saida-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     max-width: 700px;
-  }
+}
 
-  .entrada-container,
-  .saida-container {
+.entrada-container,
+.saida-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 100%;
-  }
+}
 
-  .categoria {
-    background-color: #307E95;
+.categoria {
+    background-color: #68C9E5;
     border-radius: 8px;
     overflow: hidden;
     width: 100%;
-  }
+    
+}
 
-  .categoria summary {
+.categoria summary {
     padding: 10px;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
     font-weight: 400;
-  }
+    background-color: #307E95;
+}
+.categoria-info{
+    padding: 10px;
+    padding-top: 5px;
+}
 
-  .gastos {
+.gastos {
     background-color: #68C9E5;
     padding: 10px;
-  }
+}
 
-  .gasto {
+.gasto {
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
-  }
-  .btnAddSaida, .btnAddEntrada{
+}
+
+.btnAddSaida, .btnAddEntrada {
     border-radius: 50px;
     width: 40px;
     font-size: 24px;
@@ -210,11 +211,131 @@ background-color: white;
     cursor: pointer;
     background-color: white;
     font-weight: bold;
+    transition: background-color 0.2s ease;
+}
 
-  }
-  .btnAddSaida:hover{
-    background-color:#ffbcbc;
-  }
-  .btnAddEntrada:hover{
+.btnAddSaida:hover {
+    background-color: #ffbcbc;
+}
+
+.btnAddEntrada:hover {
     background-color: #ace58d;
+}
+
+/* Estilos dos Modais */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-saida, .modal-entrada {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-saida h2 {
+    color: #c26363;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.modal-entrada h2 {
+    color: #58873e;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #f8f8f8;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.btn-cancelar, 
+.btn-confirmar,
+.btn-confirmar-entrada {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+    transition: all 0.2s ease;
+}
+#btnBalanca {
+    padding: 12px;
+    border-radius: 50%;
+    background-color: #fff;
+ 
   }
+  .financas{
+    background-color:#307E95 ;
+    font-weight: 800;
+  }
+  
+  #btnBalanca svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+.btn-cancelar {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-cancelar:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-confirmar {
+    background-color: #c26363;
+    color: white;
+}
+
+.btn-confirmar:hover {
+    background-color: #b05050;
+}
+
+.btn-confirmar-entrada {
+    background-color: #58873e;
+    color: white;
+}
+
+.btn-confirmar-entrada:hover {
+    background-color: #476b32;
+}

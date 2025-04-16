@@ -6,6 +6,8 @@ import Historico from "./pages/Historico";
 import "./styles/style-dashboard.css";
 import "./styles/style-historico.css";
 import { LoginPage } from "./pages/login";
+import Agenda from "./pages/Agenda";
+import "./styles/style-agenda.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,6 +19,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/dashboard" element={<DashboardEleve />} />
         {/* Rota para o Histórico */}
         <Route path="/historico" element={<Historico />} />
+        {/* Rota para a agenda */}
+        <Route path="/agenda" element={<Agenda />} />
+
+        
       </Routes>
     </Router>
   </React.StrictMode>

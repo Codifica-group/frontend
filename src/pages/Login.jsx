@@ -2,7 +2,7 @@ import "../styles/style-login.css";
 import logo from "../assets/logo.png";
 import { useState } from "react";
 
-export function LoginPage() {
+export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");

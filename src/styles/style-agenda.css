@@ -1,85 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Quicksand', sans-serif;
+.sidebar:hover~.agenda-container {
+    margin-left: 150px;
+    width: calc(100vw - 150px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-body {
-    display: flex;
-    min-height: 100vh;
-    background-color: #e8f6fc;
-}
-
-.sidebar {
-    background-color: #68C9E5;
-    width: 75px;
-    transition: width 0.3s ease;
-    overflow: hidden;
-    position: fixed;
-    height: 100%;
-}
-
-.agenda {
-    background-color: #307E95;
-    font-weight: 800;
-}
-
-.sidebar .logo {
-    text-align: center;
-    padding: 20px 0;
-    margin-bottom: 20vh;
-    margin-top: 5vh;
-    min-width: 200px;
-}
-
-.logo img {
-    width: 200px;
-    height: 90px;
-}
-
-.sidebar:hover {
-    width: 220px;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar li {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-size: 20px;
-}
-
-.sidebar li:hover {
-    background-color: #307E95;
-}
-
-.sidebar li i {
-    margin-right: 15px;
-    font-size: 24px;
-}
-.agenda-container{
+.agenda-container {
     flex: 1;
     padding: 2rem 3rem;
     width: 100vw;
     height: 100vh;
-  padding-right: 120px;
-   
+    padding-right: 120px;
+    transition: 0.3s ease;
 }
 
-.sidebar:hover~.agenda-container {
-    margin-left: 150px; /* Largura da sidebar expandida */
-    width: calc(100vw - 150px); /* Ajuste dinâmico da largura */
-    transition: margin-left 0.3s ease, width 0.3s ease;
-}
 .agenda-main {
 
     background: #fff;
@@ -89,7 +22,7 @@ body {
     min-height: 100%;
     width: 100%;
     margin-left: 75px;
-    
+
 }
 
 

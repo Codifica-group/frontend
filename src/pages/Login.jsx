@@ -4,6 +4,10 @@ import { useState } from "react";
 
 export default function LoginPage() {
 
+    const [showModal, setShowModal] = useState(false);
+    const [messageModal, setMessageModal] = useState("");
+    const [titleModal, setTitleModal] = useState(false);
+
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [lembrar, setLembrar] = useState(false);
@@ -17,6 +21,7 @@ export default function LoginPage() {
         const usuarioString = JSON.stringify(usuario);
         localStorage.setItem("usuario", usuarioString);
 
+        setShowModal(true);
         fetch("http://localhost:8080/api/usuarios/login", {
             method: "POST",
             headers: {
@@ -26,15 +31,22 @@ export default function LoginPage() {
         })
         .then(async (response) => {
             if (response.ok) {
+                setInterval(() => {
+                    setMessageModal(response.message);
+                    setTitleModal(true);
+                }, 2000);
                 window.location.href = "/dashboard";
+                
             } else {
                 const errorData = await response.json();
-                console.log(errorData);
+                setMessageModal(errorData);
+                setTitleModal(false);
             }
         })
         .catch((error) => {
             console.error("Erro:", error);
-            console.log("Erro ao fazer login. Tente novamente mais tarde." + error.message);
+            setMessageModal("Erro ao fazer login. Tente novamente mais tarde." + error.message);
+            setTitleModal(false);
         });
         
     }
@@ -63,6 +75,15 @@ export default function LoginPage() {
 
                     <button type="submit" className="botao-primario">Entrar</button>
                 </form>
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-login">
+                            <h2>Erro ao fazer login</h2>
+                            <p>{messageModal}</p>
+                            <button onClick={() => setShowModal(false)}>OK</button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

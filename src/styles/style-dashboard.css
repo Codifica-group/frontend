@@ -1,8 +1,14 @@
+.dashboard {
+    /* border: #333 5px solid; */
+    width: calc(100vw - 90px);
+}
+
 .main {
     flex: 1;
     padding: 2rem 3rem;
     width: 100%;
-    margin-left: 12vw;
+    margin-left: 75px;
+    /* border: #307E95 5px solid; */
 }
 
 .saldo-topo {
@@ -22,6 +28,13 @@
     gap: 12rem;
     flex-wrap: wrap;
     margin-bottom: 3rem;
+}
+
+@media (max-width: 1450px) {
+    .bloco-financas-e-graficos {
+        flex-direction: column; /* Empilha os gráficos verticalmente em telas menores */
+        align-items: center;
+    }
 }
 
 .grafico-coluna {

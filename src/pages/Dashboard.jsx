@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
+import ContainerCategorias from "../components/ContainerCategorias";
+import ChartComponent from "../components/ChartComponent";
 
 export default function DashboardEleve() {
     useEffect(() => {
@@ -63,48 +65,6 @@ export default function DashboardEleve() {
     };
 
     useEffect(() => {
-        const ctxEntrada = document.getElementById("graficoEntrada");
-        const ctxSaida = document.getElementById("graficoSaida");
-
-        if (Chart.getChart(ctxEntrada)) Chart.getChart(ctxEntrada).destroy();
-        if (Chart.getChart(ctxSaida)) Chart.getChart(ctxSaida).destroy();
-
-        new Chart(ctxEntrada.getContext("2d"), {
-            type: "pie",
-            data: {
-                labels: ["Salário", "Caixinhas", "Outros"],
-                datasets: [
-                    {
-                        label: "Entradas",
-                        data: [500, 800, 200],
-                        backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-            },
-        });
-
-        new Chart(ctxSaida.getContext("2d"), {
-            type: "pie",
-            data: {
-                labels: ["Aluguel", "Transporte", "Outros"],
-                datasets: [
-                    {
-                        label: "Saídas",
-                        data: [300, 125, 75],
-                        backgroundColor: ["#c26363", "#f97777", "#ffbcbc"],
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-            },
-        });
-
         const btn = document.getElementById("btnBalanca");
         if (btn) {
             btn.addEventListener("click", function () {
@@ -206,7 +166,24 @@ export default function DashboardEleve() {
 
                         <div className="grafico-titulo saida">Saída: R$ -500,00</div>
                         <div className="grafico-pizza">
-                            <canvas id="graficoSaida"></canvas>
+                            <ChartComponent
+                                id="graficoSaida"
+                                type="pie"
+                                data={{
+                                    labels: ["Aluguel", "Transporte", "Outros"],
+                                    datasets: [
+                                        {
+                                            label: "Saídas",
+                                            data: [300, 125, 75],
+                                            backgroundColor: ["#c26363", "#f97777", "#ffbcbc"],
+                                        },
+                                    ],
+                                }}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                }}
+                            />
                         </div>
                     </div>
 
@@ -329,46 +306,31 @@ export default function DashboardEleve() {
 
                         <div className="grafico-titulo entrada">Entrada: R$ 1.500,00</div>
                         <div className="grafico-pizza">
-                            <canvas id="graficoEntrada"></canvas>
+                            <ChartComponent
+                                id="graficoEntrada"
+                                type="pie"
+                                data={{
+                                    labels: ["Salário", "Caixinhas", "Outros"],
+                                    datasets: [
+                                        {
+                                            label: "Entradas",
+                                            data: [500, 800, 200],
+                                            backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
+                                        },
+                                    ],
+                                }}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
 
                 <div className="categorias-container">
-                    <div className="saida-wrapper">
-                        <div className="saida-container">
-                            {[1, 2, 3].map((cat, index) => (
-                                <details className="categoria saida" key={index}>
-                                    <summary>Categoria {cat}</summary>
-                                    <div className="categoria-info">
-                                        <ul>
-                                            <li>• Gasto 1</li>
-                                            <li>• Gasto 2</li>
-                                            <li>• Gasto 3</li>
-                                        </ul>
-                                    </div>
-                                </details>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="entrada-wrapper">
-                        <div className="entrada-container">
-                            {[4, 5, 6].map((cat, index) => (
-                                <details className="categoria entrada" key={index}>
-                                    <summary>Categoria {cat}</summary>
-                                    <div className="categoria-info">
-                                        {" "}
-                                        <ul>
-                                            <li>• Entrada 1</li>
-                                            <li>• Entrada 2</li>
-                                            <li>• Entrada 3</li>
-                                        </ul>
-                                    </div>
-                                </details>
-                            ))}
-                        </div>
-                    </div>
+                    <ContainerCategorias tipo="saida" categorias={[1, 2, 3]} />
+                    <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} />
                 </div>
             </div>
         </div>

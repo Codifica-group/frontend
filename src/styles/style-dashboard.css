@@ -102,8 +102,7 @@
     font-weight: 300;
 }
 
-.entrada-wrapper,
-.saida-wrapper {
+.categoria-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -111,8 +110,7 @@
     max-width: 700px;
 }
 
-.entrada-container,
-.saida-container {
+.categoria-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -139,17 +137,6 @@
 .categoria-info {
     padding: 10px;
     padding-top: 5px;
-}
-
-.gastos {
-    background-color: #68C9E5;
-    padding: 10px;
-}
-
-.gasto {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
 }
 
 .btnAddSaida,

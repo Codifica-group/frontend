@@ -1,5 +1,4 @@
 .dashboard {
-    /* border: #333 5px solid; */
     width: calc(100vw - 90px);
 }
 
@@ -8,7 +7,6 @@
     padding: 2rem 3rem;
     width: 100%;
     margin-left: 75px;
-    /* border: #307E95 5px solid; */
 }
 
 .saldo-topo {
@@ -22,26 +20,18 @@
 
 .bloco-financas-e-graficos {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: flex-start;
-    gap: 12rem;
+    gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 3rem;
-}
-
-@media (max-width: 1450px) {
-    .bloco-financas-e-graficos {
-        flex-direction: column;
-        align-items: center;
-    }
 }
 
 .grafico-coluna {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 360px;
+    width: 40%;
 }
 
 .grafico-titulo {
@@ -66,9 +56,6 @@
 }
 
 .grafico-central {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-top: 160px;
     border-radius: 20px;
     padding: 20px;
@@ -89,8 +76,9 @@
     cursor: pointer;
 }
 
-.grafico-central button.ativo {
+.ativo {
     transform: rotateY(180deg);
+    border: #307E95 5px solid;
 }
 
 .categorias-container {
@@ -100,6 +88,7 @@
     margin-top: 2rem;
     font-size: 20px;
     font-weight: 300;
+    width: 100%;
 }
 
 .categoria-wrapper {
@@ -278,4 +267,19 @@
 
 .btn-confirmar-entrada:hover {
     background-color: #476b32;
+}
+
+@media (max-width: 1280px) {
+    .bloco-financas-e-graficos {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .grafico-coluna{
+        width: 90%;
+    }
+
+    .grafico-central{
+        margin: 50px 0;
+    }
 }

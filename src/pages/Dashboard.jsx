@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Chart from "chart.js/auto";
 import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
 import ContainerCategorias from "../components/ContainerCategorias";
 import ChartComponent from "../components/ChartComponent";
+import Modal from "../components/Modal";
 
 export default function DashboardEleve() {
     useEffect(() => {
@@ -64,14 +64,11 @@ export default function DashboardEleve() {
         });
     };
 
-    useEffect(() => {
-        const btn = document.getElementById("btnBalanca");
-        if (btn) {
-            btn.addEventListener("click", function () {
-                this.classList.toggle("ativo");
-            });
-        }
-    }, []);
+    const [ativo, setAtivo] = useState(false);
+
+    const toggleClasse = () => {
+        setAtivo((prev) => !prev);
+    };
 
     return (
         <div className="dashboard">
@@ -95,76 +92,8 @@ export default function DashboardEleve() {
                             +
                         </button>
 
-                        {showModalSaida && (
-                            <div className="modal-overlay">
-                                <div className="modal-saida">
-                                    <h2>Adicionar Saída</h2>
-                                    <form onSubmit={handleSubmitSaida}>
-                                        <div className="form-group">
-                                            <label>Produto</label>
-                                            <input
-                                                type="text"
-                                                name="produto"
-                                                value={novaSaida.produto}
-                                                onChange={handleInputChangeSaida}
-                                                placeholder="Ex: Bamboo"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Categoria</label>
-                                            <input
-                                                type="text"
-                                                name="categoria"
-                                                value={novaSaida.categoria}
-                                                onChange={handleInputChangeSaida}
-                                                placeholder="Ex: Banho e Tosa"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Valor</label>
-                                            <input
-                                                type="number"
-                                                name="valor"
-                                                value={novaSaida.valor}
-                                                onChange={handleInputChangeSaida}
-                                                placeholder="R$ 0,00"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Data</label>
-                                            <input
-                                                type="date"
-                                                name="data"
-                                                value={novaSaida.data}
-                                                onChange={handleInputChangeSaida}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="modal-buttons">
-                                            <button
-                                                type="button"
-                                                className="btn-cancelar"
-                                                onClick={() => setShowModalSaida(false)}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button type="submit" className="btn-confirmar">
-                                                Confirmar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-
                         <div className="grafico-titulo saida">Saída: R$ -500,00</div>
+                        
                         <div className="grafico-pizza">
                             <ChartComponent
                                 id="graficoSaida"
@@ -185,12 +114,28 @@ export default function DashboardEleve() {
                                 }}
                             />
                         </div>
+
+                        <div className="categorias-container">
+                            <ContainerCategorias tipo="saida" categorias={[1, 2, 3]} />
+                        </div>
+
+                        {showModalSaida && (
+                            <Modal 
+                            tipo = "saida" 
+                            submit = {handleSubmitSaida}
+                            novoItem = {novaSaida}
+                            showModal = {setShowModalSaida}
+                            change = {handleInputChangeSaida}/>
+                        )}
+
                     </div>
 
                     <div className="grafico-central">
                         <button
                             id="btnBalanca"
                             style={{ background: "none", border: "none", cursor: "pointer" }}
+                            className={ativo ? "ativo" : ""}
+                            onClick={toggleClasse}
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -235,76 +180,8 @@ export default function DashboardEleve() {
                             +
                         </button>
 
-                        {showModalEntrada && (
-                            <div className="modal-overlay">
-                                <div className="modal-entrada">
-                                    <h2>Indicador: Saldo</h2>
-                                    <form onSubmit={handleSubmitEntrada}>
-                                        <div className="form-group">
-                                            <label>Produto</label>
-                                            <input
-                                                type="text"
-                                                name="produto"
-                                                value={novaEntrada.produto}
-                                                onChange={handleInputChangeEntrada}
-                                                placeholder="Ex: Banho"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Categoria</label>
-                                            <input
-                                                type="text"
-                                                name="categoria"
-                                                value={novaEntrada.categoria}
-                                                onChange={handleInputChangeEntrada}
-                                                placeholder="Ex: Banho e Tosa"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Valor</label>
-                                            <input
-                                                type="number"
-                                                name="valor"
-                                                value={novaEntrada.valor}
-                                                onChange={handleInputChangeEntrada}
-                                                placeholder="R$ 0,00"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Data</label>
-                                            <input
-                                                type="date"
-                                                name="data"
-                                                value={novaEntrada.data}
-                                                onChange={handleInputChangeEntrada}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="modal-buttons">
-                                            <button
-                                                type="button"
-                                                className="btn-cancelar"
-                                                onClick={() => setShowModalEntrada(false)}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button type="submit" className="btn-confirmar-entrada">
-                                                Confirmar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-
                         <div className="grafico-titulo entrada">Entrada: R$ 1.500,00</div>
+
                         <div className="grafico-pizza">
                             <ChartComponent
                                 id="graficoEntrada"
@@ -325,12 +202,21 @@ export default function DashboardEleve() {
                                 }}
                             />
                         </div>
-                    </div>
-                </div>
 
-                <div className="categorias-container">
-                    <ContainerCategorias tipo="saida" categorias={[1, 2, 3]} />
-                    <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} />
+                        <div className="categorias-container">
+                            <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} />
+                        </div>
+
+                        {showModalEntrada && (
+                            <Modal 
+                            tipo = "entrada" 
+                            submit = {handleSubmitEntrada}
+                            novoItem = {novaEntrada}
+                            showModal = {setShowModalEntrada}
+                            change = {handleInputChangeEntrada}/>
+                        )}
+
+                    </div>
                 </div>
             </div>
         </div>

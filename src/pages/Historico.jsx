@@ -13,28 +13,32 @@ const Historico = () => {
             
             <div className="content">
                 <h1 className="titulo">Histórico</h1>
-                <div className="filter-section">
+                <div className="filter-container">
 
-                    <label htmlFor="start-date">Data Início:</label>
-                    <input type="date" id="start-date" />
+                    <div className="filter-section">
+                        <label htmlFor="start-date">Data Início:</label>
+                        <input type="date" id="start-date" />
 
-                    <label htmlFor="end-date">Data Fim:</label>
-                    <input type="date" id="end-date" />
+                        <label htmlFor="end-date">Data Fim:</label>
+                        <input type="date" id="end-date" />
+                    </div>
+                    
+                    <div className="filter-section">
+                        <input type="text" placeholder="Nome Cliente" />
 
-                    <input type="text" placeholder="Nome Cliente" />
+                        <input type="text" placeholder="Nome Pet" />
 
-                    <input type="text" placeholder="Nome Pet" />
+                        <input type="text" placeholder="Raça" />
 
-                    <input type="text" placeholder="Raça" />
+                        <select>
+                            <option value="">Serviço</option>
+                            <option value="banho">Banho</option>
+                            <option value="tosa">Tosa</option>
+                            <option value="hidratacao">Hidratação</option>
+                        </select>
 
-                    <select>
-                        <option value="">Serviço</option>
-                        <option value="banho">Banho</option>
-                        <option value="tosa">Tosa</option>
-                        <option value="hidratacao">Hidratação</option>
-
-                    </select>
-                    <button>Filtrar</button>
+                        <button>Filtrar</button>
+                    </div>
 
                 </div>
                 <div className="table-container">

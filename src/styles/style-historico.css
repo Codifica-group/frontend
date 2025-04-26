@@ -21,6 +21,13 @@
 }
 
 /* Filtros */
+
+.filter-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 .filter-section {
     display: flex;
     gap: 10px;
@@ -81,14 +88,13 @@ table tr:hover {
     background-color: #d6eaff;
 }
 
-/* @media (max-width: 1450px) {
-    table {
-        width: 1450px;
-        overflow-x: scroll;
-    }
-} */
-
 .table-container {
-    width: 100%; /* O contêiner ocupa toda a largura disponível */
-    overflow-x: auto; /* Adiciona scroll horizontal em telas menores */
+    width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 1400px) {
+    .filter-container {
+        flex-direction: column;
+    }
 }

@@ -3,7 +3,8 @@ import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
 import ContainerCategorias from "../components/ContainerCategorias";
 import ChartComponent from "../components/ChartComponent";
-import Modal from "../components/Modal";
+import ModalGastos from "../components/ModalGastos";
+import ModalComparar from "../components/ModalComparar";
 
 export default function DashboardEleve() {
     useEffect(() => {
@@ -27,6 +28,8 @@ export default function DashboardEleve() {
         valor: "",
         data: "",
     });
+
+    const [showModalComparar, setShowModalComparar] = useState(false);
 
     // Handlers para saída
     const handleInputChangeSaida = (e) => {
@@ -64,10 +67,16 @@ export default function DashboardEleve() {
         });
     };
 
+    const handleSubmitComparar = (e) => {
+        e.preventDefault();
+        setShowModalComparar(false);
+    };
+
     const [ativo, setAtivo] = useState(false);
 
     const toggleClasse = () => {
         setAtivo((prev) => !prev);
+        setShowModalComparar(true)
     };
 
     return (
@@ -84,35 +93,37 @@ export default function DashboardEleve() {
 
                 <div className="bloco-financas-e-graficos">
                     <div className="grafico-coluna">
-                        <button
-                            title="Adicionar uma saída"
-                            className="btnAddSaida"
-                            onClick={() => setShowModalSaida(true)}
-                        >
-                            +
-                        </button>
+                        <div className="grafico-container">
+                            <button
+                                title="Adicionar uma saída"
+                                className="btnAddSaida"
+                                onClick={() => setShowModalSaida(true)}
+                            >
+                                +
+                            </button>
 
-                        <div className="grafico-titulo saida">Saída: R$ -500,00</div>
-                        
-                        <div className="grafico-pizza">
-                            <ChartComponent
-                                id="graficoSaida"
-                                type="pie"
-                                data={{
-                                    labels: ["Aluguel", "Transporte", "Outros"],
-                                    datasets: [
-                                        {
-                                            label: "Saídas",
-                                            data: [300, 125, 75],
-                                            backgroundColor: ["#c26363", "#f97777", "#ffbcbc"],
-                                        },
-                                    ],
-                                }}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                }}
-                            />
+                            <div className="grafico-titulo saida">Saída: R$ -500,00</div>
+                            
+                            <div className="grafico-pizza">
+                                <ChartComponent
+                                    id="graficoSaida"
+                                    type="pie"
+                                    data={{
+                                        labels: ["Aluguel", "Transporte", "Outros"],
+                                        datasets: [
+                                            {
+                                                label: "Saídas",
+                                                data: [300, 125, 75],
+                                                backgroundColor: ["#c26363", "#f97777", "#ffbcbc"],
+                                            },
+                                        ],
+                                    }}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         <div className="categorias-container">
@@ -120,7 +131,7 @@ export default function DashboardEleve() {
                         </div>
 
                         {showModalSaida && (
-                            <Modal 
+                            <ModalGastos 
                             tipo = "saida" 
                             submit = {handleSubmitSaida}
                             novoItem = {novaSaida}
@@ -133,7 +144,6 @@ export default function DashboardEleve() {
                     <div className="grafico-central">
                         <button
                             id="btnBalanca"
-                            style={{ background: "none", border: "none", cursor: "pointer" }}
                             className={ativo ? "ativo" : ""}
                             onClick={toggleClasse}
                         >
@@ -169,46 +179,53 @@ export default function DashboardEleve() {
                                 <path d="M42 35 Q48 40 54 35" />
                             </svg>
                         </button>
+                        {showModalComparar && (
+                            <ModalComparar
+                                submit = {handleSubmitComparar}
+                                showModal = {setShowModalComparar}
+                            />
+                        )}
                     </div>
 
                     <div className="grafico-coluna">
-                        <button
-                            title="Adicionar uma entrada"
-                            className="btnAddEntrada"
-                            onClick={() => setShowModalEntrada(true)}
-                        >
-                            +
-                        </button>
+                        <div className="grafico-container">
+                            <button
+                                title="Adicionar uma entrada"
+                                className="btnAddEntrada"
+                                onClick={() => setShowModalEntrada(true)}
+                            >
+                                +
+                            </button>
 
-                        <div className="grafico-titulo entrada">Entrada: R$ 1.500,00</div>
+                            <div className="grafico-titulo entrada">Entrada: R$ 1.500,00</div>
 
-                        <div className="grafico-pizza">
-                            <ChartComponent
-                                id="graficoEntrada"
-                                type="pie"
-                                data={{
-                                    labels: ["Salário", "Caixinhas", "Outros"],
-                                    datasets: [
-                                        {
-                                            label: "Entradas",
-                                            data: [500, 800, 200],
-                                            backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
-                                        },
-                                    ],
-                                }}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                }}
-                            />
+                            <div className="grafico-pizza">
+                                <ChartComponent
+                                    id="graficoEntrada"
+                                    type="pie"
+                                    data={{
+                                        labels: ["Salário", "Caixinhas", "Outros"],
+                                        datasets: [
+                                            {
+                                                label: "Entradas",
+                                                data: [500, 800, 200],
+                                                backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
+                                            },
+                                        ],
+                                    }}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                    }}
+                                />
+                            </div>
                         </div>
-
                         <div className="categorias-container">
                             <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} />
                         </div>
 
                         {showModalEntrada && (
-                            <Modal 
+                            <ModalGastos 
                             tipo = "entrada" 
                             submit = {handleSubmitEntrada}
                             novoItem = {novaEntrada}

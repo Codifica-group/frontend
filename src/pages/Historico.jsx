@@ -1,11 +1,53 @@
 import "../styles/style-historico.css";
 import { useEffect } from "react";
 import SideBar from "../components/SideBar";
+import TableHistorico from "../components/TableHistorico";
 
 const Historico = () => {
     useEffect(() => {
         document.title = `Histórico`;
     }, []);
+
+    const columns = ["Data", "Hora", "Cliente", "Pet", "Raça", "Serviço", "Valor"];
+    const data = [
+        { Data: "21/03/2025", Hora: "08:00 - 09:00", Cliente: "Maria Eduarda", Pet: "Charlotte", Raça: "Pug", Serviço: "Banho e Tosa", Valor: "R$100,00" },
+        { Data: "22/03/2025", Hora: "09:30 - 10:30", Cliente: "Carlos Silva", Pet: "Bobby", Raça: "Labrador", Serviço: "Tosa Completa", Valor: "R$150,00" },
+        { Data: "23/03/2025", Hora: "10:00 - 11:00", Cliente: "Ana Clara", Pet: "Luna", Raça: "Poodle", Serviço: "Banho Medicinal", Valor: "R$120,00" },
+        { Data: "24/03/2025", Hora: "11:30 - 12:30", Cliente: "João Pedro", Pet: "Scooby", Raça: "Dachshund", Serviço: "Tosa Higiênica", Valor: "R$80,00" },
+        { Data: "25/03/2025", Hora: "13:00 - 14:00", Cliente: "Sofia Almeida", Pet: "Mia", Raça: "Siamês (gato)", Serviço: "Banho e Escovação", Valor: "R$90,00" },
+        { Data: "26/03/2025", Hora: "14:30 - 15:30", Cliente: "Lúcia Ferreira", Pet: "Duke", Raça: "Buldogue Francês", Serviço: "Tosa Completa e Banho Perfumado", Valor: "R$200,00" },
+        { Data: "27/03/2025", Hora: "08:00 - 09:00", Cliente: "Gabriel Lima", Pet: "Thor", Raça: "Husky Siberiano", Serviço: "Banho", Valor: "R$90,00" },
+        { Data: "27/03/2025", Hora: "09:00 - 10:00", Cliente: "Camila Rocha", Pet: "Mel", Raça: "Shih Tzu", Serviço: "Tosa Higiênica", Valor: "R$85,00" },
+        { Data: "27/03/2025", Hora: "10:00 - 11:00", Cliente: "Ricardo Nunes", Pet: "Max", Raça: "Golden Retriever", Serviço: "Banho e Tosa", Valor: "R$130,00" },
+        { Data: "27/03/2025", Hora: "11:00 - 12:00", Cliente: "Fernanda Dias", Pet: "Nina", Raça: "Persa (gato)", Serviço: "Hidratação", Valor: "R$110,00" },
+        { Data: "27/03/2025", Hora: "13:00 - 14:00", Cliente: "Thiago Martins", Pet: "Luke", Raça: "Boxer", Serviço: "Banho", Valor: "R$100,00" },
+        { Data: "27/03/2025", Hora: "14:00 - 15:00", Cliente: "Larissa Souza", Pet: "Julie", Raça: "Poodle", Serviço: "Tosa Completa", Valor: "R$120,00" },
+        { Data: "27/03/2025", Hora: "15:00 - 16:00", Cliente: "Henrique Castro", Pet: "Apolo", Raça: "Rottweiler", Serviço: "Banho", Valor: "R$130,00" },
+        { Data: "27/03/2025", Hora: "16:00 - 17:00", Cliente: "Bruna Reis", Pet: "Pitucha", Raça: "Yorkshire", Serviço: "Hidratação e Escovação", Valor: "R$140,00" },
+        { Data: "28/03/2025", Hora: "08:30 - 09:30", Cliente: "Pedro Alves", Pet: "Zeus", Raça: "Pastor Alemão", Serviço: "Tosa Higiênica", Valor: "R$110,00" },
+        { Data: "28/03/2025", Hora: "09:30 - 10:30", Cliente: "Juliana Torres", Pet: "Lily", Raça: "Pinscher", Serviço: "Banho Medicinal", Valor: "R$105,00" },
+        { Data: "28/03/2025", Hora: "10:30 - 11:30", Cliente: "Felipe Moura", Pet: "Tom", Raça: "Siamês (gato)", Serviço: "Escovação", Valor: "R$75,00" },
+        { Data: "28/03/2025", Hora: "11:30 - 12:30", Cliente: "Isabela Ribeiro", Pet: "Lola", Raça: "Cocker Spaniel", Serviço: "Banho e Tosa", Valor: "R$125,00" },
+        { Data: "28/03/2025", Hora: "13:30 - 14:30", Cliente: "Renato Costa", Pet: "Chico", Raça: "Poodle", Serviço: "Tosa Criativa", Valor: "R$150,00" },
+        { Data: "28/03/2025", Hora: "14:30 - 15:30", Cliente: "Marcela Gomes", Pet: "Bella", Raça: "Shih Tzu", Serviço: "Banho e Hidratação", Valor: "R$115,00" },
+        { Data: "28/03/2025", Hora: "15:30 - 16:30", Cliente: "Lucas Araújo", Pet: "Fred", Raça: "Bulldog Inglês", Serviço: "Banho", Valor: "R$110,00" },
+        { Data: "28/03/2025", Hora: "16:30 - 17:30", Cliente: "Tatiane Melo", Pet: "Amora", Raça: "Gato SRD", Serviço: "Banho e Escovação", Valor: "R$95,00" },
+        { Data: "29/03/2025", Hora: "08:00 - 09:00", Cliente: "Diogo Batista", Pet: "Toby", Raça: "Pitbull", Serviço: "Hidratação", Valor: "R$125,00" },
+        { Data: "29/03/2025", Hora: "09:00 - 10:00", Cliente: "Mariana Neves", Pet: "Lua", Raça: "Poodle", Serviço: "Tosa Higiênica", Valor: "R$80,00" },
+        { Data: "29/03/2025", Hora: "10:00 - 11:00", Cliente: "André Coelho", Pet: "Rex", Raça: "Chow Chow", Serviço: "Banho", Valor: "R$140,00" },
+        { Data: "29/03/2025", Hora: "11:00 - 12:00", Cliente: "Renata Braga", Pet: "Flor", Raça: "Gato Persa", Serviço: "Escovação", Valor: "R$85,00" },
+        { Data: "29/03/2025", Hora: "13:00 - 14:00", Cliente: "Eduardo Lopes", Pet: "Nick", Raça: "Border Collie", Serviço: "Tosa Completa", Valor: "R$135,00" },
+        { Data: "29/03/2025", Hora: "14:00 - 15:00", Cliente: "Vanessa Cruz", Pet: "Bia", Raça: "Pug", Serviço: "Banho", Valor: "R$90,00" },
+        { Data: "29/03/2025", Hora: "15:00 - 16:00", Cliente: "Caio Mendes", Pet: "Snow", Raça: "Samoyeda", Serviço: "Banho e Hidratação", Valor: "R$160,00" },
+        { Data: "29/03/2025", Hora: "16:00 - 17:00", Cliente: "Aline Barreto", Pet: "Zara", Raça: "Lhasa Apso", Serviço: "Tosa e Escovação", Valor: "R$100,00" },
+        { Data: "30/03/2025", Hora: "08:00 - 09:00", Cliente: "Otávio Silva", Pet: "Félix", Raça: "Gato SRD", Serviço: "Banho Medicinal", Valor: "R$110,00" },
+        { Data: "30/03/2025", Hora: "09:00 - 10:00", Cliente: "Priscila Viana", Pet: "Lady", Raça: "Beagle", Serviço: "Tosa Higiênica", Valor: "R$95,00" },
+        { Data: "30/03/2025", Hora: "10:00 - 11:00", Cliente: "Hugo Andrade", Pet: "Flash", Raça: "Whippet", Serviço: "Banho", Valor: "R$90,00" },
+        { Data: "30/03/2025", Hora: "11:00 - 12:00", Cliente: "Beatriz Teixeira", Pet: "Moana", Raça: "Chihuahua", Serviço: "Tosa e Hidratação", Valor: "R$105,00" },
+        { Data: "30/03/2025", Hora: "13:00 - 14:00", Cliente: "Rafael Dias", Pet: "Simba", Raça: "Maine Coon", Serviço: "Banho e Escovação", Valor: "R$120,00" },
+        { Data: "30/03/2025", Hora: "14:00 - 15:00", Cliente: "Catarina Souza", Pet: "Léo", Raça: "SRD", Serviço: "Tosa Higiênica", Valor: "R$80,00" },
+        { Data: "30/03/2025", Hora: "15:00 - 16:00", Cliente: "Murilo Rocha", Pet: "Bento", Raça: "Spitz Alemão", Serviço: "Banho Perfumado", Valor: "R$110,00" },
+    ];
 
     return (
         <div>
@@ -35,364 +77,12 @@ const Historico = () => {
                             <option value="banho">Banho</option>
                             <option value="tosa">Tosa</option>
                             <option value="hidratacao">Hidratação</option>
-                        </select>
+                        </select>   
 
                         <button>Filtrar</button>
                     </div>
-
                 </div>
-                <div className="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Hora</th>
-                                <th>Cliente</th>
-                                <th>Pet</th>
-                                <th>Raça</th>
-                                <th>Serviço</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>21/03/2025</td>
-                                <td>08:00 - 09:00</td>
-                                <td>Maria Eduarda</td>
-                                <td>Charlotte</td>
-                                <td>Pug</td>
-                                <td>Banho e Tosa</td>
-                                <td>R$100,00</td>
-                            </tr>
-                            <tr>
-                                <td>22/03/2025</td>
-                                <td>09:30 - 10:30</td>
-                                <td>Carlos Silva</td>
-                                <td>Bobby</td>
-                                <td>Labrador</td>
-                                <td>Tosa Completa</td>
-                                <td>R$150,00</td>
-                            </tr>
-                            <tr>
-                                <td>23/03/2025</td>
-                                <td>10:00 - 11:00</td>
-                                <td>Ana Clara</td>
-                                <td>Luna</td>
-                                <td>Poodle</td>
-                                <td>Banho Medicinal</td>
-                                <td>R$120,00</td>
-                            </tr>
-                            <tr>
-                                <td>24/03/2025</td>
-                                <td>11:30 - 12:30</td>
-                                <td>João Pedro</td>
-                                <td>Scooby</td>
-                                <td>Dachshund</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$80,00</td>
-                            </tr>
-                            <tr>
-                                <td>25/03/2025</td>
-                                <td>13:00 - 14:00</td>
-                                <td>Sofia Almeida</td>
-                                <td>Mia</td>
-                                <td>Siamês (gato)</td>
-                                <td>Banho e Escovação</td>
-                                <td>R$90,00</td>
-                            </tr>
-
-
-                            <tr>
-                                <td>26/03/2025</td>
-                                <td>14:30 - 15:30</td>
-                                <td>Lúcia Ferreira</td>
-                                <td>Duke</td>
-                                <td>Buldogue Francês</td>
-                                <td>Tosa Completa e Banho Perfumado</td>
-                                <td>R$200,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>08:00 - 09:00</td>
-                                <td>Gabriel Lima</td>
-                                <td>Thor</td>
-                                <td>Husky Siberiano</td>
-                                <td>Banho</td>
-                                <td>R$90,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>09:00 - 10:00</td>
-                                <td>Camila Rocha</td>
-                                <td>Mel</td>
-                                <td>Shih Tzu</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$85,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>10:00 - 11:00</td>
-                                <td>Ricardo Nunes</td>
-                                <td>Max</td>
-                                <td>Golden Retriever</td>
-                                <td>Banho e Tosa</td>
-                                <td>R$130,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>11:00 - 12:00</td>
-                                <td>Fernanda Dias</td>
-                                <td>Nina</td>
-                                <td>Persa (gato)</td>
-                                <td>Hidratação</td>
-                                <td>R$110,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>13:00 - 14:00</td>
-                                <td>Thiago Martins</td>
-                                <td>Luke</td>
-                                <td>Boxer</td>
-                                <td>Banho</td>
-                                <td>R$100,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>14:00 - 15:00</td>
-                                <td>Larissa Souza</td>
-                                <td>Julie</td>
-                                <td>Poodle</td>
-                                <td>Tosa Completa</td>
-                                <td>R$120,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>15:00 - 16:00</td>
-                                <td>Henrique Castro</td>
-                                <td>Apolo</td>
-                                <td>Rottweiler</td>
-                                <td>Banho</td>
-                                <td>R$130,00</td>
-                            </tr>
-                            <tr>
-                                <td>27/03/2025</td>
-                                <td>16:00 - 17:00</td>
-                                <td>Bruna Reis</td>
-                                <td>Pitucha</td>
-                                <td>Yorkshire</td>
-                                <td>Hidratação e Escovação</td>
-                                <td>R$140,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>08:30 - 09:30</td>
-                                <td>Pedro Alves</td>
-                                <td>Zeus</td>
-                                <td>Pastor Alemão</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$110,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>09:30 - 10:30</td>
-                                <td>Juliana Torres</td>
-                                <td>Lily</td>
-                                <td>Pinscher</td>
-                                <td>Banho Medicinal</td>
-                                <td>R$105,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>10:30 - 11:30</td>
-                                <td>Felipe Moura</td>
-                                <td>Tom</td>
-                                <td>Siamês (gato)</td>
-                                <td>Escovação</td>
-                                <td>R$75,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>11:30 - 12:30</td>
-                                <td>Isabela Ribeiro</td>
-                                <td>Lola</td>
-                                <td>Cocker Spaniel</td>
-                                <td>Banho e Tosa</td>
-                                <td>R$125,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>13:30 - 14:30</td>
-                                <td>Renato Costa</td>
-                                <td>Chico</td>
-                                <td>Poodle</td>
-                                <td>Tosa Criativa</td>
-                                <td>R$150,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>14:30 - 15:30</td>
-                                <td>Marcela Gomes</td>
-                                <td>Bella</td>
-                                <td>Shih Tzu</td>
-                                <td>Banho e Hidratação</td>
-                                <td>R$115,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>15:30 - 16:30</td>
-                                <td>Lucas Araújo</td>
-                                <td>Fred</td>
-                                <td>Bulldog Inglês</td>
-                                <td>Banho</td>
-                                <td>R$110,00</td>
-                            </tr>
-                            <tr>
-                                <td>28/03/2025</td>
-                                <td>16:30 - 17:30</td>
-                                <td>Tatiane Melo</td>
-                                <td>Amora</td>
-                                <td>Gato SRD</td>
-                                <td>Banho e Escovação</td>
-                                <td>R$95,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>08:00 - 09:00</td>
-                                <td>Diogo Batista</td>
-                                <td>Toby</td>
-                                <td>Pitbull</td>
-                                <td>Hidratação</td>
-                                <td>R$125,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>09:00 - 10:00</td>
-                                <td>Mariana Neves</td>
-                                <td>Lua</td>
-                                <td>Poodle</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$80,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>10:00 - 11:00</td>
-                                <td>André Coelho</td>
-                                <td>Rex</td>
-                                <td>Chow Chow</td>
-                                <td>Banho</td>
-                                <td>R$140,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>11:00 - 12:00</td>
-                                <td>Renata Braga</td>
-                                <td>Flor</td>
-                                <td>Gato Persa</td>
-                                <td>Escovação</td>
-                                <td>R$85,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>13:00 - 14:00</td>
-                                <td>Eduardo Lopes</td>
-                                <td>Nick</td>
-                                <td>Border Collie</td>
-                                <td>Tosa Completa</td>
-                                <td>R$135,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>14:00 - 15:00</td>
-                                <td>Vanessa Cruz</td>
-                                <td>Bia</td>
-                                <td>Pug</td>
-                                <td>Banho</td>
-                                <td>R$90,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>15:00 - 16:00</td>
-                                <td>Caio Mendes</td>
-                                <td>Snow</td>
-                                <td>Samoyeda</td>
-                                <td>Banho e Hidratação</td>
-                                <td>R$160,00</td>
-                            </tr>
-                            <tr>
-                                <td>29/03/2025</td>
-                                <td>16:00 - 17:00</td>
-                                <td>Aline Barreto</td>
-                                <td>Zara</td>
-                                <td>Lhasa Apso</td>
-                                <td>Tosa e Escovação</td>
-                                <td>R$100,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>08:00 - 09:00</td>
-                                <td>Otávio Silva</td>
-                                <td>Félix</td>
-                                <td>Gato SRD</td>
-                                <td>Banho Medicinal</td>
-                                <td>R$110,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>09:00 - 10:00</td>
-                                <td>Priscila Viana</td>
-                                <td>Lady</td>
-                                <td>Beagle</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$95,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>10:00 - 11:00</td>
-                                <td>Hugo Andrade</td>
-                                <td>Flash</td>
-                                <td>Whippet</td>
-                                <td>Banho</td>
-                                <td>R$90,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>11:00 - 12:00</td>
-                                <td>Beatriz Teixeira</td>
-                                <td>Moana</td>
-                                <td>Chihuahua</td>
-                                <td>Tosa e Hidratação</td>
-                                <td>R$105,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>13:00 - 14:00</td>
-                                <td>Rafael Dias</td>
-                                <td>Simba</td>
-                                <td>Maine Coon</td>
-                                <td>Banho e Escovação</td>
-                                <td>R$120,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>14:00 - 15:00</td>
-                                <td>Catarina Souza</td>
-                                <td>Léo</td>
-                                <td>SRD</td>
-                                <td>Tosa Higiênica</td>
-                                <td>R$80,00</td>
-                            </tr>
-                            <tr>
-                                <td>30/03/2025</td>
-                                <td>15:00 - 16:00</td>
-                                <td>Murilo Rocha</td>
-                                <td>Bento</td>
-                                <td>Spitz Alemão</td>
-                                <td>Banho Perfumado</td>
-                                <td>R$110,00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <TableHistorico columns={columns} data={data} />
             </div>
         </div>
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Modal(props) {
+export default function ModalGastos(props) {
     return (
         <div className="modal-overlay">
             <div className={`modal-${props.tipo}`}>

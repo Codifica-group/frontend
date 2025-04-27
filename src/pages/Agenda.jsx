@@ -1,6 +1,7 @@
 import "../styles/style-agenda.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
+import ModalAgenda from "../components/ModalAgenda";
 
 export default function Agenda() {
     useEffect(() => {
@@ -37,6 +38,8 @@ export default function Agenda() {
         { dia: 1, hora: 2, texto: "Banho (Rex)" },
     ];
 
+    const [showModal, setShowModal] = useState(false);
+
     return (
         <div className="agenda-root">
             <SideBar selecionado="agenda" />
@@ -46,7 +49,12 @@ export default function Agenda() {
                 <main className="agenda-main">
                     <div className="agenda-header">
                         <span>08 de Abril 2025, Quarta</span>
-                        <button className="btn-novo">+ Novo Agendamento</button>
+                        <button className="btn-novo" onClick={() => setShowModal(true)}>+ Novo Agendamento</button>
+                        {showModal && (
+                            <ModalAgenda
+                                showModal={setShowModal}    
+                            />
+                        )}
                     </div>
                     <div className="agenda-content">
                         {/* Calendário e lista lateral */}

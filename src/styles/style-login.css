@@ -109,7 +109,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.modal-login h2 {
+.sucesso {
     color: #58873e;
     margin-top: 0;
     margin-bottom: 1.5rem;
@@ -117,11 +117,19 @@
     font-size: 1.5rem;
 }
 
+.fracasso {
+    color: #c26363;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
 .modal-login button{
-    background-color: #58873e;
+    background-color: #FFF;
     margin-top: 1.5rem;
-    padding: 0.5rem 1.5rem;
-    border: none;
+    padding: 0.25rem 2rem;
+    border: 1px solid #000;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;

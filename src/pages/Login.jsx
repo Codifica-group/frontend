@@ -31,24 +31,28 @@ export default function LoginPage() {
         })
         .then(async (response) => {
             if (response.ok) {
-                setInterval(() => {
-                    setMessageModal(response.message);
-                    setTitleModal(true);
-                }, 2000);
-                window.location.href = "/dashboard";
-                
+                setMessageModal(await response.text() + " Direcionando para o dashboard...");
+                setTitleModal(true)
+
             } else {
                 const errorData = await response.json();
-                setMessageModal(errorData);
-                setTitleModal(false);
+                console.error("Erro:", errorData);
+                setMessageModal(errorData.message + " Insita as credenciais corretamente.");
+                setTitleModal(false)
             }
         })
         .catch((error) => {
             console.error("Erro:", error);
             setMessageModal("Erro ao fazer login. Tente novamente mais tarde." + error.message);
-            setTitleModal(false);
+            setTitleModal(false)
         });
-        
+    }
+
+    function redirecionar(sucesso) {
+        setShowModal(false)
+        if (sucesso) {
+            window.location.href = "/dashboard";
+        }
     }
 
     return (
@@ -78,9 +82,9 @@ export default function LoginPage() {
                 {showModal && (
                     <div className="modal-overlay">
                         <div className="modal-login">
-                            <h2>Erro ao fazer login</h2>
+                            <h2 className={titleModal ? "sucesso" : "fracasso"}>{titleModal ? "Login bem-sucedido" : "Erro ao fazer login"}</h2>
                             <p>{messageModal}</p>
-                            <button onClick={() => setShowModal(false)}>OK</button>
+                            <button onClick={() =>redirecionar(titleModal)}>OK</button>
                         </div>
                     </div>
                 )}

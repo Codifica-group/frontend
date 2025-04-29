@@ -1,6 +1,6 @@
 import "../styles/style-login.css";
 import logo from "../assets/logo.png";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function LoginPage() {
 
@@ -12,6 +12,37 @@ export default function LoginPage() {
     const [senha, setSenha] = useState("");
     const [lembrar, setLembrar] = useState(false);
 
+    useEffect(() => {
+        const emailStorage = localStorage.getItem("email");
+        const senhaStorage = localStorage.getItem("senha");
+        const lembrarStorage = localStorage.getItem("lembrar") === "true";
+
+        if (lembrarStorage) {
+            setEmail(emailStorage);
+            setSenha(senhaStorage);
+            setLembrar(lembrarStorage);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (lembrar) {
+            localStorage.setItem("email", email);
+            localStorage.setItem("senha", senha);
+        }
+    }, [email, senha, lembrar]);
+
+    useEffect(() => {
+        if (!lembrar){
+            localStorage.removeItem("email");
+            localStorage.removeItem("senha");
+            localStorage.removeItem("lembrar");
+        }
+        else {
+            localStorage.setItem("lembrar", lembrar);
+        }
+        
+    }, [lembrar]);
+
     function logar() {
         const usuario = {
             email: email,
@@ -19,7 +50,6 @@ export default function LoginPage() {
         };
 
         const usuarioString = JSON.stringify(usuario);
-        localStorage.setItem("usuario", usuarioString);
 
         setShowModal(true);
         fetch("http://localhost:8080/api/usuarios/login", {
@@ -31,18 +61,21 @@ export default function LoginPage() {
         })
         .then(async (response) => {
             if (response.ok) {
-                setMessageModal(await response.text() + " Direcionando para o dashboard...");
+                const data = await response.json();
+                localStorage.setItem("token", data.token);
+                setMessageModal(data.mensagem + " Direcionando para o dashboard...");
                 setTitleModal(true)
 
             } else {
                 const errorData = await response.json();
-                console.error("Erro:", errorData);
+                localStorage.removeItem("token");
                 setMessageModal(errorData.message + " Insita as credenciais corretamente.");
                 setTitleModal(false)
             }
         })
         .catch((error) => {
             console.error("Erro:", error);
+            localStorage.removeItem("token");
             setMessageModal("Erro ao fazer login. Tente novamente mais tarde." + error.message);
             setTitleModal(false)
         });
@@ -65,15 +98,20 @@ export default function LoginPage() {
                 <form id="login" onSubmit={(e) => { e.preventDefault(); logar(); }}>
                     <div className="grupo-formulario">
                         <label>Email</label>
-                        <input type="email" id="email-acesso" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+                        <input type="email" id="email-acesso" value={email} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="grupo-formulario">
                         <label>Senha</label>
-                        <input type="password" id="senha-acesso" placeholder="Senha" onChange={(e) => setSenha(e.target.value)} />
+                        <input type="password" id="senha-acesso" value={senha} placeholder="Senha" onChange={(e) => setSenha(e.target.value)} />
                     </div>
 
                     <div className="lembrar-me">
-                        <input type="checkbox" id="lembrar-acesso" onChange={(e) => setLembrar(e.target.value)} />
+                        <input
+                            type="checkbox"
+                            id="lembrar-acesso"
+                            checked={lembrar}
+                            onChange={() => setLembrar(!lembrar)}
+                        />
                         <label>Lembrar de mim</label>
                     </div>
 

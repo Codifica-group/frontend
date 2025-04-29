@@ -4,7 +4,7 @@ export default function ModalGastos(props) {
     return (
         <div className="modal-overlay">
             <div className={`modal-${props.tipo}`}>
-                <h2>{props.tipo == "entrada" ? "Indicador: Saldo" : "Adicionar Saída"}</h2>
+                <h2>{props.tipo == "entrada" ? "Adicionar Entrada" : "Adicionar Saída"}</h2>
                 <form onSubmit={props.submit}>
                     <div className="form-group">
                         <label>Produto</label>

@@ -14,7 +14,6 @@
 }
 
 .agenda-main {
-
     background: #fff;
     padding: 0;
     display: flex;
@@ -22,7 +21,6 @@
     min-height: 100%;
     width: 100%;
     margin-left: 75px;
-
 }
 
 
@@ -36,19 +34,13 @@
 }
 
 .btn-novo {
-    background: #fff;
-    border: 1px solid #888;
-    color: #333;
+    background: #307e95;
+    border: none;
+    color: white;
     border-radius: 10px;
     padding: 10px 22px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-novo:hover {
-    background: #68C9E5;
-    color: #fff;
 }
 
 .agenda-content {
@@ -67,10 +59,10 @@
 }
 
 .agenda-calendar {
-    background: #f8fafd;
     border-radius: 12px;
     box-shadow: 0 1px 6px #0001;
     padding: 18px 14px;
+    border: 2px solid #307e95;
 }
 
 .agenda-calendar-header {
@@ -105,14 +97,14 @@
 }
 
 .agenda-calendar-dia.marcado {
-    background: #68C9E5;
+    background: #307e95;
     color: #fff;
     font-weight: bold;
 }
 
 .agenda-lista h4 {
     margin: 0 0 10px 0;
-    color: #307E95;
+    color: #000;
     font-size: 1.1rem;
     font-weight: bold;
 }
@@ -126,17 +118,15 @@
 .agenda-lista li {
     margin-bottom: 8px;
     font-size: 1rem;
-    color: #1a4e5e;
+    color: #000;
 }
 
 .agenda-grid {
     flex: 1;
-    background: #f8fafd;
     border-radius: 12px;
     box-shadow: 0 1px 6px #0001;
     padding: 20px 14px;
     min-width: 720px;
-    overflow-x: auto;
 }
 
 .agenda-grid-header {
@@ -192,12 +182,11 @@
 }
 
 .agenda-grid-cell.agendado {
-    background: #68C9E5;
+    background: #307e95;
     color: #fff;
     font-weight: bold;
     font-size: 0.95rem;
     box-shadow: 0 1px 4px #0001;
-    transition: background 0.2s;
 }
 
 .modal-agenda {

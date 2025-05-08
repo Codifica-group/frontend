@@ -1,13 +1,15 @@
 import "../styles/style-login.css";
 import logo from "../assets/logo.png";
 import { use, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
     const [messageModal, setMessageModal] = useState("");
     const [titleModal, setTitleModal] = useState(false);
-
+    
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [lembrar, setLembrar] = useState(false);
@@ -84,7 +86,7 @@ export default function LoginPage() {
     function redirecionar(sucesso) {
         setShowModal(false)
         if (sucesso) {
-            window.location.href = "/dashboard";
+            navigate("/dashboard");
         }
     }
 

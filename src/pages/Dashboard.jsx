@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getCategoriasPrdutos } from "../utils/get";
 import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
 import ContainerCategorias from "../components/ContainerCategorias";
@@ -7,8 +8,17 @@ import ModalGastos from "../components/ModalGastos";
 import ModalComparar from "../components/ModalComparar";
 
 export default function DashboardEleve() {
+    const [categoriasProdutos, setCategoriasProdutos] = useState([]);
     useEffect(() => {
         document.title = `Dashboard`;
+        (async () => {
+            try {
+                setCategoriasProdutos(await getCategoriasPrdutos());
+                console.log(categoriasProdutos);
+            } catch (error) {
+                console.error("Erro ao carregar produtos:", error);
+            }
+        })();
     }, []);
 
     // Estados para o modal de saída
@@ -127,7 +137,7 @@ export default function DashboardEleve() {
                         </div>
 
                         <div className="categorias-container">
-                            <ContainerCategorias tipo="saida" categorias={[1, 2, 3]} />
+                            <ContainerCategorias tipo="saida" categorias={categoriasProdutos} />
                         </div>
 
                         {showModalSaida && (
@@ -221,7 +231,7 @@ export default function DashboardEleve() {
                             </div>
                         </div>
                         <div className="categorias-container">
-                            <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} />
+                            {/* <ContainerCategorias tipo="entrada" categorias={[4, 5, 6]} /> */}
                         </div>
 
                         {showModalEntrada && (

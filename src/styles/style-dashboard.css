@@ -19,6 +19,11 @@
     line-height: 1;
 }
 
+.saldo-topo input{
+    margin-left: 2rem;
+    width: 15%;
+}
+
 .bloco-financas-e-graficos {
     display: flex;
     justify-content: center;
@@ -111,7 +116,6 @@
     border-radius: 8px;
     overflow: hidden;
     width: 100%;
-
 }
 
 .categoria summary {
@@ -123,21 +127,32 @@
     background-color: #307E95;
 }
 
-.categoria-info {
-    padding: 10px 20px;
-    padding-top: 5px;
-    cursor: pointer;
-}
 
-.categoria-info:hover {
-    background-color: rgb(35, 86, 102);
-    transition: all 0.3s;
-}
 
 .categoria-info li {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+    
+}
+
+.categoria-info li > div{
+    width: 100%;
+}
+
+.categoria-info li > div > div{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    padding-top: 5px;
+}
+
+.categoria-info li > div > div:hover {
+    background-color: rgb(35, 86, 102);
+    color: #FFF;
+    transition: all 0.3s;
+    cursor: pointer;
 }
 
 .btnAddSaida,
@@ -175,7 +190,7 @@
 }
 
 .modal-saida,
-.modal-entrada {
+.modal-atualizar {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
@@ -240,6 +255,24 @@
     background-color: #f8f8f8;
 }
 
+.sugestoes-list{
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.sugestao-item{
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.sugestao-item:hover{
+    cursor: pointer;
+    background-color: #1c64d4;
+    color: #FFF;
+}
+
 .modal-saida h2 {
     color: #c26363;
     margin-bottom: 1.5rem;
@@ -247,7 +280,7 @@
     font-size: 1.5rem;
 }
 
-.modal-entrada h2 {
+.modal-atualizar h2 {
     color: #58873e;
     margin-bottom: 1.5rem;
     text-align: center;
@@ -263,6 +296,7 @@
     margin-bottom: 0.5rem;
     color: #333;
     font-weight: 600;
+    font-size: 16px;
 }
 
 .form-group input {
@@ -275,15 +309,16 @@
 }
 
 .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 .btn-cancelar,
 .btn-confirmar,
-.btn-confirmar-entrada {
+.btn-confirmar-entrada,
+.btn-excluir {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 6px;
@@ -291,6 +326,7 @@
     font-weight: bold;
     flex: 1;
     transition: all 0.2s ease;
+    font-size: 16px;
 }
 
 #btnBalanca {
@@ -331,6 +367,15 @@
     background-color: #b05050;
 }
 
+.btn-excluir {
+    background-color: #c26363;
+    color: white;
+}
+
+.btn-excluir:hover {
+    background-color: #b05050;
+}
+
 .btn-confirmar-entrada {
     background-color: #58873e;
     color: white;
@@ -339,6 +384,8 @@
 .btn-confirmar-entrada:hover {
     background-color: #476b32;
 }
+
+
 
 @media (max-width: 1280px) {
     .bloco-financas-e-graficos {

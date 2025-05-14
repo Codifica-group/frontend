@@ -169,7 +169,7 @@ export default function ContainerCategorias(props) {
                         <summary>{categoriaNome}</summary>
                         <div className="categoria-info">
                             <ul>
-                                {despesas && itens
+                                {Array.isArray (itens) && itens
                                     .filter((item) =>
                                         despesas.some(
                                             (despesa) =>

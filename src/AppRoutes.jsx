@@ -10,29 +10,29 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route 
-                path="/dashboard" 
+            <Route
+                path="/dashboard"
                 element={
-                   
-                        <DashboardEleve />
-                  
-                } 
+                    <ProtectedRoute> <DashboardEleve /></ProtectedRoute>
+
+
+                }
             />
-            <Route 
-                path="/historico" 
+            <Route
+                path="/historico"
                 element={
                     <ProtectedRoute>
                         <Historico />
                     </ProtectedRoute>
-                } 
+                }
             />
             <Route
-                path="/agenda" 
+                path="/agenda"
                 element={
                     <ProtectedRoute>
                         <Agenda />
                     </ProtectedRoute>
-                } 
+                }
             />
             <Route path="/error" element={<ErrorPage />} />
         </Routes>

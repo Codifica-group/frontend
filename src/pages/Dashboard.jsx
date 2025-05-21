@@ -32,14 +32,6 @@ export default function DashboardEleve() {
         })();
     }, []);
 
-  const [showModalSaida, setShowModalSaida] = useState(false);
-  const [novaSaida, setNovaSaida] = useState({
-    produto: "",
-    categoria: "",
-    valor: "",
-    data: getDataAtual(),
-  });
-
   const [showModalComparar, setShowModalComparar] = useState(false);
 
   const handleSubmitComparar = (e) => {
@@ -135,23 +127,26 @@ export default function DashboardEleve() {
               </div>
             </div>
             <div className="categorias-container">
-              <ContainerCategorias
-                tipo="saida"
-                categorias={categoriasProdutos}
-                dataSelecionada={dataSelecionada}
-              />
+                <ContainerCategorias 
+                    tipo="saida" 
+                    categorias={categoriasProdutos} 
+                    setCategorias={setCategoriasProdutos}
+                    dataSelecionada={dataSelecionada}
+                    despesas={despesas}
+                    setDespesas={setDespesas}
+                />
             </div>
             {showModalSaida && (
-              <ModalGastos
-                tipo="saida"
-                submit={handleSubmitSaida}
-                novoItem={novaSaida}
-                showModal={setShowModalSaida} // Passando a função para controlar a visibilidade
-                change={handleInputChangeSaida}
-                sugestoes={sugestoesSaida}
-                setSugestoes={setSugestoesSaida}
-              // onClose={() => setShowModalSaida(false)} // Alternativa se o ModalGastos usar onClose
-              />
+                <ModalGastos
+                    tipo="saida"
+                    novoItem={novaSaida}
+                    setNovoItem={setNovaSaida}
+                    showModal={setShowModalSaida}
+                    despesas={despesas}
+                    setDespesas={setDespesas}
+                    categorias={categoriasProdutos}
+                    setCategorias={setCategoriasProdutos}
+                />
             )}
           </div>
 

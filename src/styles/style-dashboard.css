@@ -1,3 +1,9 @@
+.sidebar:hover~.main {
+    margin-left: 220px;
+    width: calc(100vw - 240px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
 .dashboard {
     width: calc(100vw - 90px);
 }

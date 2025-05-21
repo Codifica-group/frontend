@@ -169,14 +169,14 @@ export default function DashboardEleve() {
 
   const handleSubmitComparar = (e) => {
     e.preventDefault();
-    setShowModalComparar(false); 
+    setShowModalComparar(false);
   };
 
   const [ativo, setAtivo] = useState(false);
 
   const toggleClasse = () => {
     setAtivo((prev) => !prev);
-    setShowModalComparar(true); 
+    setShowModalComparar(true);
   };
 
 
@@ -186,7 +186,7 @@ export default function DashboardEleve() {
 
 
 
-//   const [showModalEntrada, setShowModalEntrada] = useState(false);
+  //   const [showModalEntrada, setShowModalEntrada] = useState(false);
   // const [novaEntrada, setNovaEntrada] = useState({...});
   // const handleInputChangeEntrada = (e) => {...};
   // const handleSubmitEntrada = async (e) => {...};
@@ -209,23 +209,23 @@ export default function DashboardEleve() {
                 <div className="kpi-card-value">R$ 1.000,00</div>
               </div>
               <div className="kpi-actions-section">
-              <button className="kpi-action-button" onClick={toggleClasse}>
-                <span role="img" aria-label="ícone balança" className="icon-balance">⚖️</span> Comparar
-                    {showModalComparar && (
-              <ModalComparar
-                submit={handleSubmitComparar}
-                showModal={setShowModalComparar} // Passando a função para controlar a visibilidade
-                // onClose={() => setShowModalComparar(false)} // Alternativa se o ModalComparar usar onClose
-              />
-            )}
-              </button>
-              <button
-                className="kpi-action-button"
-                onClick={() => setShowModalSaida(true)}
-              >
-                Adicionar Saída
-              </button>
-            </div>
+                <button className="kpi-action-button" onClick={toggleClasse}>
+                  <span role="img" aria-label="ícone balança" className="icon-balance">⚖️</span> Comparar
+                </button>
+
+                {showModalComparar && (
+                  <ModalComparar
+                    submit={handleSubmitComparar}
+                    showModal={setShowModalComparar}
+                  />
+                )}
+                <button
+                  className="kpi-action-button"
+                  onClick={() => setShowModalSaida(true)}
+                >
+                  Adicionar Saída
+                </button>
+              </div>
               <div className="kpi-card">
                 <div className="kpi-card-title">
                   <span role="img" aria-label="ícone gráfico" className="icon-chart">📊</span> Margem de Lucro (últimos 30 dias)
@@ -237,14 +237,14 @@ export default function DashboardEleve() {
                 </div>
               </div>
             </div>
-           
+
           </div>
         </header>
-       
+
         <div className="bloco-financas-e-graficos">
           <div className="grafico-coluna">
             <div className="grafico-container">
-            
+
               <div className="grafico-titulo saida">Saída: R$ -500,00</div>
               <div className="grafico-pizza">
                 <ChartComponent
@@ -283,16 +283,16 @@ export default function DashboardEleve() {
                 change={handleInputChangeSaida}
                 sugestoes={sugestoesSaida}
                 setSugestoes={setSugestoesSaida}
-                // onClose={() => setShowModalSaida(false)} // Alternativa se o ModalGastos usar onClose
+              // onClose={() => setShowModalSaida(false)} // Alternativa se o ModalGastos usar onClose
               />
             )}
           </div>
 
-         
+
 
           <div className="grafico-coluna">
             <div className="grafico-container">
-              
+
               <div className="grafico-titulo entrada">Entrada: R$ 1.500,00</div>
               <div className="grafico-pizza">
                 <ChartComponent

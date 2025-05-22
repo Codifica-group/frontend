@@ -2,136 +2,283 @@ import "../styles/style-agenda.css";
 import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import ModalAgenda from "../components/ModalAgenda";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+// import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from "@fullcalendar/interaction";
+import ptBrLocale from "@fullcalendar/core/locales/pt-br";
+import {
+  format,
+  parseISO,
+  addDays,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function Agenda() {
-    useEffect(() => {
-        document.title = `Agenda`;
-    }, []);
-    const agendamentos = [
-        { hora: "08:30 - 09:00", descricao: "Banho + Higienização (Mel)" },
-        { hora: "10:00 - 11:00", descricao: "Banho (Rex)" },
-        { hora: "11:30 - 12:00", descricao: "Banho (Bob)" },
-        { hora: "13:00 - 14:00", descricao: "Banho (Max)" },
-        { hora: "15:00 - 15:30", descricao: "Banho (Tobu)" },
-        { hora: "16:00 - 16:30", descricao: "Banho (Fred)" },
-    ];
+  const [events, setEvents] = useState([
+    {
+      id: "1",
+      title: "Banho + Higienização (Mel)",
+      start: "2025-04-08T08:30:00",
+      end: "2025-04-08T09:00:00",
+      backgroundColor: "#307e95",
+    },
+    {
+      id: "2",
+      title: "Banho (Rex)",
+      start: "2025-04-08T10:00:00",
+      end: "2025-04-08T11:00:00",
+      backgroundColor: "#307e95",
+    },
+    {
+      id: "3",
+      title: "Banho (Bob)",
+      start: "2025-04-08T11:30:00",
+      end: "2025-04-08T12:00:00",
+      backgroundColor: "#307e95",
+    },
+    {
+      id: "4",
+      title: "Banho (Max)",
+      start: "2025-04-10T13:00:00",
+      end: "2025-04-10T14:00:00",
+      backgroundColor: "#307e95",
+    },
+    {
+      id: "5",
+      title: "Banho (Tobu)",
+      start: "2025-04-08T15:00:00",
+      end: "2025-04-08T15:30:00",
+      backgroundColor: "#307e95",
+    },
+    {
+      id: "6",
+      title: "Banho (Fred)",
+      start: "2025-04-08T16:00:00",
+      end: "2025-04-08T16:30:00",
+      backgroundColor: "#307e95",
+    },
+  ]);
 
-    const diasSemana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado"];
-    const datasSemana = ["06", "07", "08", "09", "10", "11"];
-    const horarios = [
-        "08h", "09h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h"
-    ];
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showModal, setShowModal] = useState(false);
 
-    // Exemplo de agendamentos no grid (ajuste conforme necessário)
-    const gridAgendas = [
-        { dia: 2, hora: 0, texto: "Banho + Higienização (Mel)" },
-        { dia: 0, hora: 1, texto: "Banho (Rex)" },
-        { dia: 2, hora: 1, texto: "Banho (Rex)" },
-        { dia: 2, hora: 2, texto: "Banho (Bob)" },
-        { dia: 2, hora: 4, texto: "Banho (Max)" },
-        { dia: 2, hora: 6, texto: "Banho (Tobu)" },
-        { dia: 2, hora: 7, texto: "Banho (Fred)" },
-        { dia: 3, hora: 1, texto: "Banho (Rex)" },
-        { dia: 4, hora: 1, texto: "Banho (Rex)" },
-        { dia: 5, hora: 7, texto: "Banho (Rex)" },
-        { dia: 3, hora: 2, texto: "Banho (Rex)" },
-        { dia: 1, hora: 2, texto: "Banho (Rex)" },
-    ];
+  useEffect(() => {
+    document.title = `Agenda`;
+  }, []);
 
-    const [showModal, setShowModal] = useState(false);
+  // Filtra eventos do dia selecionado
+  const dailyEvents = events.filter((event) => {
+    const eventDate = format(parseISO(event.start), "yyyy-MM-dd");
+    const selectedDateFormatted = format(selectedDate, "yyyy-MM-dd");
+    return eventDate === selectedDateFormatted;
+  });
 
-    return (
-        <div className="agenda-root">
-            <SideBar selecionado="agenda" />
+  // Gera dias da semana para o cabeçalho
+  const generateWeekDays = () => {
+    const start = startOfWeek(currentDate, { locale: ptBR });
+    const end = endOfWeek(currentDate, { locale: ptBR });
+    const days = eachDayOfInterval({ start, end });
 
-            {/* Conteúdo principal */}
-            <div className="agenda-container">
-                <main className="agenda-main">
-                    <div className="agenda-header">
-                        <span>08 de Abril 2025, Quarta</span>
-                        <button className="btn-novo" onClick={() => setShowModal(true)}>+ Novo Agendamento</button>
-                        {showModal && (
-                            <ModalAgenda
-                                showModal={setShowModal}    
-                            />
-                        )}
+    return days.map((day) => ({
+      date: format(day, "dd"),
+      dayName: format(day, "EEEE", { locale: ptBR }).replace("-feira", ""),
+      fullDate: day,
+    }));
+  };
+
+  const weekDays = generateWeekDays();
+
+  // Manipuladores do calendário
+  const handleDateClick = (arg) => {
+    setSelectedDate(arg.date);
+  };
+
+  //   const handleEventClick = (info) => {
+  //     if (window.confirm(`Deseja remover o agendamento "${info.event.title}"?`)) {
+  //       setEvents(events.filter(event => event.id !== info.event.id));
+  //     }
+  //   };
+
+  const handlePrevWeek = () => {
+    setCurrentDate(addDays(currentDate, -7));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentDate(addDays(currentDate, 7));
+  };
+
+  const handleToday = () => {
+    setCurrentDate(new Date());
+    setSelectedDate(new Date());
+  };
+
+  // Adiciona novo evento
+  const addNewEvent = (newEvent) => {
+    setEvents([
+      ...events,
+      {
+        id: `event-${Date.now()}`,
+        title: `${newEvent.service} (${newEvent.pet})`,
+        start: newEvent.date + "T" + newEvent.startTime,
+        end: newEvent.date + "T" + newEvent.endTime,
+        backgroundColor: "#307e95",
+      },
+    ]);
+    setShowModal(false);
+  };
+
+  return (
+    <div className="agenda-root">
+      <SideBar selecionado="agenda" />
+
+      <div className="agenda-container">
+        <main className="agenda-main">
+          <div className="agenda-header">
+            <span>
+              {format(selectedDate, "dd 'de' MMMM yyyy, EEEE", {
+                locale: ptBR,
+              })}
+            </span>
+            <button className="btn-novo" onClick={() => setShowModal(true)}>
+              + Novo Agendamento
+            </button>
+            {showModal && (
+              <ModalAgenda
+                showModal={setShowModal}
+                onSave={addNewEvent}
+                selectedDate={selectedDate}
+              />
+            )}
+          </div>
+
+          <div className="agenda-content">
+            {/* Sidebar com calendário e lista */}
+            <section className="agenda-sidebar">
+              <div className="agenda-mini-calendar">
+                <FullCalendar
+                  plugins={[dayGridPlugin, interactionPlugin]}
+                  initialView="dayGridMonth"
+                  locale={ptBrLocale}
+                  headerToolbar={{
+                    start: "title",
+                    end: "prev,next",
+                  }}
+                  height="300px"
+                  dateClick={handleDateClick}
+                  events={events}
+                  eventColor="#307e95"
+                  dayCellClassNames="mini-calendar-day"
+                  dayHeaderClassNames="mini-calendar-header"
+                />
+              </div>
+
+              <div className="agenda-lista">
+                <h4>Agendamentos do Dia</h4>
+                {dailyEvents.length > 0 ? (
+                  <ul>
+                    {dailyEvents.map((event, i) => (
+                      <li key={i}>
+                        <span>
+                          {format(parseISO(event.start), "HH:mm")} -{" "}
+                          {format(parseISO(event.end), "HH:mm")}
+                        </span>{" "}
+                        - {event.title}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-events">Nenhum agendamento para este dia</p>
+                )}
+              </div>
+            </section>
+
+            {/* Grade semanal */}
+            <section className="agenda-week-view">
+              <div className="week-header">
+                <button onClick={handlePrevWeek}>&lt;</button>
+                <h3>
+                  {format(currentDate, "MMMM yyyy", { locale: ptBR })}
+                  <button onClick={handleToday} className="today-btn">
+                    Hoje
+                  </button>
+                </h3>
+                <button onClick={handleNextWeek}>&gt;</button>
+              </div>
+
+              <div className="week-grid">
+                <div className="time-column">
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <div key={i} className="time-slot">
+                      {i + 8}:00
                     </div>
-                    <div className="agenda-content">
-                        {/* Calendário e lista lateral */}
-                        <section className="agenda-sidebar">
-                            <Calendar />
-                            <div className="agenda-lista">
-                                <h4>Agendamentos do Dia</h4>
-                                <ul>
-                                    {agendamentos.map((ag, i) => (
-                                        <li key={i}>
-                                            <span>{ag.hora}</span> - {ag.descricao}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </section>
-                        {/* Grade semanal */}
-                        <section className="agenda-grid">
-                            <div className="agenda-grid-header">
-                                <div className="agenda-grid-canto"></div>
-                                {datasSemana.map((data, idx) => (
-                                    <div key={idx} className="agenda-grid-dia">
-                                        <span>{data}</span>
-                                        <span>{diasSemana[idx]}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="agenda-grid-body">
-                                {horarios.map((hora, linha) => (
-                                    <div className="agenda-grid-row" key={linha}>
-                                        <div className="agenda-grid-hora">{hora}</div>
-                                        {datasSemana.map((_, coluna) => {
-                                            const ag = gridAgendas.find(
-                                                a => a.dia === coluna && a.hora === linha
-                                            );
-                                            return (
-                                                <div
-                                                    key={coluna}
-                                                    className={`agenda-grid-cell${ag ? " agendado" : ""}`}
-                                                >
-                                                    {ag && <span>{ag.texto}</span>}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    </div>
-                </main>
-            </div>
-        </div>
-    );
-}
+                  ))}
+                </div>
 
-// Componente de calendário simplificado
-function Calendar() {
-    return (
-        <div className="agenda-calendar">
-            <div className="agenda-calendar-header">
-                <button>{"<"}</button>
-                <span>Abril 2025</span>
-                <button>{">"}</button>
-            </div>
-            <div className="agenda-calendar-grid">
-                {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
-                    <div key={i} className="agenda-calendar-dia">{d}</div>
-                ))}
-                {[...Array(30)].map((_, i) => (
+                <div className="days-container">
+                  {weekDays.map((day, dayIdx) => (
                     <div
-                        key={i}
-                        className={`agenda-calendar-dia${[6, 7, 8, 9, 10, 11].includes(i + 1) ? " marcado" : ""}`}
+                      key={dayIdx}
+                      className={`day-column ${
+                        format(day.fullDate, "yyyy-MM-dd") ===
+                        format(selectedDate, "yyyy-MM-dd")
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedDate(day.fullDate)}
                     >
-                        {i + 1}
+                      <div className="day-header">
+                        <span className="day-name">{day.dayName}</span>
+                        <span className="day-date">{day.date}</span>
+                      </div>
+                      <div className="day-events">
+                        {events
+                          .filter(
+                            (event) =>
+                              format(parseISO(event.start), "yyyy-MM-dd") ===
+                              format(day.fullDate, "yyyy-MM-dd")
+                          )
+                          .map((event, eventIdx) => (
+                            <div
+                              key={eventIdx}
+                              className="event-block"
+                              style={{
+                                top: `${
+                                  (parseInt(
+                                    format(parseISO(event.start), "H")
+                                  ) -
+                                    8) *
+                                    60 +
+                                  parseInt(format(parseISO(event.start), "m"))
+                                }px`,
+                                height: `${
+                                  (new Date(event.end) -
+                                    new Date(event.start)) /
+                                  (1000 * 60)
+                                }px`,
+                                width: "calc(100% - 8px)",
+                              }}
+                            >
+                              <div className="event-time">
+                                {format(parseISO(event.start), "HH:mm")} -{" "}
+                                {format(parseISO(event.end), "HH:mm")}
+                              </div>
+                              <div className="event-title">{event.title}</div>
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                ))}
-            </div>
-        </div>
-    );
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
 }

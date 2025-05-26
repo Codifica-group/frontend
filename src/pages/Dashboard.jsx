@@ -46,18 +46,18 @@ export default function DashboardEleve() {
     setShowModalComparar(true);
   };
 
-
-  const obterDataFormatada = () => {
-    return "terça-feira, 13 de maio de 2025";
-  };
-
   return (
     <div className="dashboard">
       <SideBar selecionado="dashboard" />
       <div className="main">
-        {/* NOVO HEADER DE KPI INSERIDO AQUI */}
         <header className="kpi-header-container">
-          <div className="kpi-date-display">{obterDataFormatada()}</div>
+          <div className="kpi-date-display">
+            <input
+              type="date"
+              value={dataSelecionada}
+              onChange={e => setDataSelecionada(e.target.value)}
+            />
+            </div>
           <div className="kpi-content-area">
             <div className="kpi-cards-section">
               <div className="kpi-card">

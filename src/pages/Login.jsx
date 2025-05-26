@@ -8,7 +8,7 @@ export default function LoginPage() {
 
     const [showModal, setShowModal] = useState(false);
     const [messageModal, setMessageModal] = useState("");
-    const [titleModal, setTitleModal] = useState(false);
+    const [titleModal, setTitleModal] = useState(null);
     
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
@@ -122,7 +122,7 @@ export default function LoginPage() {
                 {showModal && (
                     <div className="modal-overlay">
                         <div className="modal-login">
-                            <h2 className={titleModal ? "sucesso" : "fracasso"}>{titleModal ? "Login bem-sucedido" : "Erro ao fazer login"}</h2>
+                            <h2 className={titleModal ? "sucesso" : "fracasso"}>{titleModal == null ? "Carregando" : titleModal ? "Login bem-sucedido" : "Erro ao fazer login"}</h2>
                             <p>{messageModal}</p>
                             <button onClick={() =>redirecionar(titleModal)}>OK</button>
                         </div>

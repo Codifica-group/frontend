@@ -53,9 +53,11 @@ export default function ModalGastos(props) {
 
             try {
                 if(props.tipo === "atualizar") {
+                    console.log("novaDespesa: ", novaDespesa);
                     const response = await putDespesa(props.idDespesa, novaDespesa);
                     console.log("Despesa atualizada com sucesso:", response);
                 } else {
+                    console.log("novaDespesa: ", novaDespesa);
                     const response = await postDespesa(novaDespesa);
                     console.log("Despesa criada com sucesso:", response);
                 }
@@ -77,13 +79,13 @@ export default function ModalGastos(props) {
                 props.setCategorias(await getCategoriasPrdutos());
                 
                 if(props.tipo === "atualizar") {
-                    const novaDespesa = {
+                    novaDespesa = {
                         produtoId: responseProduto.id,
                         valor: novaSaidaFormatada.valor,
                         data: novaSaidaFormatada.data,
                     };
                 } else {
-                    const novaDespesa = [{
+                    novaDespesa = [{
                         produtoId: responseProduto.id,
                         valor: novaSaidaFormatada.valor,
                         data: novaSaidaFormatada.data,

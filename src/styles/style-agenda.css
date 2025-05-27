@@ -1,14 +1,14 @@
 /* Estilos gerais da agenda */
 .sidebar:hover~.agenda-container {
     margin-left: 150px;
-    width: calc(100vw - 150px);
+    width: calc(100vw - 210px);
     transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .agenda-root {
     display: flex;
     min-height: 100vh;
-    background-color: #f5f7fa;
+    background-color: #e8f6fc;
 }
 
 .agenda-container {
@@ -86,13 +86,14 @@
     gap: 24px;
 }
 
-/* Mini calendário */
+/* Mini calendário - MODIFICAÇÕES PRINCIPAIS AQUI */
 .agenda-mini-calendar {
     border-radius: 10px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     padding: 16px;
     border: 1px solid #e0e8ef;
     background: #fff;
+    height: 40vh;
 }
 
 .agenda-mini-calendar .fc {
@@ -115,6 +116,42 @@
     transition: all 0.2s ease;
 }
 
+/* Estilos para mostrar apenas bolinhas nos dias com eventos */
+.agenda-mini-calendar .fc-daygrid-day-events {
+    min-height: 0;
+    margin: 0;
+}
+
+.agenda-mini-calendar .fc-daygrid-event {
+    position: relative;
+    margin: 0 auto;
+    width: 6px;
+    height: 6px;
+    background-color: #307E95;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    top: -16px;
+}
+
+.agenda-mini-calendar .fc-daygrid-event-dot {
+    display: none !important;
+}
+
+.agenda-mini-calendar .fc-daygrid-event-harness {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.agenda-mini-calendar .fc-event-title,
+.agenda-mini-calendar .fc-event-time {
+    display: none;
+}
+
+/* Fim das modificações do mini calendário */
+
 .agenda-mini-calendar .fc-button:hover {
     color: #1e5d72 !important;
 }
@@ -122,7 +159,7 @@
 .agenda-mini-calendar .fc-daygrid-day-number {
     color: #4a5568;
     font-weight: normal;
-    padding: 4px;
+    height: 0;
 }
 
 .agenda-mini-calendar .fc-daygrid-day.fc-day-today {
@@ -130,12 +167,13 @@
 }
 
 .agenda-mini-calendar .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-    font-weight: bold;
+    font-weight: bolder;
     color: #307E95;
 }
 
 .agenda-mini-calendar .fc-daygrid-day-top {
     justify-content: center;
+    height: 0;
 }
 
 .agenda-mini-calendar .fc-daygrid-day-frame {
@@ -144,16 +182,17 @@
 }
 
 .agenda-mini-calendar .fc-daygrid-day-frame:hover {
-    background: rgba(48, 126, 149, 0.05);
+    background-color: #4f99af;
+    font-weight: bolder;
+    color: white;
 }
 
-.agenda-mini-calendar .fc-daygrid-event {
-    margin-top: 2px;
+.fc-daygrid-day-frame:hover .fc-daygrid-day-number {
+    color: white !important;
 }
 
-.agenda-mini-calendar .fc-daygrid-event-dot {
-    border-color: #307E95 !important;
-    margin-right: 4px;
+.fc-scrollgrid-section:hover {
+    background: none !important;
 }
 
 /* Lista de agendamentos */
@@ -291,13 +330,14 @@
     display: flex;
     flex: 1;
     position: relative;
-    min-height: 600px;
+    min-height: 500px;
 }
 
 .time-column {
     width: 60px;
-    margin-top: 40px;
+    margin-top: 95px;
     position: relative;
+    height: 640px;
 }
 
 .time-slot {
@@ -307,7 +347,7 @@
     color: #718096;
     font-size: 0.85rem;
     position: relative;
-    font-weight: 500;
+    font-weight: 900;
 }
 
 .time-slot::after {
@@ -324,7 +364,7 @@
     flex: 1;
     border: 1px solid #eaeef2;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: hidden;   
 }
 
 .day-column {
@@ -388,7 +428,7 @@
 
 .day-events {
     position: relative;
-    height: calc(60px * 12);
+    height: calc(35px * 18);
     background: repeating-linear-gradient(
         to bottom,
         transparent,

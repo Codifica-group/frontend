@@ -4,7 +4,6 @@ import SideBar from "../components/SideBar";
 import ModalAgenda from "../components/ModalAgenda";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-// import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import {
@@ -61,6 +60,13 @@ export default function Agenda() {
       end: "2025-04-08T16:30:00",
       backgroundColor: "#307e95",
     },
+        {
+      id: "7",
+      title: "Teste (Teste)",
+      start: "2025-04-30T16:00:00",
+      end: "2025-04-30T18:30:00",
+      backgroundColor: "#307e95",
+    },
   ]);
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -71,14 +77,12 @@ export default function Agenda() {
     document.title = `Agenda`;
   }, []);
 
-  // Filtra eventos do dia selecionado
   const dailyEvents = events.filter((event) => {
     const eventDate = format(parseISO(event.start), "yyyy-MM-dd");
     const selectedDateFormatted = format(selectedDate, "yyyy-MM-dd");
     return eventDate === selectedDateFormatted;
   });
 
-  // Gera dias da semana para o cabeçalho
   const generateWeekDays = () => {
     const start = startOfWeek(currentDate, { locale: ptBR });
     const end = endOfWeek(currentDate, { locale: ptBR });
@@ -93,16 +97,9 @@ export default function Agenda() {
 
   const weekDays = generateWeekDays();
 
-  // Manipuladores do calendário
   const handleDateClick = (arg) => {
     setSelectedDate(arg.date);
   };
-
-  //   const handleEventClick = (info) => {
-  //     if (window.confirm(`Deseja remover o agendamento "${info.event.title}"?`)) {
-  //       setEvents(events.filter(event => event.id !== info.event.id));
-  //     }
-  //   };
 
   const handlePrevWeek = () => {
     setCurrentDate(addDays(currentDate, -7));
@@ -117,7 +114,6 @@ export default function Agenda() {
     setSelectedDate(new Date());
   };
 
-  // Adiciona novo evento
   const addNewEvent = (newEvent) => {
     setEvents([
       ...events,
@@ -157,7 +153,6 @@ export default function Agenda() {
           </div>
 
           <div className="agenda-content">
-            {/* Sidebar com calendário e lista */}
             <section className="agenda-sidebar">
               <div className="agenda-mini-calendar">
                 <FullCalendar
@@ -172,8 +167,11 @@ export default function Agenda() {
                   dateClick={handleDateClick}
                   events={events}
                   eventColor="#307e95"
-                  dayCellClassNames="mini-calendar-day"
-                  dayHeaderClassNames="mini-calendar-header"
+                  eventContent={() => null} // Isso esconde o conteúdo do evento
+                  dayCellContent={(args) => {
+                    // Mostra apenas o número do dia
+                    return { html: `<div class="fc-daygrid-day-number">${args.dayNumberText}</div>` };
+                  }}
                 />
               </div>
 
@@ -197,7 +195,6 @@ export default function Agenda() {
               </div>
             </section>
 
-            {/* Grade semanal */}
             <section className="agenda-week-view">
               <div className="week-header">
                 <button onClick={handlePrevWeek}>&lt;</button>
@@ -212,7 +209,7 @@ export default function Agenda() {
 
               <div className="week-grid">
                 <div className="time-column">
-                  {Array.from({ length: 12 }, (_, i) => (
+                  {Array.from({ length: 11 }, (_, i) => (
                     <div key={i} className="time-slot">
                       {i + 8}:00
                     </div>
@@ -223,12 +220,11 @@ export default function Agenda() {
                   {weekDays.map((day, dayIdx) => (
                     <div
                       key={dayIdx}
-                      className={`day-column ${
-                        format(day.fullDate, "yyyy-MM-dd") ===
-                        format(selectedDate, "yyyy-MM-dd")
+                      className={`day-column ${format(day.fullDate, "yyyy-MM-dd") ===
+                          format(selectedDate, "yyyy-MM-dd")
                           ? "selected"
                           : ""
-                      }`}
+                        }`}
                       onClick={() => setSelectedDate(day.fullDate)}
                     >
                       <div className="day-header">
@@ -247,19 +243,17 @@ export default function Agenda() {
                               key={eventIdx}
                               className="event-block"
                               style={{
-                                top: `${
-                                  (parseInt(
-                                    format(parseISO(event.start), "H")
-                                  ) -
+                                top: `${(parseInt(
+                                  format(parseISO(event.start), "H")
+                                ) -
                                     8) *
-                                    60 +
+                                  60 +
                                   parseInt(format(parseISO(event.start), "m"))
-                                }px`,
-                                height: `${
-                                  (new Date(event.end) -
+                                  }px`,
+                                height: `${(new Date(event.end) -
                                     new Date(event.start)) /
                                   (1000 * 60)
-                                }px`,
+                                  }px`,
                                 width: "calc(100% - 8px)",
                               }}
                             >

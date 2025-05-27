@@ -34,7 +34,6 @@
     margin-bottom: 20px;
     align-items: center;
 }
-
 .filter-section label {
     font-weight: bold;
 }
@@ -44,6 +43,8 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+        background-color: #fff;
+
 }
 
 .filter-section button {

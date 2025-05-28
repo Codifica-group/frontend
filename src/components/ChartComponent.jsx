@@ -18,7 +18,7 @@ export default function ChartComponent({ id, type, data, options }) {
         return () => {
             if (Chart.getChart(ctx)) Chart.getChart(ctx).destroy();
         };
-    }, []);
+    }, [data]);
 
     return <canvas id={id} ref={chartRef}></canvas>;
 }

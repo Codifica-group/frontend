@@ -3,7 +3,7 @@ import { getCategoriasPrdutos, getDespesas } from "../utils/get";
 import { NumericFormat } from "react-number-format";
 import { postDespesa, postProduto } from "../utils/post";
 import { getDataAtual } from "../utils/util";
-import { putDespesa } from "../utils/put";
+import { putDespesa, putProduto } from "../utils/put";
 
 export default function ModalGastos(props) {
     const [sugestoesSaida, setSugestoesSaida] = useState([]);
@@ -52,6 +52,13 @@ export default function ModalGastos(props) {
             }
 
             try {
+                const responseProduto = await putProduto(produtoExistente.id, 
+                    { 
+                        categoriaId: parseInt(novaSaidaFormatada.categoria, 10), 
+                        nome: produtoExistente.nome,  
+                    }
+                );
+                console.log("Produto atualizado com sucesso:", responseProduto);
                 if(props.tipo === "atualizar") {
                     console.log("novaDespesa: ", novaDespesa);
                     const response = await putDespesa(props.idDespesa, novaDespesa);
@@ -157,6 +164,7 @@ export default function ModalGastos(props) {
                             onChange={handleInputChangeSaida}
                             placeholder="Ex: Banho"
                             required
+                            autoComplete="off"
                         />
                         {sugestoesSaida.length > 0 && (
                             <ul className="sugestoes-list">

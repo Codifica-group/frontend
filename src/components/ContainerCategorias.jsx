@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCategoriasPrdutos} from '../utils/get';
+import { getCategoriasPrdutos, getDespesas} from '../utils/get';
 import ModalGastos from './ModalGastos';
 import { deleteDespesa } from '../utils/delete';
 
@@ -27,7 +27,10 @@ export default function ContainerCategorias(props) {
             console.log("Despesa excluída com sucesso:", response);
 
             const categoriasAtualizadas = await getCategoriasPrdutos();
-            setCategoriasProdutos(categoriasAtualizadas);
+            props.setCategorias(categoriasAtualizadas);
+
+            const despesasAtualizadas = await getDespesas();
+            props.setDespesas(despesasAtualizadas);
 
             setShowModalSaida(false);
         } catch (error) {
@@ -47,7 +50,7 @@ export default function ContainerCategorias(props) {
                                     .filter((item) =>
                                         (Array.isArray(props.despesas) ? props.despesas : []).some(
                                             (despesa) =>
-                                                despesa.produtoId === item.id &&
+                                                despesa.produto.id === item.id &&
                                                 despesa.data === props.dataSelecionada
                                         )
                                     )
@@ -57,7 +60,7 @@ export default function ContainerCategorias(props) {
                                                 {props.despesas
                                                     .filter(
                                                         (despesa) =>
-                                                            despesa.produtoId === item.id &&
+                                                            despesa.produto.id === item.id &&
                                                             despesa.data === props.dataSelecionada
                                                     )
                                                     .map((despesaFiltrada) => (

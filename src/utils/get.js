@@ -20,3 +20,13 @@ export async function getDespesas(){
     };
 }
 
+export async function getServicos(){
+    try {
+        const response = await axios.get("http://localhost:8080/api/servicos")
+        return response.data;
+    }
+    catch(error) {
+        return error;
+    };
+}
+

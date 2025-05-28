@@ -1,6 +1,6 @@
 /* Estilos gerais da agenda */
 .sidebar:hover~.agenda-container {
-    margin-left: 150px;
+    margin-left: 160px;
     width: calc(100vw - 210px);
     transition: margin-left 0.3s ease, width 0.3s ease;
 }

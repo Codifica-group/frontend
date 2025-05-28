@@ -5,6 +5,7 @@ import Historico from "./pages/Historico";
 import Agenda from "./pages/Agenda";
 import ErrorPage from "./pages/ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Comparacao from "./pages/Comparacao";
 
 export default function AppRoutes() {
     return (
@@ -31,6 +32,14 @@ export default function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <Agenda />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/comparacao"
+                element={
+                    <ProtectedRoute>
+                        <Comparacao />
                     </ProtectedRoute>
                 }
             />

@@ -1,0 +1,163 @@
+* {
+    font-family: quicksand, sans-serif;
+}
+
+.sidebar:hover~.main-comparacao {
+    margin-left: 210px;
+    width: calc(100vw - 210px);
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease;
+}
+.container-dashboard {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+
+}
+
+.main-comparacao {
+    flex: 1;
+    padding: 32px 48px;
+    background: #e8f6fc;
+    width: 75vw;
+    margin-left: 4vw;
+}
+
+h2 {
+    color: #3992a1;
+    margin-bottom: 32px;
+    font-size: 32px;
+    font-weight: bold;
+}
+span{
+    font-size: 24px;
+font-weight: bold;
+}
+strong{
+    font-size: 20px;
+    font-weight: 550;
+}
+
+.botoes-comparacao {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-comparar:hover,
+.btn-voltar:hover {
+    background: #1e5d72;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-comparar,
+.btn-voltar {
+    background: #3992a1;
+    color: #fff;
+    border: none;
+    padding: 8px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0001;
+    transition: background 0.2s;
+    height: 55px;
+    width: 200px;
+}
+
+.btn-voltar {
+    background: #7eb6c4;
+}
+
+.cards-info {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.card-info {
+    background: #f8fafc;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0001;
+    padding: 18px 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-bar {
+    background: #e5e7eb;
+    border-radius: 8px;
+    height: 16px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.progress-bar.saida .progress {
+    background: #c26363;
+}
+
+.progress-bar.entrada .progress {
+    background: #58873e;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 8px;
+    color: #fff;
+    text-align: right;
+    padding-right: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.lucro-valor {
+    color: #58873e;
+    font-size: 1.9rem;
+}
+
+.lucro-porcentagem {
+    color: #3992a1;
+    font-weight: bold;
+}
+
+.graficos-comparacao {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+}
+
+.grafico-box {
+    background: #f8fafc;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0001;
+    flex: 1;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 40%;
+}
+
+.titulo-saida {
+    color: #c26363;
+    margin-bottom: 12px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.titulo-entrada {
+    color: #58873e;
+    margin-bottom: 12px;
+     font-size: 24px;
+    font-weight: 700;
+}
+
+.intervalo {
+    font-size: 0.95rem;
+    color: #000000;
+    margin-top: 16px;
+    font-weight: 700;
+}

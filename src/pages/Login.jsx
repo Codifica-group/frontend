@@ -71,7 +71,7 @@ export default function LoginPage() {
             } else {
                 const errorData = await response.json();
                 localStorage.removeItem("token");
-                setMessageModal(errorData.message + " Insita as credenciais corretamente.");
+                setMessageModal(errorData.message + "Credenciais incorretas.");
                 setTitleModal(false)
             }
         })
@@ -86,7 +86,7 @@ export default function LoginPage() {
     function redirecionar(sucesso) {
         setShowModal(false)
         if (sucesso) {
-            navigate("/dashboard");
+            navigate("/Agenda");
         }
     }
 

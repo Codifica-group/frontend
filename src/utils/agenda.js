@@ -6,12 +6,9 @@ import { putAgenda } from "./put";
 
 // REQUISIÇÕES PARA A API DE AGENDAS
 const API_BASE = "http://localhost:8080/api/agendas";
-export const calcularServico = async (petId, servicosId) => {
+export const calcularServico = async (body) => {
   try {
-    const response = await axios.post(`${API_BASE}/calcular/servico`, {
-      petId,
-      servicosId,
-    });
+    const response = await axios.post(`${API_BASE}/calcular/servico`, body);
     return response.data;
   } catch (error) {
     console.error("Erro ao calcular serviço:", error.response || error.message);

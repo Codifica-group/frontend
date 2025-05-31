@@ -105,6 +105,7 @@ export default function Agenda() {
                 showModal={setShowModal}
                 onSave={addNewEvent}
                 selectedDate={selectedDate}
+                recarregarAgendas={carregarAgendas}
               />
             )}
           </div>

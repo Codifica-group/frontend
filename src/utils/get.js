@@ -20,6 +20,16 @@ export async function getDespesas(){
     };
 }
 
+export async function getServicos(){
+    try {
+        const response = await axios.get("http://localhost:8080/api/servicos")
+        return response.data;
+    }
+    catch(error) {
+        return error;
+    };
+}
+
 export async function getHistorico(filtro) {
     try {
         const response = await axios.post("http://localhost:8080/api/agendas/filtrar", filtro);
@@ -50,7 +60,7 @@ export async function getClientes() {
     }
 }
 
-export async function getRacas() {
+    export async function getRacas() {
     try {
         const response = await axios.get("http://localhost:8080/api/racas");
         return response.data;

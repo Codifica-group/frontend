@@ -553,3 +553,31 @@
         padding-right: 4px;
     }
 }
+
+table {
+    width: 1450px;
+    /* A tabela ocupa toda a largura disponível */
+    border-collapse: collapse;
+    transition: width 0.3s ease;
+    /* Transição suave para largura */
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #307e95;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f0f8ff;
+}
+
+table tr:hover {
+    background-color: #d6eaff;
+}

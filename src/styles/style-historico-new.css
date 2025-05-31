@@ -2,7 +2,7 @@
 .sidebar:hover~.content {
     margin-left: 230px;
     width: calc(100vw - 250px);
-    transition: margin-left 0.3s cubic-bezier(.4, 0, .2, 1), width 0.3s cubic-bezier(.4, 0, .2, 1);
+    transition: margin-left 0.3s cubic-bezier(.4,0,.2,1), width 0.3s cubic-bezier(.4,0,.2,1);
 }
 
 .titulo {
@@ -18,7 +18,7 @@
     flex-direction: column;
     margin-left: 75px;
     width: calc(100vw - 95px);
-    transition: 0.3s cubic-bezier(.4, 0, .2, 1);
+    transition: 0.3s cubic-bezier(.4,0,.2,1);
     overflow-x: auto;
     padding: 32px 24px;
     background: #fafdff;
@@ -34,7 +34,7 @@
     background: #ffffff;
     padding: 18px 20px;
     border-radius: 14px;
-    box-shadow: 0 2px 12px 0 rgba(48, 126, 149, 0.07);
+    box-shadow: 0 2px 12px 0 rgba(48,126,149,0.07);
     margin-bottom: 24px;
     transition: background 0.3s;
 }
@@ -45,7 +45,6 @@
     margin-bottom: 0;
     align-items: center;
 }
-
 .filter-section label {
     font-weight: 600;
     color: #000000;
@@ -59,14 +58,14 @@
     background: #fff;
     font-size: 1rem;
     transition: border 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px 0 rgba(48, 126, 149, 0.04);
+    box-shadow: 0 2px 8px 0 rgba(48,126,149,0.04);
 }
 
 .filter-section input:focus,
 .filter-section select:focus {
     outline: none;
     border: 1.5px solid #90caf9;
-    box-shadow: 0 4px 16px 0 rgba(59, 179, 195, 0.13);
+    box-shadow: 0 4px 16px 0 rgba(59,179,195,0.13);
 }
 
 .filter-section button {
@@ -77,7 +76,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    box-shadow: 0 2px 8px 0 rgba(48, 126, 149, 0.08);
+    box-shadow: 0 2px 8px 0 rgba(48,126,149,0.08);
     transition: background 0.2s, transform 0.2s;
 }
 
@@ -90,85 +89,66 @@
 .table-container {
     width: 100%;
     overflow-x: auto;
-    border-radius: 8px;
-    /* quadrada */
-    box-shadow: 0 4px 24px 0 rgba(48, 126, 149, 0.10);
+    border-radius: 8px; /* quadrada */
+    box-shadow: 0 4px 24px 0 rgba(48,126,149,0.10);
     margin-bottom: 32px;
     transition: box-shadow 0.3s;
 }
 
-.historico-root {
-    table {
-        width: 100%;
-        min-width: 900px;
-        border-collapse: separate;
-        border-spacing: 0;
-        border-radius: 0;
-        /* quadrada */
-        overflow: hidden;
-        background: #fff;
-        /* só branco */
-        box-shadow: 0 2px 12px 0 rgba(48, 126, 149, 0.06);
-        animation: fadeInTable 0.7s cubic-bezier(.4, 0, .2, 1);
-    }
+table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0; /* quadrada */
+    overflow: hidden;
+    background: #fff; /* só branco */
+    box-shadow: 0 2px 12px 0 rgba(48,126,149,0.06);
+    animation: fadeInTable 0.7s cubic-bezier(.4,0,.2,1);
+}
 
-    @keyframes fadeInTable {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
+@keyframes fadeInTable {
+    from { opacity: 0; transform: translateY(30px);}
+    to { opacity: 1; transform: translateY(0);}
+}
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+table th,
+table td {
+    border: none;
+    color: #1a1a1a;
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 1rem;
+    transition: background 0.2s;
+    
+}
 
-    table th,
-    table td {
-        border: none;
-        color: #1a1a1a;
-        padding: 14px 18px;
-        text-align: left;
-        font-size: 1rem;
-        transition: background 0.2s;
+table th {
+    background: #389eec; /* azul claro, sem gradiente */
+    color: #ffffff;      /* azul mais forte */
+    font-weight: 700;
+    border-radius: 0;    /* quadrada */
+}
 
-    }
+table tr {
+    border-radius: 0;    /* quadrada */
+    transition: box-shadow 0.2s, background 0.2s;
+}
 
-    table th {
-        background: #389eec;
-        /* azul claro, sem gradiente */
-        color: #ffffff;
-        /* azul mais forte */
-        font-weight: 700;
-        border-radius: 0;
-        /* quadrada */
-    }
+table tr:nth-child(even) {
+    background: #f0f7fa; /* azul bem claro */
+}
 
-    table tr {
-        border-radius: 0;
-        /* quadrada */
-        transition: box-shadow 0.2s, background 0.2s;
-    }
+table tr:nth-child(odd) {
+    background: #fff;    /* branco */
+}
 
-    table tr:nth-child(even) {
-        background: #f0f7fa;
-        /* azul bem claro */
-    }
-
-    table tr:nth-child(odd) {
-        background: #fff;
-        /* branco */
-    }
-
-    table tr:hover {
-        background: #fafafa;
-        /* azul mais claro no hover */
-        box-shadow: 0 2px 12px 0 rgba(48, 126, 149, 0.10);
-        transform: scale(1.01);
-        z-index: 1;
-        position: relative;
-    }
+table tr:hover {
+    background: #fafafa; /* azul mais claro no hover */
+    box-shadow: 0 2px 12px 0 rgba(48,126,149,0.10);
+    transform: scale(1.01);
+    z-index: 1;
+    position: relative;
 }
 
 /* Select personalizado */
@@ -180,13 +160,12 @@
     background: #fff;
     color: #246078;
     transition: border 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px 0 rgba(48, 126, 149, 0.06);
+    box-shadow: 0 2px 8px 0 rgba(48,126,149,0.06);
 }
-
 .select-control:focus-within {
     outline: none;
     border: 1.5px solid #90caf9;
-    box-shadow: 0 4px 16px 0 rgba(59, 179, 195, 0.13);
+    box-shadow: 0 4px 16px 0 rgba(59,179,195,0.13);
 }
 
 .select-multivalue {
@@ -212,21 +191,14 @@
     border: 1.5px solid #b5d6e6;
     margin-top: 4px;
     border-radius: 8px;
-    box-shadow: 0 8px 32px 0 rgba(48, 126, 149, 0.13);
+    box-shadow: 0 8px 32px 0 rgba(48,126,149,0.13);
     z-index: 50;
-    animation: fadeInMenu 0.3s cubic-bezier(.4, 0, .2, 1);
+    animation: fadeInMenu 0.3s cubic-bezier(.4,0,.2,1);
 }
 
 @keyframes fadeInMenu {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px);}
+    to { opacity: 1; transform: translateY(0);}
 }
 
 .select-option {
@@ -235,12 +207,10 @@
     transition: background 0.2s, color 0.2s;
     border-radius: 6px;
 }
-
 .select-option.is-selected {
     background: linear-gradient(90deg, #4fc3f7 60%, #90caf9 100%);
     color: #fff;
 }
-
 .select-option.is-focused:not(.is-selected) {
     background: #e3f2fd;
     color: #1976d2;
@@ -253,11 +223,9 @@
         gap: 12px;
         padding: 14px 10px;
     }
-
     .content {
         padding: 18px 8px;
     }
-
     .table-container {
         padding: 8px 0;
     }
@@ -269,12 +237,10 @@
         width: 100vw;
         padding: 10px 2px;
     }
-
     .table-container {
         padding: 0;
     }
-
-    .historico-root table {
+    table {
         min-width: 600px;
         font-size: 0.95rem;
     }
@@ -282,56 +248,46 @@
 
 /* Modal overlay */
 .modal {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Modal content box */
-.modal>div,
+.modal > div,
 .modal-content {
-    background: #fff;
-    border-radius: 12px;
-    padding: 32px 28px 24px 28px;
-    min-width: 340px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    animation: modalFadeIn 0.2s;
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: modalFadeIn 0.2s;
 }
 
 @keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px);}
+    to   { opacity: 1; transform: translateY(0);}
 }
 
 .modal-content h2 {
-    margin-bottom: 10px;
-    font-size: 1.3rem;
-    color: #333;
-    font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  color: #333;
+  font-weight: 600;
 }
 
 .modal-content label {
-    font-size: 0.97rem;
-    color: #444;
-    margin-bottom: 3px;
-    margin-top: 6px;
+  font-size: 0.97rem;
+  color: #444;
+  margin-bottom: 3px;
+  margin-top: 6px;
 }
 
 .modal-content input[type="text"],
@@ -371,16 +327,16 @@
     filter: brightness(0.95);
 }
 
-.modal>p,
-.modal>div>p {
+.modal > p,
+.modal > div > p {
     font-size: 1.08rem;
     color: #222;
     margin-bottom: 18px;
     text-align: center;
 }
 
-.modal>button,
-.modal>div>button {
+.modal > button,
+.modal > div > button {
     padding: 8px 18px;
     margin-right: 10px;
     border: none;
@@ -393,14 +349,14 @@
     transition: background 0.18s;
 }
 
-.modal>button:last-child,
-.modal>div>button:last-child {
+.modal > button:last-child,
+.modal > div > button:last-child {
     background: #ef4444;
     color: #fff;
 }
 
-.modal>button:hover,
-.modal>div>button:hover {
+.modal > button:hover,
+.modal > div > button:hover {
     filter: brightness(0.95);
 }
 
@@ -417,7 +373,7 @@
 }
 
 .icon-action-btn:hover {
-    box-shadow: 0 4px 10px -2px #d5d5d5;
+        box-shadow: 0 4px 10px -2px #d5d5d5; 
 
 }
 
@@ -427,11 +383,8 @@
 .historico-modal-overlay {
     position: fixed;
     z-index: 1000;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.45);
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -443,27 +396,18 @@
     border-radius: 12px;
     padding: 24px 20px 18px 20px;
     min-width: 380px;
-    width: 35vw;
-    /* mais largo */
+    width: 35vw; /* mais largo */
     max-width: 600px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    /* menos gap */
+    gap: 10px; /* menos gap */
     animation: historicoModalFadeIn 0.2s;
 }
 
 @keyframes historicoModalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px);}
+    to   { opacity: 1; transform: translateY(0);}
 }
 
 .historico-modal-box h2 {
@@ -504,8 +448,7 @@
 .historico-modal-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.7rem;
-    /* menos gap */
+    gap: 0.7rem; /* menos gap */
     margin-top: 1rem;
 }
 
@@ -574,7 +517,6 @@
         max-width: 98vw;
         padding: 14px 4vw 12px 4vw;
     }
-
     .historico-modal-buttons {
         grid-template-columns: 1fr;
         gap: 0.5rem;

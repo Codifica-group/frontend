@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getCategoriasPrdutos, getDespesas} from '../utils/get';
+import { useState } from 'react';
+import { getDespesas } from '../utils/get';
 import ModalGastos from './ModalGastos';
 import { deleteDespesa } from '../utils/delete';
 
@@ -8,16 +8,15 @@ export default function ContainerCategorias(props) {
     const [saida, setSaida] = useState();
     const [idDespesa, setIdDespesa] = useState();
 
-    const exibirModalSaida = (categoriaProduto, despesa) => {
+    const exibirModalSaida = (produto, despesa) => {
         setSaida({
-            produto: categoriaProduto.nome,
-            categoria: categoriaProduto.categoriaId,
+            produto: produto.nome,
+            categoria: produto.categoria?.id,
             valor: despesa.valor.toString(),
             data: despesa.data,
         });
 
         setIdDespesa(despesa.id);
-
         setShowModalSaida(true);
     }
 
@@ -26,12 +25,8 @@ export default function ContainerCategorias(props) {
             const response = await deleteDespesa(idDespesa);
             console.log("Despesa excluída com sucesso:", response);
 
-            const categoriasAtualizadas = await getCategoriasPrdutos();
-            props.setCategorias(categoriasAtualizadas);
-
             const despesasAtualizadas = await getDespesas();
             props.setDespesas(despesasAtualizadas);
-
             setShowModalSaida(false);
         } catch (error) {
             console.error("Erro ao excluir despesa:", error);
@@ -41,39 +36,33 @@ export default function ContainerCategorias(props) {
     return (
         <div className="categoria-wrapper">
             <div className="categoria-container">
-                {Object.entries(props.categorias).map(([categoriaNome, itens], index) => (
-                    <details className="categoria" key={index}>
-                        <summary>{categoriaNome}</summary>
+                {props.categorias.map((categoria) => (
+                    <details className="categoria" key={categoria.id}>
+                        <summary>{categoria.nome}</summary>
                         <div className="categoria-info">
                             <ul>
-                                {Array.isArray (itens) && itens
-                                    .filter((item) =>
-                                        (Array.isArray(props.despesas) ? props.despesas : []).some(
+                                {props.produtos
+                                    .filter((produto) => produto.categoria?.id === categoria.id)
+                                    .map((produto) => {
+                                        const despesasProduto = (props.despesas || []).filter(
                                             (despesa) =>
-                                                despesa.produto.id === item.id &&
+                                                despesa.produto.id === produto.id &&
                                                 despesa.data === props.dataSelecionada
-                                        )
-                                    )
-                                    .map((item) => (
-                                        <li key={item.id}>
-                                            <div>
-                                                {props.despesas
-                                                    .filter(
-                                                        (despesa) =>
-                                                            despesa.produto.id === item.id &&
-                                                            despesa.data === props.dataSelecionada
-                                                    )
-                                                    .map((despesaFiltrada) => (
-                                                        <div key={despesaFiltrada.id} onClick={() => exibirModalSaida(item, despesaFiltrada)}>
-                                                            <div>{item.nome}</div>
-                                                            <div >
-                                                                R$ -{despesaFiltrada.valor}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                            </div>
-                                        </li>
-                                    ))}
+                                        );
+                                        return despesasProduto.length > 0 ? (
+                                            <li key={produto.id}>
+                                                {despesasProduto.map((despesaFiltrada) => (
+                                                    <div
+                                                        key={despesaFiltrada.id}
+                                                        onClick={() => exibirModalSaida(produto, despesaFiltrada)}
+                                                    >
+                                                        <span>{produto.nome}</span>
+                                                        <span>R$ -{despesaFiltrada.valor}</span>
+                                                    </div>
+                                                ))}
+                                            </li>
+                                        ) : null;
+                                    })}
                             </ul>
                         </div>
                     </details>
@@ -89,12 +78,12 @@ export default function ContainerCategorias(props) {
                     despesas={props.despesas}
                     setDespesas={props.setDespesas}
                     categorias={props.categorias}
-                    setCategorias={props.setCategorias}
+                    produtos={props.produtos}
                 >
                     <button
                         type="button"
                         className="btn-excluir"
-                        onClick={() => excluirDespesa()}
+                        onClick={excluirDespesa}
                     >Deletar</button>
                 </ModalGastos>
             )}

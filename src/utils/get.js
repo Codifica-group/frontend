@@ -1,13 +1,21 @@
 import axios from "axios";
 
-export async function getCategoriasPrdutos(){
+export async function getProdutos() {
     try {
-        const response = await axios.get("http://localhost:8080/api/produtos")
+        const response = await axios.get("http://localhost:8080/api/produtos");
         return response.data;
+    } catch (error) {
+        return [];
     }
-    catch(error) {
-        return error;
-    };
+}
+
+export async function getCategorias() {
+    try {
+        const response = await axios.get("http://localhost:8080/api/categorias");
+        return response.data;
+    } catch (error) {
+        return [];
+    }
 }
 
 export async function getDespesas(){

@@ -1,5 +1,5 @@
-import { use, useEffect, useState } from "react";
-import { getCategoriasPrdutos, getDespesas, getServicos } from "../utils/get";
+import { useEffect, useState } from "react";
+import { getDespesas, getServicos, getProdutos, getCategorias } from "../utils/get";
 import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
 import ContainerCategorias from "../components/ContainerCategorias";
@@ -15,7 +15,8 @@ import lucroImage from "../assets/lucro.png";
 
 export default function DashboardEleve() {
     const [dataSelecionada, setDataSelecionada] = useState(getDataAtual());
-    const [categoriasProdutos, setCategoriasProdutos] = useState({});
+    const [produtos, setProdutos] = useState([]);
+    const [categorias, setCategorias] = useState([]);
     const [despesas, setDespesas] = useState([]);
     const [showModalSaida, setShowModalSaida] = useState(false);
     const [novaSaida, setNovaSaida] = useState({
@@ -27,12 +28,13 @@ export default function DashboardEleve() {
     const [lucro, setLucro] = useState();
     const [lucroMensal, setLucroMensal] = useState();
     const [servicos, setServicos] = useState([]);
-
+    
     useEffect(() => {
         document.title = `Dashboard`;
         (async () => {
             try {
-                setCategoriasProdutos(await getCategoriasPrdutos());
+                setCategorias(await getCategorias());
+                setProdutos(await getProdutos());
                 setDespesas(await getDespesas());
                 setLucro(await postLucro({"dataInicio": dataSelecionada, "dataFim": dataSelecionada}))
                 setLucroMensal(await postLucro({"dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada}));
@@ -138,7 +140,6 @@ export default function DashboardEleve() {
                 <div className="bloco-financas-e-graficos">
                     <div className="grafico-coluna">
                         <div className="grafico-container">
-
                             <div className="grafico-titulo saida">
                                 {lucro?.saida !== undefined
                                     ? `Saída: R$ -${Number(lucro.saida).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -149,22 +150,25 @@ export default function DashboardEleve() {
                                     id="graficoSaida"
                                     type="pie"
                                     data={{
-                                        labels: Object.keys(categoriasProdutos),
+                                        labels: categorias.map(c => c.nome),
                                         datasets: [
                                             {
                                                 label: "Saídas",
                                                 data: despesas.length === 0
-                                                    ? []
-                                                    : Object.keys(categoriasProdutos).map(categoriaNome => {
-                                                        const idsProdutos = (categoriasProdutos[categoriaNome] || []).map(prod => prod.id);
-                                                        return despesas
-                                                            .filter(
-                                                                despesa =>
-                                                                    despesa.data === dataSelecionada &&
-                                                                    idsProdutos.includes(despesa.produto?.id)
-                                                            )
-                                                            .reduce((soma, despesa) => soma + Number(despesa.valor), 0);
-                                                    }),
+                                                ? []
+                                                : categorias.map(categoria => {
+                                                    const produtosDaCategoria = produtos.filter(
+                                                        p => p.categoria?.id === categoria.id
+                                                    );
+                                                    const idsProdutos = produtosDaCategoria.map(p => p.id);
+                                                    return despesas
+                                                        .filter(
+                                                            d =>
+                                                                d.data === dataSelecionada &&
+                                                                idsProdutos.includes(d.produto?.id)
+                                                        )
+                                                        .reduce((soma, d) => soma + Number(d.valor), 0);
+                                                }),
                                                 backgroundColor: ["#c26363", "#f97777", "#ffbcbc", "#ffdddd", "#b0c4de", "#ace58d"],
                                             },
                                         ],
@@ -179,8 +183,8 @@ export default function DashboardEleve() {
                         <div className="categorias-container">
                             <ContainerCategorias
                                 tipo="saida"
-                                categorias={categoriasProdutos}
-                                setCategorias={setCategoriasProdutos}
+                                categorias={categorias}
+                                produtos={produtos}
                                 dataSelecionada={dataSelecionada}
                                 despesas={despesas}
                                 setDespesas={setDespesas}
@@ -194,15 +198,13 @@ export default function DashboardEleve() {
                                 showModal={setShowModalSaida}
                                 despesas={despesas}
                                 setDespesas={setDespesas}
-                                categorias={categoriasProdutos}
-                                setCategorias={setCategoriasProdutos}
+                                categorias={categorias}
+                                produtos={produtos}
                             />
                         )}
                     </div>
-
                     <div className="grafico-coluna">
                         <div className="grafico-container">
-
                             <div className="grafico-titulo entrada">
                                 {lucro?.entrada !== undefined
                                     ? `Entrada: R$ ${Number(lucro.entrada).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`

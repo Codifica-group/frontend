@@ -143,10 +143,6 @@
 }
 
 .categoria-info li > div{
-    width: 100%;
-}
-
-.categoria-info li > div > div{
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -154,7 +150,7 @@
     padding-top: 5px;
 }
 
-.categoria-info li > div > div:hover {
+.categoria-info li > div:hover {
     background-color: rgb(35, 86, 102);
     color: #FFF;
     transition: all 0.3s;

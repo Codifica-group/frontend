@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { getCategoriasPrdutos, getDespesas } from "../utils/get";
+import { useEffect, useState } from "react";
+import { getDespesas } from "../utils/get";
 import { NumericFormat } from "react-number-format";
 import { postDespesa, postProduto } from "../utils/post";
 import { getDataAtual } from "../utils/util";
@@ -25,19 +25,13 @@ export default function ModalGastos(props) {
             valor: valorNumerico,
         };
 
-        let produtoExistente = null;
+        const produtoExistente = props.produtos.find(
+            (item) => item.nome.toLowerCase() === novaSaidaFormatada.produto.toLowerCase()
+        );
 
-        Object.entries(props.categorias).forEach(([categoriaNome, itens]) => {
-            const encontrado = itens.find(
-                (item) => item.nome.toLowerCase() === novaSaidaFormatada.produto.toLowerCase()
-            );
-            if (encontrado) {
-                produtoExistente = encontrado;
-            }
-        });
 
         if (produtoExistente) {
-            if(props.tipo === "atualizar") {
+            if (props.tipo === "atualizar") {
                 novaDespesa = {
                     produtoId: produtoExistente.id,
                     valor: novaSaidaFormatada.valor,
@@ -52,10 +46,10 @@ export default function ModalGastos(props) {
             }
 
             try {
-                const responseProduto = await putProduto(produtoExistente.id, 
-                    { 
-                        categoriaId: parseInt(novaSaidaFormatada.categoria, 10), 
-                        nome: produtoExistente.nome,  
+                const responseProduto = await putProduto(produtoExistente.id,
+                    {
+                        categoriaId: parseInt(novaSaidaFormatada.categoria, 10),
+                        nome: produtoExistente.nome,
                     }
                 );
                 console.log("Produto atualizado com sucesso:", responseProduto);
@@ -69,7 +63,7 @@ export default function ModalGastos(props) {
                     console.log("Despesa criada com sucesso:", response);
                 }
             } catch (error) {
-                console.error("Erro ao criar despesa:", error);
+                console.error("Erro ao criar/atualizar despesa:", error);
             }
         } else {
             const novoProduto = [{
@@ -81,11 +75,10 @@ export default function ModalGastos(props) {
 
             try {
                 const responseProduto = await postProduto(novoProduto);
+                const produtoCriado = Array.isArray(responseProduto) ? responseProduto[0] : responseProduto;
                 console.log("Produto criado com sucesso:", responseProduto);
 
-                props.setCategorias(await getCategoriasPrdutos());
-                
-                if(props.tipo === "atualizar") {
+                if (props.tipo === "atualizar") {
                     novaDespesa = {
                         produtoId: responseProduto.id,
                         valor: novaSaidaFormatada.valor,
@@ -133,9 +126,7 @@ export default function ModalGastos(props) {
         props.setNovoItem((prev) => ({ ...prev, [name]: value }));
 
         if (name === "produto" && value) {
-            const todosProdutos = Object.values(props.categorias).flatMap((categoria) =>
-                categoria.map((item) => item.nome)
-            );
+            const todosProdutos = props.produtos.map((item) => item.nome);
             const filtrados = todosProdutos.filter((produto) =>
                 produto.toLowerCase().includes(value.toLowerCase())
             );
@@ -191,9 +182,9 @@ export default function ModalGastos(props) {
                         >
                             <option value="">Selecione uma categoria</option>
                             {props.categorias &&
-                                Object.entries(props.categorias).map(([categoria], index) => (
-                                    <option key={index} value={index + 1}>
-                                        {categoria}
+                                props.categorias.map((categoria) => (
+                                    <option key={categoria.id} value={categoria.id}>
+                                        {categoria.nome}
                                     </option>
                                 ))}
                         </select>
@@ -209,10 +200,10 @@ export default function ModalGastos(props) {
                             }}
                             thousandSeparator="."
                             decimalSeparator=","
-                            prefix="R$ "
-                            placeholder="R$ 0,00"
-                            className="form-control"
-                            required
+                        prefix="R$ "
+                        placeholder="R$ 0,00"
+                        className="form-control"
+                        required
                         />
                     </div>
 

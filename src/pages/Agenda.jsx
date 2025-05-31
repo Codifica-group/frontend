@@ -15,66 +15,23 @@ import {
   eachDayOfInterval,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { exibirAgendas } from "../utils/agenda";
 
 export default function Agenda() {
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "Banho + Higienização (Mel)",
-      start: "2025-04-08T08:30:00",
-      end: "2025-04-08T09:00:00",
-      backgroundColor: "#307e95",
-    },
-    {
-      id: "2",
-      title: "Banho (Rex)",
-      start: "2025-04-08T10:00:00",
-      end: "2025-04-08T11:00:00",
-      backgroundColor: "#307e95",
-    },
-    {
-      id: "3",
-      title: "Banho (Bob)",
-      start: "2025-04-08T11:30:00",
-      end: "2025-04-08T12:00:00",
-      backgroundColor: "#307e95",
-    },
-    {
-      id: "4",
-      title: "Banho (Max)",
-      start: "2025-04-10T13:00:00",
-      end: "2025-04-10T14:00:00",
-      backgroundColor: "#307e95",
-    },
-    {
-      id: "5",
-      title: "Banho (Tobu)",
-      start: "2025-04-08T15:00:00",
-      end: "2025-04-08T15:30:00",
-      backgroundColor: "#307e95",
-    },
-    {
-      id: "6",
-      title: "Banho (Fred)",
-      start: "2025-04-08T16:00:00",
-      end: "2025-04-08T16:30:00",
-      backgroundColor: "#307e95",
-    },
-        {
-      id: "7",
-      title: "Teste (Teste)",
-      start: "2025-04-30T16:00:00",
-      end: "2025-04-30T18:30:00",
-      backgroundColor: "#307e95",
-    },
-  ]);
+  const [events, setEvents] = useState([]);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
 
+  async function carregarAgendas() {
+    const agendas = await exibirAgendas();
+    setEvents(agendas);
+  }
+
   useEffect(() => {
     document.title = `Agenda`;
+    carregarAgendas();
   }, []);
 
   const dailyEvents = events.filter((event) => {
@@ -221,9 +178,9 @@ export default function Agenda() {
                     <div
                       key={dayIdx}
                       className={`day-column ${format(day.fullDate, "yyyy-MM-dd") ===
-                          format(selectedDate, "yyyy-MM-dd")
-                          ? "selected"
-                          : ""
+                        format(selectedDate, "yyyy-MM-dd")
+                        ? "selected"
+                        : ""
                         }`}
                       onClick={() => setSelectedDate(day.fullDate)}
                     >
@@ -246,12 +203,12 @@ export default function Agenda() {
                                 top: `${(parseInt(
                                   format(parseISO(event.start), "H")
                                 ) -
-                                    8) *
+                                  8) *
                                   60 +
                                   parseInt(format(parseISO(event.start), "m"))
                                   }px`,
                                 height: `${(new Date(event.end) -
-                                    new Date(event.start)) /
+                                  new Date(event.start)) /
                                   (1000 * 60)
                                   }px`,
                                 width: "calc(100% - 8px)",

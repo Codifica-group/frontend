@@ -67,3 +67,17 @@ export async function postVerificacao(token){
         };
     };
 }
+
+export const postAgenda = async (agenda) => {
+  try {
+    const response = await axios.post("http://localhost:8080/api/agendas/agenda");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao criar agenda:", error.response || error.message);
+    return {
+      success: false,
+      message: error.response?.data?.message || "Erro desconhecido",
+      status: error.response?.status || 500,
+    };
+  }
+};

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getDespesas } from "../utils/get";
+import { getDespesas, getProdutos } from "../utils/get";
 import { NumericFormat } from "react-number-format";
 import { postDespesa, postProduto } from "../utils/post";
 import { getDataAtual } from "../utils/util";
-import { putDespesa, putProduto } from "../utils/put";
+import { putDespesa } from "../utils/put";
 
 export default function ModalGastos(props) {
     const [sugestoesSaida, setSugestoesSaida] = useState([]);
@@ -46,21 +46,10 @@ export default function ModalGastos(props) {
             }
 
             try {
-                const responseProduto = await putProduto(produtoExistente.id,
-                    {
-                        categoriaId: parseInt(novaSaidaFormatada.categoria, 10),
-                        nome: produtoExistente.nome,
-                    }
-                );
-                console.log("Produto atualizado com sucesso:", responseProduto);
                 if(props.tipo === "atualizar") {
-                    console.log("novaDespesa: ", novaDespesa);
-                    const response = await putDespesa(props.idDespesa, novaDespesa);
-                    console.log("Despesa atualizada com sucesso:", response);
+                    await putDespesa(props.idDespesa, novaDespesa);
                 } else {
-                    console.log("novaDespesa: ", novaDespesa);
-                    const response = await postDespesa(novaDespesa);
-                    console.log("Despesa criada com sucesso:", response);
+                    await postDespesa(novaDespesa);
                 }
             } catch (error) {
                 console.error("Erro ao criar/atualizar despesa:", error);
@@ -70,14 +59,11 @@ export default function ModalGastos(props) {
                 categoriaId: parseInt(novaSaidaFormatada.categoria, 10),
                 nome: novaSaidaFormatada.produto,
             }];
-
-            console.log("Novo produto criado:", novoProduto);
-
             try {
                 const responseProduto = await postProduto(novoProduto);
                 const produtoCriado = Array.isArray(responseProduto) ? responseProduto[0] : responseProduto;
-                console.log("Produto criado com sucesso:", responseProduto);
-
+                await props.setProdutos(await getProdutos());
+                await props.setDespesas(await getDespesas());
                 if (props.tipo === "atualizar") {
                     novaDespesa = {
                         produtoId: responseProduto.id,
@@ -93,11 +79,9 @@ export default function ModalGastos(props) {
                 }
                 try {
                     if(props.tipo === "atualizar") {
-                        const response = await putDespesa(props.idDespesa, novaDespesa);
-                        console.log("Despesa atualizada com sucesso:", response);
+                        await putDespesa(props.idDespesa, novaDespesa);
                     } else {
-                        const responseDespesa = await postDespesa(novaDespesa);
-                        console.log("Despesa criada com sucesso para o novo produto:", responseDespesa);
+                        await postDespesa(novaDespesa);
                     }
                 } catch (error) {
                     console.error("Erro ao criar despesa para o novo produto:", error);
@@ -107,9 +91,8 @@ export default function ModalGastos(props) {
             }
         }
 
-        console.log("Nova saída:", novaSaidaFormatada);
-
         props.setDespesas(await getDespesas());
+        console.log("Produtos atualizados:", props.produtos);
         console.log("Despesas atualizadas:", props.despesas);
         props.showModal(false);
         props.setNovoItem({

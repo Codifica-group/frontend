@@ -148,13 +148,13 @@
     width: 100%;
     padding: 10px 20px;
     padding-top: 5px;
+    cursor: pointer;
 }
 
 .categoria-info li > div:hover {
     background-color: rgb(35, 86, 102);
     color: #FFF;
     transition: all 0.3s;
-    cursor: pointer;
 }
 
 

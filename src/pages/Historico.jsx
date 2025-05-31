@@ -51,7 +51,7 @@ const Historico = () => {
             ? resultado
             : resultado.content || resultado.data || []; // tente acessar o array correto
 
-        // console.log("Resultado da API:", lista);
+        console.log("Resultado da API:", lista);
 
         const filtrado = lista.filter(item => {
             const clienteOk = !filtros.cliente || item.cliente?.nome?.toLowerCase().includes(filtros.cliente.toLowerCase());

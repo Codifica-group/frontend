@@ -22,12 +22,11 @@ export default function ContainerCategorias(props) {
 
     const excluirDespesa = async () => {
         try {
-            const response = await deleteDespesa(idDespesa);
-            console.log("Despesa excluída com sucesso:", response);
-
+            await deleteDespesa(idDespesa);
             const despesasAtualizadas = await getDespesas();
             props.setDespesas(despesasAtualizadas);
             setShowModalSaida(false);
+            console.log ("Despesas atualizadas:", despesasAtualizadas);
         } catch (error) {
             console.error("Erro ao excluir despesa:", error);
         }
@@ -49,19 +48,15 @@ export default function ContainerCategorias(props) {
                                                 despesa.produto.id === produto.id &&
                                                 despesa.data === props.dataSelecionada
                                         );
-                                        return despesasProduto.length > 0 ? (
-                                            <li key={produto.id}>
-                                                {despesasProduto.map((despesaFiltrada) => (
-                                                    <div
-                                                        key={despesaFiltrada.id}
-                                                        onClick={() => exibirModalSaida(produto, despesaFiltrada)}
-                                                    >
+                                        return despesasProduto.length <= 0 ? null
+                                            : despesasProduto.map((despesaFiltrada) => (
+                                                <li key={despesaFiltrada.id}>
+                                                    <div onClick={() => exibirModalSaida(produto, despesaFiltrada)}>
                                                         <span>{produto.nome}</span>
                                                         <span>R$ -{despesaFiltrada.valor}</span>
                                                     </div>
-                                                ))}
-                                            </li>
-                                        ) : null;
+                                                </li>
+                                            ))
                                     })}
                             </ul>
                         </div>
@@ -79,6 +74,7 @@ export default function ContainerCategorias(props) {
                     setDespesas={props.setDespesas}
                     categorias={props.categorias}
                     produtos={props.produtos}
+                    setProdutos={props.setProdutos}
                 >
                     <button
                         type="button"

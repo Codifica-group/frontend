@@ -184,10 +184,11 @@ export default function DashboardEleve() {
                             <ContainerCategorias
                                 tipo="saida"
                                 categorias={categorias}
-                                produtos={produtos}
                                 dataSelecionada={dataSelecionada}
                                 despesas={despesas}
+                                produtos={produtos}
                                 setDespesas={setDespesas}
+                                setProdutos={setProdutos}
                             />
                         </div>
                         {showModalSaida && (
@@ -197,9 +198,10 @@ export default function DashboardEleve() {
                                 setNovoItem={setNovaSaida}
                                 showModal={setShowModalSaida}
                                 despesas={despesas}
-                                setDespesas={setDespesas}
                                 categorias={categorias}
                                 produtos={produtos}
+                                setDespesas={setDespesas}
+                                setProdutos={setProdutos}
                             />
                         )}
                     </div>

@@ -1,60 +1,250 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import Select from "react-select";
+import { getPets, getServicos } from "../utils/get";
+import { exibirAgendas, calcularServico } from "../utils/agenda";
+import { addMinutes, addHours, format, parseISO, max } from "date-fns";
+import ModalValorAgenda from "./ModalValorAgenda";
+import { postAgenda } from "../utils/post";
 
 export default function ModalAgenda(props) {
+    const [pets, setPets] = useState([]);
+    const [servicos, setServicos] = useState([]);
+    const [form, setForm] = useState({
+        cliente: null,
+        pet: null,
+        servicos: [],
+        raca: "",
+        dataInicio: "",
+        dataFim: "",
+        observacao: "",
+    });
+    const [modalValor, setModalValor] = useState(null);
+
+    // Preenche horários iniciais ao abrir o modal
+    useEffect(() => {
+        async function preencherHorariosIniciais() {
+            const agendas = await exibirAgendas();
+            const hoje = new Date();
+            const hojeStr = format(hoje, "yyyy-MM-dd");
+            const eventosHoje = agendas.filter(ev =>
+                format(parseISO(ev.start), "yyyy-MM-dd") === hojeStr
+            );
+            let inicio;
+            if (eventosHoje.length > 0) {
+                const maiorFim = max(eventosHoje.map(ev => parseISO(ev.end)));
+                inicio = addMinutes(maiorFim, 1);
+            } else {
+                inicio = hoje;
+            }
+            const inicioStr = format(inicio, "yyyy-MM-dd'T'HH:mm");
+            const fimStr = format(addHours(inicio, 1), "yyyy-MM-dd'T'HH:mm");
+            setForm(prev => ({
+                ...prev,
+                dataInicio: inicioStr,
+                dataFim: fimStr,
+            }));
+        }
+        getPets().then(res => setPets(res));
+        getServicos().then(res => setServicos(res));
+        preencherHorariosIniciais();
+    }, []);
+
+    // Gera lista de clientes únicos a partir dos pets
+    const clienteMap = {};
+    pets.forEach(pet => {
+        if (pet.cliente && !clienteMap[pet.cliente.id]) {
+            clienteMap[pet.cliente.id] = { value: pet.cliente.id, label: pet.cliente.nome };
+        }
+    });
+    const clienteOptions = Object.values(clienteMap);
+
+    // Filtra pets conforme cliente selecionado
+    const petOptions = pets
+        .filter(pet => !form.cliente || pet.cliente?.id === form.cliente.value)
+        .map(pet => ({ value: pet.id, label: pet.nome, cliente: pet.cliente }));
+
+    const servicoOptions = servicos.map(s => ({ value: s.id, label: s.nome }));
+
+    // Ao selecionar cliente, filtra pet
+    const handleClienteChange = (option) => {
+        setForm(prev => {
+            let pet = prev.pet;
+            if (pet && pets.find(p => p.id === pet.value)?.cliente?.id !== option?.value) {
+                pet = null;
+            }
+            return { ...prev, cliente: option, pet };
+        });
+    };
+
+    // Ao selecionar pet, preenche cliente automaticamente
+    const handlePetChange = (option) => {
+        const petObj = pets.find(p => p.id === option?.value);
+        const cliente = petObj?.cliente
+            ? { value: petObj.cliente.id, label: petObj.cliente.nome }
+            : null;
+        setForm(prev => ({
+            ...prev,
+            pet: option,
+            cliente: cliente || prev.cliente,
+        }));
+    };
+
+    // Ao alterar o começo do atendimento, preenche fim automaticamente (+1h)
+    const handleDataInicioChange = (e) => {
+        const value = e.target.value;
+        setForm(prev => ({
+            ...prev,
+            dataInicio: value,
+            dataFim: value ? format(addHours(new Date(value), 1), "yyyy-MM-dd'T'HH:mm") : "",
+        }));
+    };
+
+    const handleChange = (field, value) => {
+        setForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    //Envia request para calcular serviço
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const petId = form.pet?.value;
+        const servicos = Array.isArray(form.servicos)
+            ? form.servicos.map(s => ({ id: s.value }))
+            : [];
+
+        if (!petId || servicos.length === 0) {
+            alert("Selecione um pet e pelo menos um serviço.");
+            return;
+        }
+
+        try {
+            const resultado = await calcularServico({ petId, servicos });
+            console.log("Resposta calcularServico:", resultado);
+            setModalValor({
+                servicos: resultado.servico || [],
+                deslocamento: resultado.deslocamento || { valor: 0 },
+                valor: resultado.valor || 0
+            });
+        } catch (error) {
+            console.error("Erro ao calcular serviço:", error);
+        }
+    };
+
+    // Função para salvar o agendamento após confirmação no modal de valores
+    const handleSalvarAgendamento = async (dados) => {
+        if (!dados) return;
+
+        const body = {
+            petId: form.pet?.value,
+            servicos: dados.servicos.map(s => ({
+                id: s.id,
+                valor: s.valor
+            })),
+            dataHoraInicio: form.dataInicio,
+            dataHoraFim: form.dataFim
+        };
+
+        try {
+            await postAgenda(body);
+            setModalValor(null);
+            props.showModal(false);
+            if (props.recarregarAgendas) {
+                props.recarregarAgendas();
+            }
+        } catch (error) {
+            alert("Erro ao salvar agendamento!");
+            console.error(error);
+        }
+    };
+
+    if (modalValor) {
+        return (
+            <ModalValorAgenda
+                valores={modalValor}
+                onClose={() => setModalValor(null)}
+                onSalvar={handleSalvarAgendamento}
+            />
+        );
+    }
 
     return (
         <div className="modal-overlay">
             <div className="modal-agenda">
                 <h2>Novo Agendamento</h2>
-                <form onSubmit={() => props.showModal(false)}>
+                <form onSubmit={handleSubmit}>
                     <div className="form-inputs">
                         <div className="form-group">
                             <label>Cliente</label>
-                            <input type="text" placeholder="Nome do Cliente" required />
+                            <Select
+                                options={clienteOptions}
+                                value={form.cliente}
+                                onChange={handleClienteChange}
+                                placeholder="Selecione o cliente"
+                                isClearable
+                            />
                         </div>
                         <div className="form-group">
                             <label>Pet</label>
-                            <input type="text" placeholder="Nome do Pet" required />
+                            <Select
+                                options={petOptions}
+                                value={form.pet}
+                                onChange={handlePetChange}
+                                placeholder="Selecione o pet"
+                                isClearable
+                            />
                         </div>
                     </div>
                     <div className="form-inputs">
-                        <div className="form-group">
-                            <label>Raça</label>
-                            <input type="text" placeholder="Raça do pet" required />
-                        </div>
                         <div className="form-group select">
-                            <label>Tipo de Serviço</label>
-                            <select required>
-                                <option value="">Serviço</option>
-                                <option value="banho">Banho</option>
-                                <option value="tosa">Tosa</option>
-                                <option value="hidratacao">Hidratação</option>
-                            </select>
+                            <label>Serviços</label>
+                            <Select
+                                options={servicoOptions}
+                                value={form.servicos}
+                                onChange={options => handleChange("servicos", options)}
+                                placeholder="Selecione os serviços"
+                                isMulti
+                                isClearable
+                            />
                         </div>
                     </div>
                     <div className="form-inputs">
                         <div className="form-group">
-                            <label>Começo do atendimento</label>
-                            <input type="datetime-local" required />
+                            <label>Início do Atendimento</label>
+                            <input
+                                type="datetime-local"
+                                value={form.dataInicio}
+                                onChange={handleDataInicioChange}
+                                required
+                            />
                         </div>
                         <div className="form-group">
-                            <label>Final do atendimento</label>
-                            <input type="datetime-local" required />
+                            <label>Fim do Atendimento</label>
+                            <input
+                                type="datetime-local"
+                                value={form.dataFim}
+                                onChange={e => handleChange("dataFim", e.target.value)}
+                                required
+                            />
                         </div>
                     </div>
-                    <div className="form-inputs">
+                    {/* Falta add campo obs no backend */}
+                    {/* <div className="form-inputs">
                         <div className="form-group">
                             <label>Observação</label>
-                            <input type="text" placeholder="Detalhes do atendimento do pet" />
+                            <input
+                                type="text"
+                                placeholder="Detalhes do atendimento do pet"
+                                value={form.observacao}
+                                onChange={e => handleChange("observacao", e.target.value)}
+                            />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="modal-buttons">
                         <button type="button" onClick={() => props.showModal(false)} className="btn-cancelar">Cancelar</button>
-                        <button type="submit" className="btn-confirmar-entrada">Salvar</button>
+                        <button type="submit" className="btn-confirmar-entrada">Calcular Serviço</button>
                     </div>
                 </form>
             </div>
         </div>
-    )
-
+    );
 }

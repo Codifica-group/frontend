@@ -225,6 +225,31 @@
     max-height: 300px;
 }
 
+/* Scrollbar estilizada para a agenda */
+.agenda-lista ul,
+.agenda-lista {
+    scrollbar-width: thin;
+    scrollbar-color: #307e95 #e0e8ef;
+}
+
+.agenda-lista ul::-webkit-scrollbar,
+.agenda-lista::-webkit-scrollbar {
+    width: 8px;
+    background: #e0e8ef;
+    border-radius: 8px;
+}
+
+.agenda-lista ul::-webkit-scrollbar-thumb,
+.agenda-lista::-webkit-scrollbar-thumb {
+    background: #307e95;
+    border-radius: 8px;
+}
+
+.agenda-lista ul::-webkit-scrollbar-thumb:hover,
+.agenda-lista::-webkit-scrollbar-thumb:hover {
+    background: #1e5d72;
+}
+
 .agenda-lista li {
     margin-bottom: 10px;
     font-size: 0.95rem;
@@ -234,11 +259,12 @@
     background: rgba(48, 126, 149, 0.05);
     transition: all 0.2s ease;
     border-left: 3px solid #307E95;
+    cursor: pointer;
 }
 
 .agenda-lista li:hover {
     background: rgba(48, 126, 149, 0.1);
-    transform: translateX(2px);
+    /* transform: translateX(2px); */
 }
 
 .agenda-lista li span {
@@ -498,6 +524,23 @@
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     text-align: center;
+}
+
+.btn-atualizar-agenda {
+    background-color: #307e95;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+.btn-atualizar-agenda:hover {
+    background-color: #1e5d72;
 }
 
 /* Responsividade */

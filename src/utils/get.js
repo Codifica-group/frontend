@@ -77,3 +77,13 @@ export async function getClientes() {
         return [];
     }
 }
+
+export const getAgendas = async () => {
+  try {
+    const response = await axios.get("http://localhost:8080/api/agendas");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar todas as agendas:", error.response || error.message);
+    return [];
+  }
+};

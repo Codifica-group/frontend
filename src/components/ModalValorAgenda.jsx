@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
 
-export default function ModalValorAgendamento({ valores, onClose, onSalvar }) {
+export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
     const [servicos, setServicos] = useState(
         Array.isArray(valores.servicos)
             ? valores.servicos.map(s => ({
@@ -70,7 +70,7 @@ export default function ModalValorAgendamento({ valores, onClose, onSalvar }) {
                             />
                         </div>
                     ))}
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label>Valor do Deslocamento</label>
                         <NumericFormat
                             value={deslocamento}
@@ -84,7 +84,7 @@ export default function ModalValorAgendamento({ valores, onClose, onSalvar }) {
                             className="form-control"
                             placeholder="R$ 0,00"
                         />
-                    </div>
+                    </div> */}
                     <div className="form-group">
                         <label>Total</label>
                         <NumericFormat
@@ -98,13 +98,13 @@ export default function ModalValorAgendamento({ valores, onClose, onSalvar }) {
                         />
                     </div>
                     <div className="modal-buttons">
-                        <button type="button" onClick={onClose} className="btn-cancelar">Cancelar</button>
+                        <button type="button" onClick={onClose} className="btn-cancelar">Voltar</button>
                         <button
                             type="button"
                             className="btn-confirmar-entrada"
                             onClick={handleSalvarClick}
                         >
-                            Salvar Agendamento
+                            Salvar Agenda
                         </button>
                     </div>
                 </form>

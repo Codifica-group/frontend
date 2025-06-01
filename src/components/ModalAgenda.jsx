@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { getPets, getServicos } from "../utils/get";
 import { exibirAgendas, calcularServico } from "../utils/agenda";
-import { addMinutes, addHours, format, parseISO, isSameDay, max } from "date-fns";
-import ModalValorAgendamento from "./ModalValorAgendamento";
+import { addMinutes, addHours, format, parseISO, max } from "date-fns";
+import ModalValorAgenda from "./ModalValorAgenda";
 import { postAgenda } from "../utils/post";
 
 export default function ModalAgenda(props) {
@@ -131,12 +131,12 @@ export default function ModalAgenda(props) {
     };
 
     // Função para salvar o agendamento após confirmação no modal de valores
-    const handleSalvarAgendamento = async () => {
-        if (!modalValor) return;
+    const handleSalvarAgendamento = async (dados) => {
+        if (!dados) return;
 
         const body = {
             petId: form.pet?.value,
-            servicos: modalValor.servicos.map(s => ({
+            servicos: dados.servicos.map(s => ({
                 id: s.id,
                 valor: s.valor
             })),
@@ -159,7 +159,7 @@ export default function ModalAgenda(props) {
 
     if (modalValor) {
         return (
-            <ModalValorAgendamento
+            <ModalValorAgenda
                 valores={modalValor}
                 onClose={() => setModalValor(null)}
                 onSalvar={handleSalvarAgendamento}
@@ -209,7 +209,7 @@ export default function ModalAgenda(props) {
                     </div>
                     <div className="form-inputs">
                         <div className="form-group">
-                            <label>Começo do atendimento</label>
+                            <label>Início do Atendimento</label>
                             <input
                                 type="datetime-local"
                                 value={form.dataInicio}
@@ -218,7 +218,7 @@ export default function ModalAgenda(props) {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Final do atendimento</label>
+                            <label>Fim do Atendimento</label>
                             <input
                                 type="datetime-local"
                                 value={form.dataFim}
@@ -227,7 +227,8 @@ export default function ModalAgenda(props) {
                             />
                         </div>
                     </div>
-                    <div className="form-inputs">
+                    {/* Falta add campo obs no backend */}
+                    {/* <div className="form-inputs">
                         <div className="form-group">
                             <label>Observação</label>
                             <input
@@ -237,7 +238,7 @@ export default function ModalAgenda(props) {
                                 onChange={e => handleChange("observacao", e.target.value)}
                             />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="modal-buttons">
                         <button type="button" onClick={() => props.showModal(false)} className="btn-cancelar">Cancelar</button>
                         <button type="submit" className="btn-confirmar-entrada">Calcular Serviço</button>

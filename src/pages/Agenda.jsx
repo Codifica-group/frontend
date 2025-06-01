@@ -2,6 +2,7 @@ import "../styles/style-agenda.css";
 import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import ModalAgenda from "../components/ModalAgenda";
+import ModalGerenciarAgenda from "../components/ModalGerenciarAgenda";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -16,14 +17,28 @@ import {
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { exibirAgendas } from "../utils/agenda";
+import { getAgendas } from "../utils/get";
 
 export default function Agenda() {
   const [events, setEvents] = useState([]);
+  const [agendas, setAgendas] = useState([]);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
+  const [modalEvento, setModalEvento] = useState(null);
 
+  // Função para buscar agendas completas da API
+  async function recuperarAgendas() {
+    const response = await getAgendas();
+    const lista = Array.isArray(response)
+      ? response
+      : response.content || response.data || [];
+    setAgendas(lista);
+    return lista;
+  }
+
+  // Função para carregar eventos para o calendário
   async function carregarAgendas() {
     const agendas = await exibirAgendas();
     setEvents(agendas);
@@ -71,11 +86,17 @@ export default function Agenda() {
     setSelectedDate(new Date());
   };
 
+  const handleEventClick = async (event) => {
+  const lista = await recuperarAgendas();
+  const agenda = lista.find(a => String(a.id) === String(event.id));
+  setModalEvento(agenda);
+};
+
   const addNewEvent = (newEvent) => {
     setEvents([
       ...events,
       {
-        id: `event-${Date.now()}`,
+        id: newEbvent.id,
         title: `${newEvent.service} (${newEvent.pet})`,
         start: newEvent.date + "T" + newEvent.startTime,
         end: newEvent.date + "T" + newEvent.endTime,
@@ -108,6 +129,13 @@ export default function Agenda() {
                 recarregarAgendas={carregarAgendas}
               />
             )}
+            {modalEvento && (
+          <ModalGerenciarAgenda
+            event={modalEvento}
+            onClose={() => setModalEvento(null)}
+            recarregarAgendas={carregarAgendas}
+          />
+        )}
           </div>
 
           <div className="agenda-content">
@@ -137,15 +165,25 @@ export default function Agenda() {
                 <h4>Agendamentos do Dia</h4>
                 {dailyEvents.length > 0 ? (
                   <ul>
-                    {dailyEvents.map((event, i) => (
-                      <li key={i}>
-                        <span>
-                          {format(parseISO(event.start), "HH:mm")} -{" "}
-                          {format(parseISO(event.end), "HH:mm")}
-                        </span>{" "}
-                        - {event.title}
-                      </li>
-                    ))}
+                    {dailyEvents
+                      .slice()
+                      .sort((a, b) => new Date(a.start) - new Date(b.start))
+                      .map((event, i) => (
+                        <li
+                          key={i}
+                          onClick={async () => {
+                            const lista = await recuperarAgendas();
+                            const agenda = lista.find(a => String(a.id) === String(event.id));
+                            setModalEvento(agenda);
+                          }}
+                        >
+                          <span>
+                            {format(parseISO(event.start), "HH:mm")} -{" "}
+                            {format(parseISO(event.end), "HH:mm")}
+                          </span>{" "}
+                          - {event.title}
+                        </li>
+                      ))}
                   </ul>
                 ) : (
                   <p className="no-events">Nenhum agendamento para este dia</p>
@@ -214,6 +252,7 @@ export default function Agenda() {
                                   }px`,
                                 width: "calc(100% - 8px)",
                               }}
+                              onClick={() => handleEventClick(event)}
                             >
                               <div className="event-time">
                                 {format(parseISO(event.start), "HH:mm")} -{" "}

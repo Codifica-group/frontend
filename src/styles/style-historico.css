@@ -44,6 +44,7 @@
     gap: 12px;
     margin-bottom: 0;
     align-items: center;
+    resize: none;
 }
 
 .filter-section label {
@@ -71,7 +72,7 @@
 
 .filter-section button {
     padding: 10px 24px;
-    background: linear-gradient(90deg, #90caf9 60%, #4fc3f7 100%);
+    background: linear-gradient(90deg, #307E95 60%, #307E95 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -82,7 +83,7 @@
 }
 
 .filter-section button:hover {
-    background: linear-gradient(90deg, #4fc3f7 60%, #90caf9 100%);
+    background: linear-gradient(90deg, #236174 60%, #236174 100%);
     transform: translateY(-2px) scale(1.03);
 }
 
@@ -136,7 +137,7 @@
     }
 
     table th {
-        background: #389eec;
+        background: #307E95;
         /* azul claro, sem gradiente */
         color: #ffffff;
         /* azul mais forte */
@@ -162,13 +163,13 @@
     }
 
     table tr:hover {
-        background: #fafafa;
-        /* azul mais claro no hover */
-        box-shadow: 0 2px 12px 0 rgba(48, 126, 149, 0.10);
-        transform: scale(1.01);
-        z-index: 1;
-        position: relative;
+        background: #307E95;
+        color: #ffffff;
     }
+
+    table tr:hover td {
+    background: rgb(141, 199, 216); /* mais transparente */
+}
 }
 
 /* Select personalizado */
@@ -185,7 +186,7 @@
 
 .select-control:focus-within {
     outline: none;
-    border: 1.5px solid #90caf9;
+    border: 1.5px solid #307E95;
     box-shadow: 0 4px 16px 0 rgba(59, 179, 195, 0.13);
 }
 
@@ -237,13 +238,13 @@
 }
 
 .select-option.is-selected {
-    background: linear-gradient(90deg, #4fc3f7 60%, #90caf9 100%);
+    background: linear-gradient(90deg, #307E95 60%, #307E95 100%);
     color: #fff;
 }
 
 .select-option.is-focused:not(.is-selected) {
     background: #e3f2fd;
-    color: #1976d2;
+    color: #307E95;
 }
 
 /* Responsividade */
@@ -347,7 +348,7 @@
 }
 
 .modal-content input:focus {
-    border: 1.5px solid #3b82f6;
+    border: 1.5px solid #307E95;
 }
 
 .modal-content button {
@@ -355,7 +356,7 @@
     margin-right: 10px;
     border: none;
     border-radius: 6px;
-    background: #3b82f6;
+    background: #307E95;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;
@@ -497,7 +498,7 @@
 }
 
 .historico-modal-box input:focus {
-    border: 1.5px solid #3b82f6;
+    border: 1.5px solid #307E95;
     background: #fff;
 }
 

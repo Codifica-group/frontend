@@ -70,7 +70,7 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                             />
                         </div>
                     ))}
-                    {/* <div className="form-group">
+                    <div className="form-group">
                         <label>Valor do Deslocamento</label>
                         <NumericFormat
                             value={deslocamento}
@@ -84,7 +84,7 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                             className="form-control"
                             placeholder="R$ 0,00"
                         />
-                    </div> */}
+                    </div>
                     <div className="form-group">
                         <label>Total</label>
                         <NumericFormat

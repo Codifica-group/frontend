@@ -165,7 +165,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                         />
                     </div>
                     <div className="modal-buttons">
-                        <button type="button" className="btn-cancelar" onClick={onClose}>Cancelar</button>
+                        <button type="button" className="btn-fechar" onClick={onClose}>X</button>
                         <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
                         <button type="button" className="btn-excluir" onClick={handleDelete} disabled={loading}>
                             {loading ? "Deletando..." : "Deletar"}

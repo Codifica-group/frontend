@@ -241,7 +241,7 @@ export default function ModalAgenda(props) {
                     </div> */}
                     <div className="modal-buttons">
                         <button type="button" onClick={() => props.showModal(false)} className="btn-cancelar">Cancelar</button>
-                        <button type="submit" className="btn-confirmar-entrada">Calcular Serviço</button>
+                        <button type="submit" className="btn-atualizar-agenda">Calcular Serviço</button>
                     </div>
                 </form>
             </div>

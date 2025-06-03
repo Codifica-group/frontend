@@ -121,21 +121,6 @@ export default function Agenda() {
             <button className="btn-novo" onClick={() => setShowModal(true)}>
               + Novo Agendamento
             </button>
-            {showModal && (
-              <ModalAgenda
-                showModal={setShowModal}
-                onSave={addNewEvent}
-                selectedDate={selectedDate}
-                recarregarAgendas={carregarAgendas}
-              />
-            )}
-            {modalEvento && (
-          <ModalGerenciarAgenda
-            event={modalEvento}
-            onClose={() => setModalEvento(null)}
-            recarregarAgendas={carregarAgendas}
-          />
-        )}
           </div>
 
           <div className="agenda-content">
@@ -269,6 +254,21 @@ export default function Agenda() {
             </section>
           </div>
         </main>
+        {showModal && (
+              <ModalAgenda
+                showModal={setShowModal}
+                onSave={addNewEvent}
+                selectedDate={selectedDate}
+                recarregarAgendas={carregarAgendas}
+              />
+            )}
+            {modalEvento && (
+          <ModalGerenciarAgenda
+            event={modalEvento}
+            onClose={() => setModalEvento(null)}
+            recarregarAgendas={carregarAgendas}
+          />
+        )}
       </div>
     </div>
   );

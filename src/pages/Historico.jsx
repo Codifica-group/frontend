@@ -80,7 +80,7 @@ const Historico = () => {
             Serviço: Array.isArray(item.servicos)
                 ? item.servicos.map(s => s.nome).join(", ")
                 : (item.servicos?.nome || ""),
-            Valor: item.valor ? `R$${item.valor},00` : "",
+            Valor: item.valorTotal ? `R$${item.valorTotal},00` : "",
         }));
     }
 

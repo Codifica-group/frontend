@@ -6,6 +6,7 @@ import Agenda from "./pages/Agenda";
 import ErrorPage from "./pages/ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Comparacao from "./pages/Comparacao";
+import Gerenciar from "./pages/Gerenciar";
 
 export default function AppRoutes() {
     return (
@@ -40,6 +41,14 @@ export default function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <Comparacao />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/gerenciar"
+                element={
+                    <ProtectedRoute>
+                        <Gerenciar />
                     </ProtectedRoute>
                 }
             />

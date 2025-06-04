@@ -84,6 +84,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             }
             onClose();
         } catch (error) {
+            alert("Erro ao atualizar agendamento:\n" + (error?.message || String(error)));
             console.error("Erro ao atualizar agendamento:", error);
         } finally {
             setLoading(false);
@@ -104,6 +105,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             }
             onClose();
         } catch (error) {
+            alert("Erro ao deletar agendamento:\n" + (error?.message || String(error)));
             console.error("Erro ao deletar agendamento: ", error);
         } finally {
             setLoading(false);

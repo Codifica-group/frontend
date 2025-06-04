@@ -14,26 +14,33 @@ export default function AppRoutes() {
             <Route
                 path="/dashboard"
                 element={
+                    <ProtectedRoute> 
                         <DashboardEleve />
-                    
+                    </ProtectedRoute>
                 }
             />
             <Route
                 path="/historico"
                 element={
+                    <ProtectedRoute>
                         <Historico />
+                    </ProtectedRoute>
                 }
             />
             <Route
                 path="/agenda"
                 element={
+                    <ProtectedRoute>
                         <Agenda />
+                    </ProtectedRoute>
                 }
             />
             <Route
                 path="/comparacao"
                 element={
+                    <ProtectedRoute>
                         <Comparacao />
+                    </ProtectedRoute>
                 }
             />
             <Route path="/error" element={<ErrorPage />} />

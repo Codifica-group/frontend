@@ -6,6 +6,7 @@ import { getHistorico, getPets, getClientes, getRacas } from "../utils/get";
 import { deleteAgenda } from "../utils/delete"; // <-- importe aqui
 import { putAgenda } from "../utils/put";       // <-- importe aqui
 import Select from "react-select";
+import ModalLoading from "../components/ModalLoading";
 
 const Historico = () => {
     useEffect(() => {
@@ -30,37 +31,46 @@ const Historico = () => {
         });
     }, []);
 
+    const [loading, setLoading] = useState(false);
+    const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+
     // Função para buscar histórico com todos os filtros
     async function buscarHistorico(filtro) {
-        // Monta o array de IDs dos serviços selecionados
-        const servicoId = filtro.servico && filtro.servico.length > 0
-            ? filtro.servico.map(s => Number(s.value))
-            : null; // ou [] se sua API preferir array vazio
+        setLoadingMsg("Buscando histórico...");
+        setLoading(true);
+        try {
+            // Monta o array de IDs dos serviços selecionados
+            const servicoId = filtro.servico && filtro.servico.length > 0
+                ? filtro.servico.map(s => Number(s.value))
+                : null; // ou [] se sua API preferir array vazio
 
-        const resultado = await getHistorico({
-            dataInicio: filtro.dataInicio,
-            dataFim: filtro.dataFim,
-            clienteId: filtro.clienteId || null,
-            petId: filtro.petId || null,
-            racaId: filtro.racaId || null,
-            servicoId: servicoId,
-        });
+            const resultado = await getHistorico({
+                dataInicio: filtro.dataInicio,
+                dataFim: filtro.dataFim,
+                clienteId: filtro.clienteId || null,
+                petId: filtro.petId || null,
+                racaId: filtro.racaId || null,
+                servicoId: servicoId,
+            });
 
-        // Ajuste aqui conforme o formato do seu backend:
-        const lista = Array.isArray(resultado)
-            ? resultado
-            : resultado.content || resultado.data || []; // tente acessar o array correto
+            // Ajuste aqui conforme o formato do seu backend:
+            const lista = Array.isArray(resultado)
+                ? resultado
+                : resultado.content || resultado.data || []; // tente acessar o array correto
 
-        console.log("Resultado da API:", lista);
+            console.log("Resultado da API:", lista);
 
-        const filtrado = lista.filter(item => {
-            const clienteOk = !filtros.cliente || item.cliente?.nome?.toLowerCase().includes(filtros.cliente.toLowerCase());
-            const petOk = !filtros.pet || item.pet?.nome?.toLowerCase().includes(filtros.pet.toLowerCase());
-            const racaOk = !filtros.raca || item.pet?.raca?.nome?.toLowerCase().includes(filtros.raca.toLowerCase());
-            return clienteOk && petOk && racaOk;
-        });
+            const filtrado = lista.filter(item => {
+                const clienteOk = !filtros.cliente || item.cliente?.nome?.toLowerCase().includes(filtros.cliente.toLowerCase());
+                const petOk = !filtros.pet || item.pet?.nome?.toLowerCase().includes(filtros.pet.toLowerCase());
+                const racaOk = !filtros.raca || item.pet?.raca?.nome?.toLowerCase().includes(filtros.raca.toLowerCase());
+                return clienteOk && petOk && racaOk;
+            });
 
-        setDados(mapearDadosParaTabela(filtrado));
+            setDados(mapearDadosParaTabela(filtrado));
+        } finally {
+            setLoading(false);
+        }
     }
 
     function mapearDadosParaTabela(dados) {
@@ -144,36 +154,50 @@ const Historico = () => {
 
     async function salvarEdicao() {
         if (!modalEditar.agenda) return;
-        // Monte o body conforme o esperado pelo backend
-        const body = {
-            petId: modalEditar.agenda.petId,
-            servicosId: modalEditar.agenda.servicosId,
-            dataHoraInicio: modalEditar.agenda.dataHoraInicio,
-            dataHoraFim: modalEditar.agenda.dataHoraFim,
-            valor: modalEditar.agenda.valor,
-        };
-        await putAgenda(modalEditar.agenda.id, body);
         setModalEditar({ aberto: false, agenda: null });
-        buscarHistorico(filtros);
+        setLoadingMsg("Atualizando agenda...");
+        setLoading(true);
+        try {
+            // Monte o body conforme o esperado pelo backend
+            const body = {
+                petId: modalEditar.agenda.petId,
+                servicosId: modalEditar.agenda.servicosId,
+                dataHoraInicio: modalEditar.agenda.dataHoraInicio,
+                dataHoraFim: modalEditar.agenda.dataHoraFim,
+                valor: modalEditar.agenda.valor,
+            };
+            await putAgenda(modalEditar.agenda.id, body);
+            setModalEditar({ aberto: false, agenda: null });
+            buscarHistorico(filtros);
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function confirmarApagar() {
         if (!modalApagar.id) return;
-        await deleteAgenda(modalApagar.id);
         setModalApagar({ aberto: false, id: null });
-        // Use sempre os filtros atuais
-        buscarHistorico({
-            dataInicio: filtros.dataInicio,
-            dataFim: filtros.dataFim,
-            clienteId: filtros.clienteId || null,
-            petId: filtros.petId || null,
-            racaId: filtros.racaId || null,
-            servico: filtros.servico,
-        });
+        setLoadingMsg("Deletando agenda...");
+        setLoading(true);
+        try {
+            await deleteAgenda(modalApagar.id);
+            setModalApagar({ aberto: false, id: null });
+            buscarHistorico({
+                dataInicio: filtros.dataInicio,
+                dataFim: filtros.dataFim,
+                clienteId: filtros.clienteId || null,
+                petId: filtros.petId || null,
+                racaId: filtros.racaId || null,
+                servico: filtros.servico,
+            });
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
         <div className="historico-root">
+            {loading && <ModalLoading mensagem={loadingMsg} />}
             <SideBar selecionado="historico" />
 
             <div className="content">

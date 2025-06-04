@@ -18,6 +18,8 @@ import {
 import { ptBR } from "date-fns/locale";
 import { exibirAgendas } from "../utils/agenda";
 import { getAgendas } from "../utils/get";
+import ModalLoading from "../components/ModalLoading";
+import AlertErro from "../components/AlertErro";
 
 export default function Agenda() {
   const [events, setEvents] = useState([]);
@@ -27,21 +29,36 @@ export default function Agenda() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [modalEvento, setModalEvento] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+  const [erro, setErro] = useState({ aberto: false, mensagem: "", detalhe: "" });
 
   // Função para buscar agendas completas da API
   async function recuperarAgendas() {
-    const response = await getAgendas();
-    const lista = Array.isArray(response)
-      ? response
-      : response.content || response.data || [];
-    setAgendas(lista);
-    return lista;
+    setLoadingMsg("Carregando agendas...");
+    setLoading(true);
+    try {
+      const response = await getAgendas();
+      const lista = Array.isArray(response)
+        ? response
+        : response.content || response.data || [];
+      setAgendas(lista);
+      return lista;
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Função para carregar eventos para o calendário
   async function carregarAgendas() {
-    const agendas = await exibirAgendas();
-    setEvents(agendas);
+    setLoadingMsg("Carregando agendas...");
+    setLoading(true);
+    try {
+      const agendas = await exibirAgendas();
+      setEvents(agendas);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -87,10 +104,10 @@ export default function Agenda() {
   };
 
   const handleEventClick = async (event) => {
-  const lista = await recuperarAgendas();
-  const agenda = lista.find(a => String(a.id) === String(event.id));
-  setModalEvento(agenda);
-};
+    const lista = await recuperarAgendas();
+    const agenda = lista.find(a => String(a.id) === String(event.id));
+    setModalEvento(agenda);
+  };
 
   const addNewEvent = (newEvent) => {
     setEvents([
@@ -108,6 +125,7 @@ export default function Agenda() {
 
   return (
     <div className="agenda-root">
+      {loading && <ModalLoading mensagem={loadingMsg} />}
       <SideBar selecionado="agenda" />
 
       <div className="agenda-container">
@@ -171,7 +189,7 @@ export default function Agenda() {
                       ))}
                   </ul>
                 ) : (
-                  <p className="no-events">Nenhum agendamento para este dia</p>
+                  <p className="no-events">Nenhuma agenda para este dia</p>
                 )}
               </div>
             </section>
@@ -255,18 +273,26 @@ export default function Agenda() {
           </div>
         </main>
         {showModal && (
-              <ModalAgenda
-                showModal={setShowModal}
-                onSave={addNewEvent}
-                selectedDate={selectedDate}
-                recarregarAgendas={carregarAgendas}
-              />
-            )}
-            {modalEvento && (
+          <ModalAgenda
+            showModal={setShowModal}
+            onSave={addNewEvent}
+            selectedDate={selectedDate}
+            recarregarAgendas={carregarAgendas}
+            setErro={setErro}
+          />
+        )}
+        {modalEvento && (
           <ModalGerenciarAgenda
             event={modalEvento}
             onClose={() => setModalEvento(null)}
             recarregarAgendas={carregarAgendas}
+          />
+        )}
+        {erro.aberto && (
+          <AlertErro
+            mensagem={erro.mensagem}
+            erro={erro.detalhe}
+            onClose={() => setErro({ aberto: false, mensagem: "", detalhe: "" })}
           />
         )}
       </div>

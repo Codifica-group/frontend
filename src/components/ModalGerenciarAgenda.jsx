@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { deleteAgenda } from "../utils/delete";
 import { putAgenda } from "../utils/put";
 import { NumericFormat } from "react-number-format";
-import { addHours, format } from "date-fns";
+import { addHours, format, set } from "date-fns";
+import ModalLoading from "./ModalLoading";
 
 export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas }) {
     const [servicos, setServicos] = useState([]);
@@ -12,6 +13,8 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
         dataFim: "",
     });
     const [loading, setLoading] = useState(false);
+    const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+
 
     useEffect(() => {
         if (!event) return;
@@ -63,6 +66,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
     // Função para atualizar Agenda
     const handleUpdate = async (e) => {
         e.preventDefault();
+        setLoadingMsg("Atualizando agenda...");
         setLoading(true);
         try {
             const body = {
@@ -89,8 +93,10 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
     // Função para deletar Agenda
     const handleDelete = async (e) => {
         e.preventDefault();
-        if (!window.confirm("Tem certeza que deseja deletar este agendamento?")) return;
-        setLoading(true);
+        if (!window.confirm("Tem certeza que deseja deletar esta agenda?")) return;
+
+        setLoadingMsg("Deletando agenda...");
+        setLoading(true)
         try {
             await deleteAgenda(event.id);
             if (typeof recarregarAgendas === "function") {
@@ -107,72 +113,78 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
     if (!event) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-agenda">
-                <h2>Gerenciar Agendamento</h2>
-                <h3>{event.pet.nome}</h3>
-                <form>
-                    <div className="form-inputs">
-                        <div className="form-group">
-                            <label>Início do Atendimento</label>
-                            <input
-                                type="datetime-local"
-                                value={form.dataInicio}
-                                onChange={handleDataInicioChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Fim do Atendimento</label>
-                            <input
-                                type="datetime-local"
-                                value={form.dataFim}
-                                onChange={e => handleChange("dataFim", e.target.value)}
-                                required
-                            />
+        <>
+            {loading ? (
+                <ModalLoading mensagem={loadingMsg} />)
+                : (
+                    <div className="modal-overlay">
+                        <div className="modal-agenda">
+                            <h2>Gerenciar Agendamento</h2>
+                            <h3>{event.pet.nome}</h3>
+                            <form>
+                                <div className="form-inputs">
+                                    <div className="form-group">
+                                        <label>Início do Atendimento</label>
+                                        <input
+                                            type="datetime-local"
+                                            value={form.dataInicio}
+                                            onChange={handleDataInicioChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Fim do Atendimento</label>
+                                        <input
+                                            type="datetime-local"
+                                            value={form.dataFim}
+                                            onChange={e => handleChange("dataFim", e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                {servicos.length > 0 && servicos.map((servico, idx) => (
+                                    <div className="form-group" key={servico.id}>
+                                        <label>
+                                            Valor do {servico.nome}
+                                        </label>
+                                        <NumericFormat
+                                            value={servico.valor}
+                                            thousandSeparator="."
+                                            decimalSeparator=","
+                                            prefix="R$ "
+                                            allowNegative={false}
+                                            decimalScale={2}
+                                            fixedDecimalScale
+                                            onValueChange={val => handleServicoChange(idx, val)}
+                                            className="form-control"
+                                            placeholder="R$ 0,00"
+                                        />
+                                    </div>
+                                ))}
+                                <div className="form-group">
+                                    <label>Total</label>
+                                    <NumericFormat
+                                        value={total}
+                                        thousandSeparator="."
+                                        decimalSeparator=","
+                                        prefix="R$ "
+                                        decimalScale={2}
+                                        fixedDecimalScale
+                                        className="form-control"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="modal-buttons">
+                                    <button type="button" className="btn-fechar" onClick={onClose}>X</button>
+                                    <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
+                                    <button type="button" className="btn-excluir" onClick={handleDelete} disabled={loading}>
+                                        {loading ? "Deletando..." : "Deletar"}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    {servicos.length > 0 && servicos.map((servico, idx) => (
-                        <div className="form-group" key={servico.id}>
-                            <label>
-                                Valor do {servico.nome}
-                            </label>
-                            <NumericFormat
-                                value={servico.valor}
-                                thousandSeparator="."
-                                decimalSeparator=","
-                                prefix="R$ "
-                                allowNegative={false}
-                                decimalScale={2}
-                                fixedDecimalScale
-                                onValueChange={val => handleServicoChange(idx, val)}
-                                className="form-control"
-                                placeholder="R$ 0,00"
-                            />
-                        </div>
-                    ))}
-                    <div className="form-group">
-                        <label>Total</label>
-                        <NumericFormat
-                            value={total}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            prefix="R$ "
-                            decimalScale={2}
-                            fixedDecimalScale
-                            className="form-control"
-                            readOnly
-                        />
-                    </div>
-                    <div className="modal-buttons">
-                        <button type="button" className="btn-fechar" onClick={onClose}>X</button>
-                        <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
-                        <button type="button" className="btn-excluir" onClick={handleDelete} disabled={loading}>
-                            {loading ? "Deletando..." : "Deletar"}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                )}
+        </>
     );
 }

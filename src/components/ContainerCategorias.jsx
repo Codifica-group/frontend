@@ -35,33 +35,61 @@ export default function ContainerCategorias(props) {
     return (
         <div className="categoria-wrapper">
             <div className="categoria-container">
-                {props.categorias.map((categoria) => (
-                    <details className="categoria" key={categoria.id}>
-                        <summary>{categoria.nome}</summary>
-                        <div className="categoria-info">
-                            <ul>
-                                {props.produtos
-                                    .filter((produto) => produto.categoria?.id === categoria.id)
-                                    .map((produto) => {
-                                        const despesasProduto = (props.despesas || []).filter(
-                                            (despesa) =>
-                                                despesa.produto.id === produto.id &&
-                                                despesa.data === props.dataSelecionada
-                                        );
-                                        return despesasProduto.length <= 0 ? null
-                                            : despesasProduto.map((despesaFiltrada) => (
-                                                <li key={despesaFiltrada.id}>
-                                                    <div onClick={() => exibirModalSaida(produto, despesaFiltrada)}>
-                                                        <span>{produto.nome}</span>
-                                                        <span>R$ -{despesaFiltrada.valor}</span>
-                                                    </div>
-                                                </li>
-                                            ))
-                                    })}
-                            </ul>
-                        </div>
-                    </details>
-                ))}
+                {props.tipo === "saida" ? (
+                    props.categorias.map((categoria) => (
+                        <details className="categoria" key={categoria.id}>
+                            <summary>{categoria.nome}</summary>
+                            <div className="categoria-info">
+                                <ul>
+                                    {props.produtos
+                                        .filter((produto) => produto.categoria?.id === categoria.id)
+                                        .map((produto) => {
+                                            const despesasProduto = (props.despesas || []).filter(
+                                                (despesa) =>
+                                                    despesa.produto.id === produto.id &&
+                                                    despesa.data === props.dataSelecionada
+                                            );
+                                            return despesasProduto.length <= 0 ? null
+                                                : despesasProduto.map((despesaFiltrada) => (
+                                                    <li key={despesaFiltrada.id}>
+                                                        <div onClick={() => exibirModalSaida(produto, despesaFiltrada)}>
+                                                            <span>{produto.nome}</span>
+                                                            <span>R$ -{despesaFiltrada.valor}</span>
+                                                        </div>
+                                                    </li>
+                                                ))
+                                        })
+                                    }
+                                </ul>
+                            </div>
+                        </details>
+                    ))
+                ) : (
+                    props.categorias.map((servico) => (
+                        <details className="categoria" key={servico.id}>
+                            <summary>{servico.nome}</summary>
+                            <div className="categoria-info">
+                                <ul>
+                                    {(props.despesas || [])
+                                        .filter(agenda => agenda.dataHoraInicio.startsWith(props.dataSelecionada))
+                                        .map(agenda =>
+                                            agenda.servicos
+                                                .filter(s => s.id === servico.id)
+                                                .map(s => (
+                                                    <li key={agenda.id + '-' + s.id}>
+                                                        <div>
+                                                            <span>{agenda.cliente?.nome} - {agenda.pet?.nome}</span>
+                                                            <span>R$ {Number(s.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                                                        </div>
+                                                    </li>
+                                                ))
+                                        )
+                                    }
+                                </ul>
+                            </div>
+                        </details>
+                    ))
+                )}
             </div>
             {showModalSaida && (
                 <ModalGastos

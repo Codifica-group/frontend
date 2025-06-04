@@ -4,9 +4,11 @@ import { NumericFormat } from "react-number-format";
 import { postDespesa, postProduto } from "../utils/post";
 import { getDataAtual } from "../utils/util";
 import { putDespesa } from "../utils/put";
+import Select from "react-select";
 
 export default function ModalGastos(props) {
     const [sugestoesSaida, setSugestoesSaida] = useState([]);
+    const [desabilitarInputProduto, setDesabilitarInputProduto] = useState(props.tipo === "atualizar");
     let novaDespesa = null;
 
     useEffect(() => {
@@ -106,15 +108,44 @@ export default function ModalGastos(props) {
     const handleInputChangeSaida = (e) => {
         const { name, value } = e.target;
 
+        if (name === "produto" && value) {
+            const produtoExistente = props.produtos.find(
+                item => item.nome.toLowerCase() === value.toLowerCase()
+            );
+            if (produtoExistente) {
+                props.setNovoItem((prev) => ({
+                    ...prev,
+                    produto: value,
+                    categoria: produtoExistente.categoria?.id || ""
+                }));
+                setSugestoesSaida([]);
+                setDesabilitarInputProduto(true);
+                return;
+            } else {
+                props.setNovoItem((prev) => ({
+                    ...prev,
+                    produto: value,
+                    categoria: ""
+                }));
+                const todosProdutos = props.produtos.map((item) => item.nome);
+                const filtrados = todosProdutos.filter((produto) =>
+                    produto.toLowerCase().includes(value.toLowerCase())
+                );
+                setSugestoesSaida(filtrados);
+                setDesabilitarInputProduto(false);
+                return;
+            }
+        }
+
         props.setNovoItem((prev) => ({ ...prev, [name]: value }));
 
-        if (name === "produto" && value) {
-            const todosProdutos = props.produtos.map((item) => item.nome);
-            const filtrados = todosProdutos.filter((produto) =>
-                produto.toLowerCase().includes(value.toLowerCase())
-            );
-            setSugestoesSaida(filtrados);
-        } else if (name === "produto") {
+        if (name === "produto" && value === "") {
+            props.setNovoItem((prev) => ({
+                ...prev,
+                produto: value,
+                categoria: ""
+            }));
+            setDesabilitarInputProduto(false);
             setSugestoesSaida([]);
         }
     };
@@ -157,20 +188,29 @@ export default function ModalGastos(props) {
 
                     <div className="form-group">
                         <label>Categoria</label>
-                        <select
+                        <Select
                             name="categoria"
                             id="categoria"
-                            value={props.novoItem.categoria || ""}
-                            onChange={handleInputChangeSaida}
-                        >
-                            <option value="">Selecione uma categoria</option>
-                            {props.categorias &&
-                                props.categorias.map((categoria) => (
-                                    <option key={categoria.id} value={categoria.id}>
-                                        {categoria.nome}
-                                    </option>
-                                ))}
-                        </select>
+                            value={
+                                props.categorias
+                                    .map(categoria => ({
+                                        value: categoria.id,
+                                        label: categoria.nome
+                                    }))
+                                    .find(option => option.value === props.novoItem.categoria) || null
+                            }
+                            onChange={(selectedOption) => {
+                                handleInputChangeSaida({ target: { name: "categoria", value: selectedOption ? selectedOption.value : "" } });
+                            }}
+                            options={props.categorias.map(categoria => ({
+                                value: categoria.id,
+                                label: categoria.nome
+                            }))}
+                            placeholder="Selecione uma categoria"
+                            isClearable
+                            className="form-select"
+                            isDisabled={desabilitarInputProduto ? true : false}
+                        />
                     </div>
 
                     <div className="form-group">

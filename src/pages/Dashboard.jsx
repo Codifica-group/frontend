@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDespesas, getServicos, getProdutos, getCategorias } from "../utils/get";
+import { getDespesas, getServicos, getProdutos, getCategorias, getAgendas } from "../utils/get";
 import "../styles/style-dashboard.css";
 import SideBar from "../components/SideBar";
 import ContainerCategorias from "../components/ContainerCategorias";
@@ -8,10 +8,11 @@ import ModalGastos from "../components/ModalGastos";
 import ModalComparar from "../components/ModalComparar";
 import { getDataAtual } from "../utils/util";
 import { postLucro, postVerificacao } from "../utils/post";
-import { subDays, format } from "date-fns";
+import { subDays, format, set } from "date-fns";
 import saldoDisponivel from "../assets/saldo-disponivel.png";
 import info from "../assets/info.png";
 import lucroImage from "../assets/lucro.png";
+import ModalLoading from "../components/ModalLoading";
 
 export default function DashboardEleve() {
     const [dataSelecionada, setDataSelecionada] = useState(getDataAtual());
@@ -28,6 +29,8 @@ export default function DashboardEleve() {
     const [lucro, setLucro] = useState();
     const [lucroMensal, setLucroMensal] = useState();
     const [servicos, setServicos] = useState([]);
+    const [agendas, setAgendas] = useState([]);
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
         document.title = `Dashboard`;
@@ -39,19 +42,26 @@ export default function DashboardEleve() {
                 setLucro(await postLucro({"dataInicio": dataSelecionada, "dataFim": dataSelecionada}))
                 setLucroMensal(await postLucro({"dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada}));
                 setServicos(await getServicos());
+                setAgendas(await getAgendas());
             } catch (error) {
                 console.error("Erro ao carregar produtos:", error);
+            } finally {
+                setLoading(false);
             }
         })();
     }, []);
 
     useEffect(() => {
+        setLoading(true);
         (async () => {
             try {
                 setLucro(await postLucro({"dataInicio": dataSelecionada, "dataFim": dataSelecionada}))
                 setLucroMensal(await postLucro({"dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada}));
             } catch (error) {
                 console.error("Erro ao carregar produtos:", error);
+            }
+            finally {
+                setLoading(false);
             }
         })();
     }, [despesas, dataSelecionada]);
@@ -72,6 +82,7 @@ export default function DashboardEleve() {
 
     return (
         <div className="dashboard">
+            {loading ? ( <ModalLoading /> ) : null}
             <SideBar selecionado="dashboard" />
             <div className="main">
                 <header className="kpi-header-container">
@@ -100,7 +111,7 @@ export default function DashboardEleve() {
                                 </div>
                             </div>
                             <div className="kpi-actions-section">
-                                <button className="kpi-action-button" onClick={toggleClasse}>
+                                {/* <button className="kpi-action-button" onClick={toggleClasse}>
                                     <span role="img" aria-label="ícone balança" className="icon-balance">⚖️</span> Comparar
                                 </button>
 
@@ -109,7 +120,7 @@ export default function DashboardEleve() {
                                         submit={handleSubmitComparar}
                                         showModal={setShowModalComparar}
                                     />
-                                )}
+                                )} */}
                                 <button
                                     className="kpi-action-button"
                                     onClick={() => setShowModalSaida(true)}
@@ -149,6 +160,7 @@ export default function DashboardEleve() {
                                 <ChartComponent
                                     id="graficoSaida"
                                     type="pie"
+                                    dados={despesas}
                                     data={{
                                         labels: categorias.map(c => c.nome),
                                         datasets: [
@@ -177,6 +189,7 @@ export default function DashboardEleve() {
                                         responsive: true,
                                         maintainAspectRatio: false,
                                     }}
+                                    dataSelecionada={dataSelecionada}
                                 />
                             </div>
                         </div>
@@ -216,12 +229,21 @@ export default function DashboardEleve() {
                                 <ChartComponent
                                     id="graficoEntrada"
                                     type="pie"
+                                    dados={agendas}
                                     data={{
                                         labels: servicos.map(servico => servico.nome),
                                         datasets: [
                                             {
                                                 label: "Entradas",
-                                                data: [500, 800, 200],
+                                                data: servicos.map(servico =>
+                                                    agendas.filter(agenda => agenda.dataHoraInicio.startsWith(dataSelecionada))
+                                                    .reduce((soma, agenda) => (
+                                                        soma +
+                                                        agenda.servicos
+                                                            .filter(s => s.id === servico.id)
+                                                            .reduce((acc, s) => acc + Number(s.valor), 0)
+                                                    ), 0)
+                                                ),
                                                 backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
                                             },
                                         ],
@@ -230,22 +252,21 @@ export default function DashboardEleve() {
                                         responsive: true,
                                         maintainAspectRatio: false,
                                     }}
+                                    dataSelecionada={dataSelecionada}
                                 />
                             </div>
                         </div>
                         <div className="categorias-container">
-                            {/* <ContainerCategorias tipo="entrada" categorias={categoriasProdutos} dataSelecionada={dataSelecionada} /> */}
-                            {/* Exemplo de como poderia ser, ajuste conforme sua necessidade */}
-                        </div>
-                        {/* {showModalEntrada && (
-                            <ModalGastos 
-                                tipo="entrada" 
-                                submit={handleSubmitEntrada} // Definir handleSubmitEntrada
-                                novoItem={novaEntrada} // Definir novaEntrada
-                                showModal={setShowModalEntrada} // Passar setShowModalEntrada
-                                change={handleInputChangeEntrada} // Definir handleInputChangeEntrada
+                            <ContainerCategorias
+                                tipo="entrada"
+                                categorias={servicos}
+                                dataSelecionada={dataSelecionada}
+                                despesas={agendas}
+                                produtos={produtos}
+                                setDespesas={setAgendas}
+                                setProdutos={setServicos}
                             />
-                        )} */}
+                        </div>
                     </div>
                 </div>
             </div>

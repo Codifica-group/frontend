@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+.asw-menu-btn{
+position: fixed !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 9999 !important;
+}

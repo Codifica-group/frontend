@@ -43,3 +43,31 @@ export async function putProduto(id, body){
         };
     };
 }
+
+export async function putCliente(id, body) {
+    try {
+        const response = await axios.put(`http://localhost:8080/api/clientes/${id}`, body);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao atualizar cliente:", error.response || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Erro desconhecido",
+            status: error.response?.status || 500,
+        };
+    }
+}
+
+export async function putPet(id, body) {
+    try {
+        const response = await axios.put(`http://localhost:8080/api/pets/${id}`, body);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao atualizar pet:", error.response || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Erro desconhecido",
+            status: error.response?.status || 500,
+        };
+    }
+}

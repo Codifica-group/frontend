@@ -81,3 +81,31 @@ export const postAgenda = async (agenda) => {
     };
   }
 };
+
+export async function postCliente(body) {
+    try {
+        const response = await axios.post("http://localhost:8080/api/clientes", body);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao criar cliente:", error.response || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Erro desconhecido",
+            status: error.response?.status || 500,
+        };
+    }
+}
+
+export async function postPet(body) {
+    try {
+        const response = await axios.post("http://localhost:8080/api/pets", body);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao criar pet:", error.response || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Erro desconhecido",
+            status: error.response?.status || 500,
+        };
+    }
+}

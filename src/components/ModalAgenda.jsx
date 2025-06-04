@@ -143,6 +143,7 @@ export default function ModalAgenda(props) {
                 valor: resultado.valor || 0
             });
         } catch (error) {
+            alert("Erro ao calcular serviço:\n" + (error?.message || String(error)));
             props.setErro({
                 aberto: true,
                 mensagem: "Erro ao calcular serviço.",
@@ -178,6 +179,7 @@ export default function ModalAgenda(props) {
                 props.recarregarAgendas();
             }
         } catch (error) {
+            alert("Erro ao salvar agendamento:\n" + (error?.message || String(error)));
             props.setErro({
                 aberto: true,
                 mensagem: "Erro ao salvar agendamento!",

@@ -3,6 +3,11 @@
     margin-left: 160px;
     width: calc(100vw - 210px);
     transition: margin-left 0.3s ease, width 0.3s ease;
+ 
+}
+
+body{
+    background-color: #e8f6fc;
 }
 
 .agenda-root {

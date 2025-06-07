@@ -7,6 +7,7 @@ import { deleteAgenda } from "../utils/delete"; // <-- importe aqui
 import { putAgenda } from "../utils/put";       // <-- importe aqui
 import Select from "react-select";
 import ModalLoading from "../components/ModalLoading";
+import ModalGerenciarAgenda from "../components/ModalGerenciarAgenda";
 
 const Historico = () => {
     useEffect(() => {
@@ -74,12 +75,9 @@ const Historico = () => {
     }
 
     function mapearDadosParaTabela(dados) {
-        if (!Array.isArray(dados)) {
-            console.error("O backend não retornou um array:", dados);
-            return [];
-        }
+        if (!Array.isArray(dados)) return [];
         return dados.map(item => ({
-            id: item.id, // Adicione o id aqui!
+            id: item.id,
             Data: item.dataHoraInicio ? item.dataHoraInicio.slice(0, 10).split('-').reverse().join('/') : "",
             Hora: item.dataHoraInicio && item.dataHoraFim
                 ? `${item.dataHoraInicio.slice(11, 16)} - ${item.dataHoraFim.slice(11, 16)}`
@@ -91,6 +89,7 @@ const Historico = () => {
                 ? item.servicos.map(s => s.nome).join(", ")
                 : (item.servicos?.nome || ""),
             Valor: item.valorTotal ? `R$${item.valorTotal},00` : "",
+            _original: item // <-- importante!
         }));
     }
 
@@ -142,14 +141,10 @@ const Historico = () => {
     const racaOptions = racas.map(r => ({ value: r.id, label: r.nome }));
 
     const columns = ["Data", "Hora", "Cliente", "Pet", "Raça", "Serviço", "Valor"];
+    const tamanhoColunas = ["1%", "7%", "17%", "15%", "10%", "11%", "1%"];
 
-    const handleEdit = (id) => {
-        const agenda = dados.find(d => d.id === id);
-        setModalEditar({ aberto: true, agenda });
-    };
-
-    const handleDelete = (id) => {
-        setModalApagar({ aberto: true, id });
+    const handleEdit = (item) => {
+        setModalEditar({ aberto: true, agenda: item });
     };
 
     async function salvarEdicao() {
@@ -276,10 +271,10 @@ const Historico = () => {
                     </div>
                 </div>
                 <TableHistorico
-                    columns={[...columns, "Editar", "Apagar"]}
+                    columns={[...columns, "Editar"]}
+                    columnWidths={[...tamanhoColunas, "1%"]}
                     data={dados}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onEdit={row => handleEdit(row._original || row)}
                 />
 
                 {dados.length === 0 && (
@@ -309,78 +304,14 @@ const Historico = () => {
                 )}
 
                 {modalEditar.aberto && modalEditar.agenda && (
-                    <div className="historico-modal-overlay">
-                        <div className="historico-modal-box">
-                            <h2>Editar Agenda</h2>
-                            <label>Pet:</label>
-                            <Select
-                                options={petOptions}
-                                value={petOptions.find(opt => opt.value === modalEditar.agenda.petId) || null}
-                                onChange={selected =>
-                                    setModalEditar({
-                                        ...modalEditar,
-                                        agenda: { ...modalEditar.agenda, petId: selected ? selected.value : null }
-                                    })
-                                }
-                                placeholder="Selecione o pet"
-                                classNamePrefix="custom-select"
-                            />
-                            <label>Serviços ID (separados por vírgula):</label>
-                            <input
-                                type="text"
-                                value={Array.isArray(modalEditar.agenda.servicosId) ? modalEditar.agenda.servicosId.join(",") : ""}
-                                onChange={e =>
-                                    setModalEditar({
-                                        ...modalEditar,
-                                        agenda: {
-                                            ...modalEditar.agenda,
-                                            servicosId: e.target.value.split(",").map(Number)
-                                        }
-                                    })
-                                }
-                            />
-                            <label>Data/Hora Início:</label>
-                            <input
-                                type="datetime-local"
-                                value={modalEditar.agenda.dataHoraInicio?.slice(0, 16)}
-                                onChange={e =>
-                                    setModalEditar({
-                                        ...modalEditar,
-                                        agenda: { ...modalEditar.agenda, dataHoraInicio: e.target.value }
-                                    })
-                                }
-                            />
-                            <label>Data/Hora Fim:</label>
-                            <input
-                                type="datetime-local"
-                                value={modalEditar.agenda.dataHoraFim?.slice(0, 16)}
-                                onChange={e =>
-                                    setModalEditar({
-                                        ...modalEditar,
-                                        agenda: { ...modalEditar.agenda, dataHoraFim: e.target.value }
-                                    })
-                                }
-                            />
-                            <label>Valor:</label>
-                            <input
-                                type="number"
-                                value={modalEditar.agenda.valor}
-                                onChange={e =>
-                                    setModalEditar({
-                                        ...modalEditar,
-                                        agenda: { ...modalEditar.agenda, valor: Number(e.target.value) }
-                                    })
-                                }
-                            />
-                            <div className="historico-modal-buttons">
-                                <button className="historico-btn-cancelar" onClick={() => setModalEditar({ aberto: false, agenda: null })}>Cancelar</button>
-                                <button className="historico-btn-confirmar-entrada" onClick={salvarEdicao}>Salvar</button>
-                            </div>
-                        </div>
-                    </div>
+                    <ModalGerenciarAgenda
+                        event={modalEditar.agenda}
+                        onClose={() => setModalEditar({ aberto: false, agenda: null })}
+                        recarregarAgendas={() => buscarHistorico(filtros)}
+                    />
                 )}
 
-                {modalApagar.aberto && (
+                {/* {modalApagar.aberto && (
                     <div className="historico-modal-overlay">
                         <div className="historico-modal-box">
                             <h2>Apagar Agenda</h2>
@@ -401,7 +332,7 @@ const Historico = () => {
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
 

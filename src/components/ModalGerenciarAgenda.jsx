@@ -122,7 +122,12 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                     <div className="modal-overlay">
                         <div className="modal-agenda">
                             <h2>Gerenciar Agendamento</h2>
-                            <h3>{event.pet.nome}</h3>
+                            <h3>
+                                {event.pet?.nome}
+                                {Array.isArray(event.servicos) && event.servicos.length > 0
+                                    ? " - " + event.servicos.map(s => s.nome).join(", ")
+                                    : ""}
+                            </h3>
                             <form>
                                 <div className="form-inputs">
                                     <div className="form-group">
@@ -164,17 +169,24 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                                     </div>
                                 ))}
                                 <div className="form-group">
-                                    <label>Total</label>
+                                    <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
                                     <NumericFormat
-                                        value={total}
+                                        // value={deslocamento}
                                         thousandSeparator="."
                                         decimalSeparator=","
                                         prefix="R$ "
+                                        allowNegative={false}
                                         decimalScale={2}
                                         fixedDecimalScale
+                                        // onValueChange={handleDeslocamentoChange}
                                         className="form-control"
-                                        readOnly
+                                        placeholder="R$ 0,00"
                                     />
+                                </div>
+                                <div className="form-group">
+                                    <div className="total-value">
+                                        Total: R$ {Number(total).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </div>
                                 </div>
                                 <div className="modal-buttons">
                                     <button type="button" className="btn-fechar" onClick={onClose}>X</button>

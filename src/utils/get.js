@@ -87,3 +87,13 @@ export const getAgendas = async () => {
     return [];
   }
 };
+
+export async function getEndereco(cep) {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/cep/${cep}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar endereço:", error);
+        return null;
+    }
+}

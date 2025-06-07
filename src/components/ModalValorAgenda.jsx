@@ -49,7 +49,6 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
         <div className="modal-overlay">
             <div className="modal-agenda">
                 <h2>Valor Agendamento</h2>
-                <h4>test</h4>
                 <form>
                     {servicos.length > 0 && servicos.map((servico, idx) => (
                         <div className="form-group" key={servico.id}>
@@ -71,7 +70,12 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                         </div>
                     ))}
                     <div className="form-group">
-                        <label>Valor do Deslocamento</label>
+                        <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
+                        {Number(valores.deslocamento?.distancia) > 0 && Number(valores.deslocamento?.tempo) > 0 && (
+                            <span>
+                                Distancia: {valores.deslocamento?.distancia} KM | Tempo: {valores.deslocamento?.tempo} Minutos
+                            </span>
+                        )}
                         <NumericFormat
                             value={deslocamento}
                             thousandSeparator="."
@@ -83,19 +87,13 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                             onValueChange={handleDeslocamentoChange}
                             className="form-control"
                             placeholder="R$ 0,00"
+                            style={{ marginTop: '1vh' }}
                         />
                     </div>
                     <div className="form-group">
-                        <label>Total</label>
-                        <NumericFormat
-                            value={total}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            prefix="R$ "
-                            decimalScale={2}
-                            fixedDecimalScale
-                            className="form-control"
-                        />
+                        <div className="total-value">
+                            Total: R$ {Number(total).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
                     </div>
                     <div className="modal-buttons">
                         <button type="button" onClick={onClose} className="btn-cancelar">Voltar</button>

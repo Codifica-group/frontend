@@ -4,12 +4,16 @@ import '../styles/style-historico.css';
 
 export default function Table(props) {
     return (
-        <div className="table-container">
+        <div className="table-container" style={props.rounded ? { borderRadius: "0 8px 8px 8px" } : undefined}>
             <table>
                 <thead>
                     <tr>
                         {props.columns.map((col, index) => (
-                            <th key={index}>{col}</th>
+                            <th key={index}
+                                style={props.columnWidths && props.columnWidths[index] ? { width: props.columnWidths[index] } : undefined}
+                            >
+                                {col}
+                            </th>
                         ))}
                     </tr>
                 </thead>
@@ -19,8 +23,12 @@ export default function Table(props) {
                             {props.columns.map((col, colIndex) => {
                                 if (col === "Editar") {
                                     return (
-                                        <td key={colIndex}>
-                                            <button className="icon-action-btn" onClick={() => props.onEdit(row.id)} title="Editar">
+                                        <td style={{width: '1%'}} key={colIndex}>
+                                            <button
+                                                className="icon-action-btn"
+                                                onClick={() => props.onEdit(row._original, props.tipo)}
+                                                title="Editar"
+                                            >
                                                 <FiEdit size={18} />
                                             </button>
                                         </td>
@@ -29,13 +37,17 @@ export default function Table(props) {
                                 if (col === "Apagar") {
                                     return (
                                         <td key={colIndex}>
-                                            <button className="icon-action-btn" onClick={() => props.onDelete(row.id)} title="Apagar">
+                                            <button
+                                                className="icon-action-btn"
+                                                onClick={() => props.onDelete(row, props.tipo)}
+                                                title="Apagar"
+                                            >
                                                 <FiTrash size={18} />
                                             </button>
                                         </td>
                                     );
                                 }
-                                return <td key={colIndex}>{row[col]}</td>;
+                                return <td key={colIndex} style={props.columnWidths && props.columnWidths[rowIndex] ? { width: props.columnWidths[rowIndex] } : undefined}>{row[col]}</td>;
                             })}
                         </tr>
                     ))}

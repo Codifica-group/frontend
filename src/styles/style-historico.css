@@ -127,7 +127,7 @@
 
     table th,
     table td {
-        border: none;
+        border: solid 1px red;
         color: #1a1a1a;
         padding: 14px 18px;
         text-align: left;

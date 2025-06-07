@@ -7,6 +7,7 @@ import ModalValorAgenda from "./ModalValorAgenda";
 import { postAgenda } from "../utils/post";
 import ModalLoading from "./ModalLoading";
 import AlertErro from "./AlertErro";
+import "../styles/style-agenda.css";
 
 export default function ModalAgenda(props) {
     const [pets, setPets] = useState([]);
@@ -210,8 +211,8 @@ export default function ModalAgenda(props) {
                         <div className="modal-agenda">
                             <h2>Novo Agendamento</h2>
                             <form onSubmit={handleSubmit}>
-                                <div className="form-inputs">
-                                    <div className="form-group">
+                                <div className="form-agenda-inputs">
+                                    <div className="campos-agenda">
                                         <label>Cliente</label>
                                         <Select
                                             options={clienteOptions}
@@ -219,9 +220,12 @@ export default function ModalAgenda(props) {
                                             onChange={handleClienteChange}
                                             placeholder="Selecione o cliente"
                                             isClearable
+                                            classNamePrefix="select"
                                         />
                                     </div>
-                                    <div className="form-group">
+                                </div>
+                                <div className="form-agenda-inputs">
+                                    <div className="campos-agenda">
                                         <label>Pet</label>
                                         <Select
                                             options={petOptions}
@@ -229,11 +233,12 @@ export default function ModalAgenda(props) {
                                             onChange={handlePetChange}
                                             placeholder="Selecione o pet"
                                             isClearable
+                                            classNamePrefix="select"
                                         />
                                     </div>
                                 </div>
-                                <div className="form-inputs">
-                                    <div className="form-group select">
+                                <div className="form-agenda-inputs">
+                                    <div className="campos-agenda">
                                         <label>Serviços</label>
                                         <Select
                                             options={servicoOptions}
@@ -242,6 +247,7 @@ export default function ModalAgenda(props) {
                                             placeholder="Selecione os serviços"
                                             isMulti
                                             isClearable
+                                            classNamePrefix="select"
                                         />
                                     </div>
                                 </div>
@@ -266,8 +272,8 @@ export default function ModalAgenda(props) {
                                     </div>
                                 </div>
                                 {/* Falta add campo obs no backend */}
-                                {/* <div className="form-inputs">
-                        <div className="form-group">
+                                {/* <div className="form-agenda-inputs">
+                        <div className="campos-agenda">
                             <label>Observação</label>
                             <input
                                 type="text"
@@ -282,9 +288,10 @@ export default function ModalAgenda(props) {
                                     <button type="submit" className="btn-atualizar-agenda">Calcular Serviço</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                )}
+                        </div >
+                    </div >
+                )
+            }
         </>
     );
 }

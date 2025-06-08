@@ -27,27 +27,30 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
         if (tipo !== "cliente") return;
         const cepLimpo = (form.cep || "").replace(/\D/g, "");
         if (cepLimpo.length === 8) {
-            console.log("CEP alterado:", cepLimpo);
-            setLoadingMsg("Buscando endereço pelo CEP...");
-            setLoading(true);
-            try {
-                getEndereco(cepLimpo).then(res => {
+            const buscarEndereco = async () => {
+                console.log("Buscando endereço pelo CEP:", cepLimpo);
+                setLoadingMsg("Buscando endereço pelo CEP...");
+                setLoading(true);
+                try {
+                    const res = await getEndereco(cepLimpo);
                     if (res && res.logradouro) {
                         setForm(prev => ({
                             ...prev,
                             rua: res.logradouro || "",
                             bairro: res.bairro || "",
-                            cidade: res.localidade || ""
+                            cidade: res.localidade || "",
+                            numEndereco: ""
                         }));
                     }
-                });
-            } catch (error) {
-                console.error("Erro ao buscar endereço:", error);
-                setErroLocal("Erro ao buscar endereço pelo CEP.");
-                setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
-            } finally {
-                setLoading(false);
-            }
+                } catch (error) {
+                    console.error("Erro ao buscar endereço:", error);
+                    setErroLocal("Erro ao buscar endereço pelo CEP.");
+                    setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
+                } finally {
+                    setLoading(false);
+                }
+            };
+            buscarEndereco();
         }
     }, [form.cep, tipo]);
 

@@ -86,7 +86,7 @@ export default function ModalGerenciarClientePet({
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
 
-        // Só chama getEndereco se o usuário alterar o campo CEP e for válido
+        //chama API BuscaCEP se o usuário alterar o campo CEP e for válido
         if (field === "cep") {
             const cepLimpo = value.replace(/\D/g, "");
             if (cepLimpo.length === 8 && cepLimpo !== lastCepBuscado) {
@@ -100,7 +100,8 @@ export default function ModalGerenciarClientePet({
                                 ...prev,
                                 rua: res.logradouro || "",
                                 bairro: res.bairro || "",
-                                cidade: res.localidade || ""
+                                cidade: res.localidade || "",
+                                numEndereco: ""
                             }));
                         }
                         setLastCepBuscado(cepLimpo);

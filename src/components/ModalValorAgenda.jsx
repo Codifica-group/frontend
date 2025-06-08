@@ -71,9 +71,16 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                     ))}
                     <div className="form-group">
                         <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
-                        {Number(valores.deslocamento?.distancia) > 0 && Number(valores.deslocamento?.tempo) > 0 && (
+                        {Number(valores.deslocamento?.distanciaKm) > 0 && Number(valores.deslocamento?.tempo) > 0 && (
                             <span>
-                                Distancia: {valores.deslocamento?.distancia} KM | Tempo: {valores.deslocamento?.tempo} Minutos
+                                Distancia: {Number(valores.deslocamento?.distanciaKm).toLocaleString("pt-BR", { maximumFractionDigits: 2 })} KM | Tempo: {
+                                    (() => {
+                                        const tempo = Number(valores.deslocamento?.tempo) || 0;
+                                        const minutos = Math.floor(tempo);
+                                        const segundos = Math.round((tempo - minutos) * 60);
+                                        return `${minutos}:${segundos.toString().padStart(2, "0")} ${minutos > 1 ? "Minutos" : "Minuto"}`;
+                                    })()
+                                }
                             </span>
                         )}
                         <NumericFormat

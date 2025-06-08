@@ -6,11 +6,9 @@ import TableHistorico from "../components/TableHistorico";
 import { getClientes, getPets, getEndereco } from "../utils/get";
 import ModalLoading from "../components/ModalLoading";
 import AlertErro from "../components/AlertErro";
-import { FaRegEdit } from "react-icons/fa";
 import NoData from "../components/NoData";
 import ModalGerenciarClientePet, { maskCelular, maskCep } from "../components/ModalGerenciarClientePet"; // Importe as máscaras
 import ModalNovoClientePet from "../components/ModalNovoClientePet";
-import ModalEditarClientePet from "../components/ModalEditarClientePet";
 
 const Gerenciar = () => {
     const [tipo, setTipo] = useState("cliente");
@@ -32,38 +30,25 @@ const Gerenciar = () => {
         }
     }, [tipo]);
 
-    async function carregarClientes() {
+        async function carregarClientes() {
         setLoading(true);
         setErro({ aberto: false, mensagem: "", detalhe: "" });
         setColunas(["Nome", "Celular", "CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade"]);
-        setTamanhoColunas(["15%", "7%", "3%", "8%", "1%", "5%", "4%", "4%"]);
+        setTamanhoColunas(["14.5%", "7.1%", "3.1%", "7%", "1%", "5%", "4%", "2%"]);
         try {
-        const clientes = await getClientes();
-        // const clientesComEndereco = await Promise.all(
-        //     (Array.isArray(clientes) ? clientes : []).map(async c => {
-        //         let endereco = {};
-        //         if (c.cep) {
-        //             endereco = await getEndereco(c.cep);
-        //         }
-        //         return {
-        //             ...c,
-        //             logradouro: endereco?.logradouro || "",
-        //             bairro: endereco?.bairro || "",
-        //             localidade: endereco?.localidade || ""
-        //         };
-        //     })
-        // );
-        setDados(clientesComEndereco);
-    } catch (error) {
-        alert("Erro ao buscar dados:\n" + (error?.message || String(error)));
-        setErro({
-            aberto: true,
-            mensagem: "Erro ao buscar dados.",
-            detalhe: error?.message || String(error)
-        });
-    } finally {
-        setLoading(false);
-    }
+            const clientes = await getClientes();
+            setDados(Array.isArray(clientes) ? clientes : []);
+            console.log("Clientes:", clientes);
+        } catch (error) {
+            alert("Erro ao buscar dados:\n" + (error?.message || String(error)));
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao buscar dados.",
+                detalhe: error?.message || String(error)
+            });
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function carregarPets() {
@@ -79,6 +64,7 @@ const Gerenciar = () => {
                 clienteNome: pet.cliente?.nome || "",
             }));
             setDados(petsCompletos);
+            console.log("Pets:", petsCompletos);
         } catch (error) {
             alert("Erro ao buscar dados:\n" + (error?.message || String(error)));
             setErro({
@@ -93,8 +79,6 @@ const Gerenciar = () => {
 
     function handleEditar(item, tipo) {
         setModalEditar({ aberto: true, tipo, dados: item });
-        console.log(item);
-        console.log(tipo);
     }
 
     function mapearDadosParaTabela() {
@@ -106,9 +90,9 @@ const Gerenciar = () => {
             CEP: maskCep(c.cep || ""),
             "Número": c.numEndereco,
             Complemento: c.complemento,
-            Rua: c.logradouro || "",
+            Rua: c.rua || "",
             Bairro: c.bairro || "",
-            Cidade: c.localidade || "",
+            Cidade: c.cidade || "",
             _original: c
         }));
     } else {
@@ -124,7 +108,7 @@ const Gerenciar = () => {
 
     return (
         <div className="historico-root">
-            <SideBar selecionado="Gerenciar" />
+            <SideBar selecionado="gerenciar" />
 
             <div className="content">
                 <h1 className="titulo">
@@ -157,7 +141,7 @@ const Gerenciar = () => {
 
                 <TableHistorico
                     columns={[...colunas, "Editar"]}
-                    columnWidths={[...tamanhoColunas, "1%"]}
+                    columnWidths={tamanhoColunas}
                     data={mapearDadosParaTabela()}
                     onEdit={handleEditar}
                     tipo={tipo}

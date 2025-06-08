@@ -143,6 +143,7 @@ export default function ModalAgenda(props) {
                 deslocamento: resultado.deslocamento || { valor: 0 },
                 valor: resultado.valor || 0
             });
+            console.log("Calculo Serviço:", resultado);
         } catch (error) {
             alert("Erro ao calcular serviço:\n" + (error?.message || String(error)));
             props.setErro({
@@ -166,6 +167,7 @@ export default function ModalAgenda(props) {
                 id: s.id,
                 valor: s.valor
             })),
+            valorDeslocamento: dados.deslocamento,
             dataHoraInicio: form.dataInicio,
             dataHoraFim: form.dataFim
         };

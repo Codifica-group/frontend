@@ -45,7 +45,7 @@ export async function exibirAgendas() {
 
     return data.map((item) => ({
       id: item.id,
-      title: `${Array.isArray(item.servicos) ? item.servicos.map(s => s.nome).join(", ") : (item.servicos?.nome || "")} (${item.pet?.nome || ""})`,
+      title: `${Array.isArray(item.servicos) ? item.servicos.map(s => s.nome).join(", ") : (item.servicos?.nome || "")} - ${item.pet?.nome || ""}`,
       start: item.dataHoraInicio,
       end: item.dataHoraFim,
       backgroundColor: "#307e95",

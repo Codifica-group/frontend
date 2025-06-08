@@ -4,6 +4,7 @@ import { putAgenda } from "../utils/put";
 import { NumericFormat } from "react-number-format";
 import { addHours, format, set } from "date-fns";
 import ModalLoading from "./ModalLoading";
+import fecharIcon from "../assets/close.png";
 
 export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas }) {
     const [servicos, setServicos] = useState([]);
@@ -12,9 +13,9 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
         dataInicio: "",
         dataFim: "",
     });
+    const [deslocamento, setDeslocamento] = useState(""); 
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
-
 
     useEffect(() => {
         if (!event) return;
@@ -31,23 +32,29 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             dataFim: event.dataHoraFim ? event.dataHoraFim.slice(0, 16) : "",
         });
 
+        setDeslocamento(event.valorDeslocamento ?? ""); 
+
         if (typeof event.valorTotal === "number") {
             setTotal(event.valorTotal);
         } else {
             const somaServicos = servicosApi.reduce((acc, s) => acc + (Number(s.valor) || 0), 0);
-            setTotal(somaServicos);
+            setTotal(somaServicos + (Number(event.valorDeslocamento) || 0)); 
         }
     }, [event]);
 
     useEffect(() => {
         const somaServicos = servicos.reduce((acc, s) => acc + (Number(s.valor) || 0), 0);
-        setTotal(somaServicos);
-    }, [servicos]);
+        setTotal((Number(deslocamento) || 0) + somaServicos); 
+    }, [servicos, deslocamento]);
 
     const handleServicoChange = (idx, value) => {
         setServicos(prev =>
             prev.map((s, i) => i === idx ? { ...s, valor: value.value === undefined ? "" : value.floatValue } : s)
         );
+    };
+
+    const handleDeslocamentoChange = (value) => {
+        setDeslocamento(value.value === undefined ? "" : value.floatValue);
     };
 
     const handleChange = (field, value) => {
@@ -75,6 +82,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                     id: s.id,
                     valor: s.valor
                 })),
+                valorDeslocamento: deslocamento, 
                 dataHoraInicio: form.dataInicio,
                 dataHoraFim: form.dataFim
             };
@@ -171,14 +179,14 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                                 <div className="form-group">
                                     <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
                                     <NumericFormat
-                                        // value={deslocamento}
+                                        value={deslocamento}
                                         thousandSeparator="."
                                         decimalSeparator=","
                                         prefix="R$ "
                                         allowNegative={false}
                                         decimalScale={2}
                                         fixedDecimalScale
-                                        // onValueChange={handleDeslocamentoChange}
+                                        onValueChange={handleDeslocamentoChange}
                                         className="form-control"
                                         placeholder="R$ 0,00"
                                     />
@@ -189,11 +197,11 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                                     </div>
                                 </div>
                                 <div className="modal-buttons">
-                                    <button type="button" className="btn-fechar" onClick={onClose}>X</button>
-                                    <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
+                                    <button type="button" className="btn-fechar" onClick={onClose}><img src={fecharIcon} alt="Fechar" /></button>
                                     <button type="button" className="btn-excluir" onClick={handleDelete} disabled={loading}>
                                         {loading ? "Deletando..." : "Deletar"}
                                     </button>
+                                    <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
                                 </div>
                             </form>
                         </div>

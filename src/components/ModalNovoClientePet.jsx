@@ -3,7 +3,7 @@ import ModalLoading from "./ModalLoading";
 import AlertErro from "./AlertErro";
 import Select from "react-select";
 import { postCliente, postPet } from "../utils/post";
-import { getClientes, getRacas } from "../utils/get";
+import { getClientes, getRacas, getEndereco } from "../utils/get";
 import { maskCelular, maskCep, unmaskNumber } from "./ModalGerenciarClientePet";
 
 export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro }) {
@@ -21,6 +21,35 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
         }
         setForm({});
     }, [tipo]);
+
+    // Utiliza API BuscaCEP para preencher endereço ao digitar CEP
+    useEffect(() => {
+        if (tipo !== "cliente") return;
+        const cepLimpo = (form.cep || "").replace(/\D/g, "");
+        if (cepLimpo.length === 8) {
+            console.log("CEP alterado:", cepLimpo);
+            setLoadingMsg("Buscando endereço pelo CEP...");
+            setLoading(true);
+            try {
+                getEndereco(cepLimpo).then(res => {
+                    if (res && res.logradouro) {
+                        setForm(prev => ({
+                            ...prev,
+                            rua: res.logradouro || "",
+                            bairro: res.bairro || "",
+                            cidade: res.localidade || ""
+                        }));
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao buscar endereço:", error);
+                setErroLocal("Erro ao buscar endereço pelo CEP.");
+                setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
+            } finally {
+                setLoading(false);
+            }
+        }
+    }, [form.cep, tipo]);
 
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
@@ -40,6 +69,9 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
                     nome: form.nome,
                     numCelular: unmaskNumber(form.numCelular),
                     cep: unmaskNumber(form.cep),
+                    rua: form.rua,
+                    bairro: form.bairro,
+                    cidade: form.cidade,
                     numEndereco: form.numEndereco,
                     complemento: form.complemento
                 });
@@ -104,14 +136,47 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
                                             maxLength={9}
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Número Endereço</label>
-                                        <input
-                                            type="number"
-                                            value={form.numEndereco || ""}
-                                            onChange={e => handleChange("numEndereco", e.target.value)}
-                                            required
-                                        />
+                                    {/* Linha com Rua e N° Endereço */}
+                                    <div className="form-group" style={{ display: "flex", gap: "10px" }}>
+                                        <div style={{ flex: "3 1 75%" }}>
+                                            <label>Rua</label>
+                                            <input
+                                                type="text"
+                                                value={form.rua || ""}
+                                                onChange={e => handleChange("rua", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div style={{ flex: "1 1 15%" }}>
+                                            <label>Número</label>
+                                            <input
+                                                type="number"
+                                                value={form.numEndereco || ""}
+                                                onChange={e => handleChange("numEndereco", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Linha com Bairro e Cidade */}
+                                    <div className="form-group" style={{ display: "flex", gap: "10px" }}>
+                                        <div style={{ flex: "1 1 50%" }}>
+                                            <label>Bairro</label>
+                                            <input
+                                                type="text"
+                                                value={form.bairro || ""}
+                                                onChange={e => handleChange("bairro", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div style={{ flex: "1 1 50%" }}>
+                                            <label>Cidade</label>
+                                            <input
+                                                type="text"
+                                                value={form.cidade || ""}
+                                                onChange={e => handleChange("cidade", e.target.value)}
+                                                required
+                                            />
+                                        </div>
                                     </div>
                                     <div className="form-group">
                                         <label>Complemento</label>
@@ -156,8 +221,8 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
                                 </>
                             )}
                             <div className="modal-buttons">
-                                <button type="submit" className="btn-atualizar-agenda">Salvar</button>
                                 <button type="button" className="btn-cancelar" onClick={onClose}>Cancelar</button>
+                                <button type="submit" className="btn-atualizar-agenda">Salvar</button>
                             </div>
                             {erroLocal && <AlertErro mensagem={erroLocal} erro={erroLocal} onClose={() => setErroLocal(null)} />}
                         </form>

@@ -59,7 +59,7 @@ const Historico = () => {
                 ? resultado
                 : resultado.content || resultado.data || []; // tente acessar o array correto
 
-            console.log("Resultado da API:", lista);
+            console.log("Agendas Filtradas:", lista);
 
             const filtrado = lista.filter(item => {
                 const clienteOk = !filtros.cliente || item.cliente?.nome?.toLowerCase().includes(filtros.cliente.toLowerCase());
@@ -76,7 +76,8 @@ const Historico = () => {
 
     function mapearDadosParaTabela(dados) {
         if (!Array.isArray(dados)) return [];
-        return dados.map(item => ({
+        const ordenado = [...dados].sort((a, b) => new Date(a.dataHoraInicio) - new Date(b.dataHoraInicio));
+        return ordenado.map(item => ({
             id: item.id,
             Data: item.dataHoraInicio ? item.dataHoraInicio.slice(0, 10).split('-').reverse().join('/') : "",
             Hora: item.dataHoraInicio && item.dataHoraFim
@@ -88,7 +89,9 @@ const Historico = () => {
             Serviço: Array.isArray(item.servicos)
                 ? item.servicos.map(s => s.nome).join(", ")
                 : (item.servicos?.nome || ""),
-            Valor: item.valorTotal ? `R$${item.valorTotal},00` : "",
+            Valor: item.valorTotal !== undefined && item.valorTotal !== null
+                ? `R$ ${Number(item.valorTotal).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : "",
             _original: item // <-- importante!
         }));
     }
@@ -141,7 +144,7 @@ const Historico = () => {
     const racaOptions = racas.map(r => ({ value: r.id, label: r.nome }));
 
     const columns = ["Data", "Hora", "Cliente", "Pet", "Raça", "Serviço", "Valor"];
-    const tamanhoColunas = ["1%", "7%", "17%", "15%", "10%", "11%", "1%"];
+    const tamanhoColunas = ["0.1%", "7.4%", "17%", "15%", "10%", "11%", "6%"];
 
     const handleEdit = (item) => {
         setModalEditar({ aberto: true, agenda: item });
@@ -272,7 +275,7 @@ const Historico = () => {
                 </div>
                 <TableHistorico
                     columns={[...columns, "Editar"]}
-                    columnWidths={[...tamanhoColunas, "1%"]}
+                    columnWidths={tamanhoColunas}
                     data={dados}
                     onEdit={row => handleEdit(row._original || row)}
                 />

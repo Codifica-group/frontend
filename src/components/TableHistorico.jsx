@@ -9,7 +9,8 @@ export default function Table(props) {
                 <thead>
                     <tr>
                         {props.columns.map((col, index) => (
-                            <th key={index}
+                            <th
+                                key={index}
                                 style={props.columnWidths && props.columnWidths[index] ? { width: props.columnWidths[index] } : undefined}
                             >
                                 {col}
@@ -34,20 +35,14 @@ export default function Table(props) {
                                         </td>
                                     );
                                 }
-                                if (col === "Apagar") {
-                                    return (
-                                        <td key={colIndex}>
-                                            <button
-                                                className="icon-action-btn"
-                                                onClick={() => props.onDelete(row, props.tipo)}
-                                                title="Apagar"
-                                            >
-                                                <FiTrash size={18} />
-                                            </button>
-                                        </td>
-                                    );
-                                }
-                                return <td key={colIndex} style={props.columnWidths && props.columnWidths[rowIndex] ? { width: props.columnWidths[rowIndex] } : undefined}>{row[col]}</td>;
+                                return (
+                                    <td
+                                        key={colIndex}
+                                        style={props.columnWidths && props.columnWidths[colIndex] ? { width: props.columnWidths[colIndex] } : undefined}
+                                    >
+                                        {row[col]}
+                                    </td>
+                                );
                             })}
                         </tr>
                     ))}

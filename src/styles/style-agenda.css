@@ -551,7 +551,7 @@ body {
 }
 
 .btn-atualizar-agenda:hover {
-    background-color: #307e95;
+    background-color: #246078;
 }
 
 .form-agenda-inputs {
@@ -675,7 +675,6 @@ table {
 
 table th,
 table td {
-    border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
 }

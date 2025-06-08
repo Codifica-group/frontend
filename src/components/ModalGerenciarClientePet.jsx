@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import fecharIcon from "../assets/close.png";
 import ModalLoading from "./ModalLoading";
 import AlertErro from "./AlertErro";
 import Select from "react-select";
 import { putCliente, putPet } from "../utils/put";
 import { deleteCliente, deletePet } from "../utils/delete";
-import { getClientes, getRacas } from "../utils/get";
+import { getClientes, getRacas, getEndereco } from "../utils/get";
+import { set } from "date-fns";
 
 // Função para máscara de celular (formato: (99) 99999-9999)
 export function maskCelular(value) {
@@ -45,6 +47,7 @@ export default function ModalGerenciarClientePet({
     const [clientes, setClientes] = useState([]);
     const [racas, setRacas] = useState([]);
     const [erroLocal, setErroLocal] = useState(null);
+    const [lastCepBuscado, setLastCepBuscado] = useState("");
 
     // Aplica as máscaras ao carregar os dados
     useEffect(() => {
@@ -82,6 +85,33 @@ export default function ModalGerenciarClientePet({
 
     const handleChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
+
+        // Só chama getEndereco se o usuário alterar o campo CEP e for válido
+        if (field === "cep") {
+            const cepLimpo = value.replace(/\D/g, "");
+            if (cepLimpo.length === 8 && cepLimpo !== lastCepBuscado) {
+                console.log("Buscando endereço pelo CEP:", cepLimpo);
+                setLoadingMsg("Buscando endereço pelo CEP...");
+                setLoading(true);
+                getEndereco(cepLimpo)
+                    .then(res => {
+                        if (res && res.logradouro) {
+                            setForm(prev => ({
+                                ...prev,
+                                rua: res.logradouro || "",
+                                bairro: res.bairro || "",
+                                cidade: res.localidade || ""
+                            }));
+                        }
+                        setLastCepBuscado(cepLimpo);
+                    })
+                    .catch(error => {
+                        setErroLocal("Erro ao buscar endereço pelo CEP.");
+                        setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
+                    })
+                    .finally(() => setLoading(false));
+            }
+        }
     };
 
     const handleSelectChange = (field, option) => {
@@ -98,7 +128,10 @@ export default function ModalGerenciarClientePet({
                     nome: form.nome,
                     numCelular: unmaskNumber(form.numCelular),
                     cep: unmaskNumber(form.cep),
+                    rua: form.rua,
                     numEndereco: form.numEndereco,
+                    bairro: form.bairro,
+                    cidade: form.cidade,
                     complemento: form.complemento
                 });
             } else {
@@ -185,14 +218,47 @@ export default function ModalGerenciarClientePet({
                                             maxLength={9}
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Número Endereço</label>
-                                        <input
-                                            type="number"
-                                            value={form.numEndereco || ""}
-                                            onChange={e => handleChange("numEndereco", e.target.value)}
-                                            required
-                                        />
+                                    {/* Linha com Rua e N° Endereço */}
+                                    <div className="form-group" style={{ display: "flex", gap: "10px" }}>
+                                        <div style={{ flex: "3 1 75%" }}>
+                                            <label>Rua</label>
+                                            <input
+                                                type="text"
+                                                value={form.rua || ""}
+                                                onChange={e => handleChange("rua", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div style={{ flex: "1 1 15%" }}>
+                                            <label>Número</label>
+                                            <input
+                                                type="number"
+                                                value={form.numEndereco || ""}
+                                                onChange={e => handleChange("numEndereco", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Linha com Bairro e Cidade */}
+                                    <div className="form-group" style={{ display: "flex", gap: "10px" }}>
+                                        <div style={{ flex: "1 1 50%" }}>
+                                            <label>Bairro</label>
+                                            <input
+                                                type="text"
+                                                value={form.bairro || ""}
+                                                onChange={e => handleChange("bairro", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div style={{ flex: "1 1 50%" }}>
+                                            <label>Cidade</label>
+                                            <input
+                                                type="text"
+                                                value={form.cidade || ""}
+                                                onChange={e => handleChange("cidade", e.target.value)}
+                                                required
+                                            />
+                                        </div>
                                     </div>
                                     <div className="form-group">
                                         <label>Complemento</label>
@@ -237,9 +303,11 @@ export default function ModalGerenciarClientePet({
                                 </>
                             )}
                             <div className="modal-buttons">
-                                <button type="submit" className="btn-atualizar-agenda">Atualizar</button>
-                                <button type="button" className="btn-excluir" onClick={handleDelete}>Deletar</button>
-                                <button type="button" className="btn-cancelar" onClick={onClose}>Cancelar</button>
+                                <button type="button" className="btn-fechar" onClick={onClose}><img src={fecharIcon} alt="Fechar" /></button>
+                                <button type="button" className="btn-excluir" onClick={handleDelete} disabled={loading}>
+                                    {loading ? "Deletando..." : "Deletar"}
+                                </button>
+                                <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
                             </div>
                             {erroLocal && <AlertErro mensagem={erroLocal} erro={erroLocal} onClose={() => setErroLocal(null)} />}
                         </form>

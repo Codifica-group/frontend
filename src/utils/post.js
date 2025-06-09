@@ -47,8 +47,12 @@ export async function postVerificacao(token){
         return response;
     }
     catch(error) {
-        console.error("Erro ao criar Verificacao:", error.response || error.message);
-        throw error;
+        console.error("Erro ao verificar token:", error.response || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Erro desconhecido",
+            status: error.response?.status || 500,
+        };
     };
 }
 

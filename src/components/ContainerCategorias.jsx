@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { getDespesas } from '../utils/get';
 import ModalGastos from './ModalGastos';
 import { deleteDespesa } from '../utils/delete';
+import AlertDelete from './AlertDelete';
+import AlertErro from './AlertErro';
 
 export default function ContainerCategorias(props) {
     const [showModalSaida, setShowModalSaida] = useState(false);
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [erro, setErro] = useState({ aberto: false, mensagem: "", detalhe: "" });
     const [saida, setSaida] = useState();
     const [idDespesa, setIdDespesa] = useState();
 
@@ -20,17 +24,31 @@ export default function ContainerCategorias(props) {
         setShowModalSaida(true);
     }
 
-    const excluirDespesa = async () => {
+    const excluirDespesa = () => {
+        setShowDeleteAlert(true);
+    };
+
+    const confirmDelete = async () => {
+        setShowDeleteAlert(false);
         try {
             await deleteDespesa(idDespesa);
             const despesasAtualizadas = await getDespesas();
             props.setDespesas(despesasAtualizadas);
             setShowModalSaida(false);
-            console.log ("Despesas atualizadas:", despesasAtualizadas);
+            console.log("Despesas atualizadas:", despesasAtualizadas);
         } catch (error) {
             console.error("Erro ao excluir despesa:", error);
+            setErro({
+                aberto: true,
+                mensagem: `Erro ao deletar despesa.`,
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         }
-    }
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteAlert(false);
+    };
 
     return (
         <div className="categoria-wrapper">
@@ -110,6 +128,20 @@ export default function ContainerCategorias(props) {
                         onClick={excluirDespesa}
                     >Deletar</button>
                 </ModalGastos>
+            )}
+            {showDeleteAlert && (
+                <AlertDelete
+                    item={"essa despesa"}
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
+            {erro.aberto && (
+                <AlertErro
+                    mensagem={erro.mensagem}
+                    erro={erro.detalhe}
+                    onClose={() => setErro({ aberto: false, mensagem: "", detalhe: "" })}
+                />
             )}
         </div>
     );

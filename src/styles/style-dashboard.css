@@ -175,6 +175,7 @@
 
 .modal-saida,
 .modal-atualizar {
+    position: relative;
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
@@ -264,14 +265,14 @@
 }
 
 .modal-saida h2 {
-    color: #c26363;
+    color: #307E95;
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;
 }
 
 .modal-atualizar h2 {
-    color: #58873e;
+    color: #307E95;
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;

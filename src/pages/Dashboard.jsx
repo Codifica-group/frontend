@@ -134,10 +134,10 @@ export default function DashboardEleve() {
                                     />
                                 )} */}
                                 <button
-                                    className="kpi-action-button"
+                                    className="btn-novo"
                                     onClick={() => setShowModalSaida(true)}
                                 >
-                                    Adicionar Saída
+                                    + Nova Saída
                                 </button>
                             </div>
                             <div className="kpi-card">

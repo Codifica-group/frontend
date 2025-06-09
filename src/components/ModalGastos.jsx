@@ -5,6 +5,7 @@ import { postDespesa, postProduto } from "../utils/post";
 import { getDataAtual } from "../utils/util";
 import { putDespesa } from "../utils/put";
 import Select from "react-select";
+import fecharIcon from "../assets/close.png";
 
 export default function ModalGastos(props) {
     const [sugestoesSaida, setSugestoesSaida] = useState([]);
@@ -93,10 +94,10 @@ export default function ModalGastos(props) {
                 } catch (error) {
                     console.error("Erro ao criar despesa para o novo produto:", error);
                     props.setErro({
-                    aberto: true,
-                    mensagem: "Erro ao criar despesa para o novo produto.",
-                    detalhe: error?.response?.data?.message || error?.message || String(error)
-                });
+                        aberto: true,
+                        mensagem: "Erro ao criar despesa para o novo produto.",
+                        detalhe: error?.response?.data?.message || error?.message || String(error)
+                    });
                 }
             } catch (error) {
                 console.error("Erro ao criar produto:", error);
@@ -257,17 +258,34 @@ export default function ModalGastos(props) {
                     </div>
 
                     <div className="modal-buttons">
-                        <button
-                            type="button"
-                            className="btn-cancelar"
-                            onClick={() => props.showModal(false)}
-                        >
-                            Cancelar
-                        </button>
-                        <button type="submit" className="btn-confirmar-entrada">
-                            Confirmar
-                        </button>
-                        {props.children}
+                        {props.tipo === "atualizar" ? (
+                            <>
+                                <button
+                                    type="button"
+                                    className="btn-fechar"
+                                    onClick={() => props.showModal(false)}
+                                >
+                                    <img src={fecharIcon} alt="Fechar" />
+                                </button>
+                                {props.children}
+                                <button type="submit" className="btn-atualizar-agenda">
+                                    Atualizar
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    type="button"
+                                    className="btn-cancelar"
+                                    onClick={() => props.showModal(false)}
+                                >
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="btn-atualizar-agenda">
+                                    Salvar
+                                </button>
+                            </>
+                        )}
                     </div>
                 </form>
             </div>

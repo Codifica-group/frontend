@@ -106,7 +106,7 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                         <button type="button" onClick={onClose} className="btn-cancelar">Voltar</button>
                         <button
                             type="button"
-                            className="btn-confirmar-entrada"
+                            className="btn-atualizar-agenda"
                             onClick={handleSalvarClick}
                         >
                             Salvar Agenda

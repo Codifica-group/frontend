@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import fecharIcon from "../assets/close.png";
 import ModalLoading from "./ModalLoading";
-import AlertErro from "./AlertErro";
+import AlertDelete from "./AlertDelete";
 import Select from "react-select";
 import { putCliente, putPet } from "../utils/put";
 import { deleteCliente, deletePet } from "../utils/delete";
@@ -43,6 +43,7 @@ export default function ModalGerenciarClientePet({
     const [form, setForm] = useState({});
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [clientes, setClientes] = useState([]);
     const [racas, setRacas] = useState([]);
     const [lastCepBuscado, setLastCepBuscado] = useState("");
@@ -156,10 +157,14 @@ export default function ModalGerenciarClientePet({
         }
     };
 
-    const handleDelete = async (e) => {
+    const handleDelete = (e) => {
         e.preventDefault();
-        if (!window.confirm("Tem certeza que deseja deletar?")) return;
-        setLoadingMsg(`Deletando ${tipo == "cliente" ? "Cliente" : "Pet"}...`);
+        setShowDeleteAlert(true);
+    };
+
+    const confirmDelete = async () => {
+        setShowDeleteAlert(false);
+        setLoadingMsg(`Deletando ${tipo === "cliente" ? "Cliente" : "Pet"}...`);
         setLoading(true);
         try {
             if (tipo === "cliente") {
@@ -178,6 +183,10 @@ export default function ModalGerenciarClientePet({
         } finally {
             setLoading(false);
         }
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteAlert(false);
     };
 
     // Options para selects
@@ -318,6 +327,13 @@ export default function ModalGerenciarClientePet({
                         </form>
                     </div>
                 </div>
+            )}
+            {showDeleteAlert && (
+                <AlertDelete
+                    item={form.nome || (tipo === "cliente" ? "cliente" : "pet")}
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
             )}
         </>
     );

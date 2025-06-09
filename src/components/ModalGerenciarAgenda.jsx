@@ -5,6 +5,7 @@ import { NumericFormat } from "react-number-format";
 import { addHours, format } from "date-fns";
 import ModalLoading from "./ModalLoading";
 import fecharIcon from "../assets/close.png";
+import AlertDelete from "./AlertDelete";
 
 export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas, setErro }) {
     const [servicos, setServicos] = useState([]);
@@ -16,6 +17,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
     const [deslocamento, setDeslocamento] = useState("");
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
     useEffect(() => {
         if (!event) return;
@@ -102,13 +104,16 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
         }
     };
 
-    // Função para deletar Agenda
-    const handleDelete = async (e) => {
+    const handleDelete = (e) => {
         e.preventDefault();
-        if (!window.confirm("Tem certeza que deseja deletar esta agenda?")) return;
+        setShowDeleteAlert(true);
+    };
 
+    // Função para deletar Agenda
+    const confirmDelete = async () => {
+        setShowDeleteAlert(false);
         setLoadingMsg("Deletando agenda...");
-        setLoading(true)
+        setLoading(true);
         try {
             await deleteAgenda(event.id);
             if (typeof recarregarAgendas === "function") {
@@ -124,6 +129,10 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
         } finally {
             setLoading(false);
         }
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteAlert(false);
     };
 
     if (!event) return null;
@@ -213,6 +222,18 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                         </div>
                     </div>
                 )}
+            {showDeleteAlert && (
+                <AlertDelete
+                    item={
+                        (Array.isArray(event.servicos) && event.servicos.length > 0
+                            ? event.servicos.map(s => s.nome).join(", ") + " - "
+                            : "") +
+                        (event.pet?.nome || "agenda")
+                    }
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
         </>
     );
 }

@@ -6,11 +6,7 @@ export async function deleteDespesa(id) {
         return response.data;
     } catch (error) {
         console.error("Erro ao excluir despesa:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        throw error;
     }
 }
 
@@ -20,11 +16,7 @@ export async function deleteAgenda(id) {
         return response.data;
     } catch (error) {
         console.error("Erro ao excluir agenda:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        throw error;
     }
 }
 
@@ -34,11 +26,7 @@ export async function deleteCliente(id) {
         return response.data;
     } catch (error) {
         console.error("Erro ao excluir cliente:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        throw error;
     }
 }
 
@@ -48,10 +36,6 @@ export async function deletePet(id) {
         return response.data;
     } catch (error) {
         console.error("Erro ao excluir pet:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        throw error;
     }
 }

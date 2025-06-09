@@ -6,12 +6,8 @@ export async function postDespesa(body){
         return response.data;
     }
     catch(error) {
-        console.error("Erro na requisição:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Despesa:", error.response || error.message);
+        throw error;
     };
 }
 
@@ -21,12 +17,8 @@ export async function postProduto(body){
         return response.data;
     }
     catch(error) {
-        console.error("Erro na requisição:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Produto:", error.response || error.message);
+        throw error;
     };
 }
 
@@ -36,12 +28,8 @@ export async function postLucro(body){
         return response.data;
     }
     catch(error) {
-        console.error("Erro na requisição:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Lucro:", error.response || error.message);
+        throw error;
     };
 }
 
@@ -59,12 +47,8 @@ export async function postVerificacao(token){
         return response;
     }
     catch(error) {
-        console.error("Erro na requisição:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Verificacao:", error.response || error.message);
+        throw error;
     };
 }
 
@@ -73,12 +57,8 @@ export const postAgenda = async (agenda) => {
     const response = await axios.post("http://localhost:8080/api/agendas", agenda);
     return response.data;
   } catch (error) {
-    console.error("Erro ao criar agenda:", error.response || error.message);
-    return {
-      success: false,
-      message: error.response?.data?.message || "Erro desconhecido",
-      status: error.response?.status || 500,
-    };
+    console.error("Erro ao criar Agenda:", error.response || error.message);
+    throw error;
   }
 };
 
@@ -87,12 +67,8 @@ export async function postCliente(body) {
         const response = await axios.post("http://localhost:8080/api/clientes", body);
         return response.data;
     } catch (error) {
-        console.error("Erro ao criar cliente:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Cliente:", error.response || error.message);
+        throw error;
     }
 }
 
@@ -101,11 +77,7 @@ export async function postPet(body) {
         const response = await axios.post("http://localhost:8080/api/pets", body);
         return response.data;
     } catch (error) {
-        console.error("Erro ao criar pet:", error.response || error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Erro desconhecido",
-            status: error.response?.status || 500,
-        };
+        console.error("Erro ao criar Pet:", error.response || error.message);
+        throw error;
     }
 }

@@ -5,7 +5,8 @@ export async function getProdutos() {
         const response = await axios.get("http://localhost:8080/api/produtos");
         return response.data;
     } catch (error) {
-        return [];
+        console.error("Erro ao buscar Produtos:", error.response || error.message);
+        throw error;
     }
 }
 
@@ -14,28 +15,29 @@ export async function getCategorias() {
         const response = await axios.get("http://localhost:8080/api/categorias");
         return response.data;
     } catch (error) {
-        return [];
+        console.error("Erro ao buscar Categorias:", error.response || error.message);
+        throw error;
     }
 }
 
-export async function getDespesas(){
+export async function getDespesas() {
     try {
-        const response = await axios.get("http://localhost:8080/api/despesas")
+        const response = await axios.get("http://localhost:8080/api/despesas");
         return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar Despesas:", error.response || error.message);
+        throw error;
     }
-    catch(error) {
-        return error;
-    };
 }
 
-export async function getServicos(){
+export async function getServicos() {
     try {
-        const response = await axios.get("http://localhost:8080/api/servicos")
+        const response = await axios.get("http://localhost:8080/api/servicos");
         return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar Servicos:", error.response || error.message);
+        throw error;
     }
-    catch(error) {
-        return error;
-    };
 }
 
 export async function getHistorico(filtro) {
@@ -43,18 +45,18 @@ export async function getHistorico(filtro) {
         const response = await axios.post("http://localhost:8080/api/agendas/filtrar", filtro);
         return response.data;
     } catch (error) {
-        console.error("Erro ao buscar histórico:", error);
-        return [];
+        console.error("Erro ao buscar Historico:", error.response || error.message);
+        throw error;
     }
 }
 
 export async function getPets() {
     try {
         const response = await axios.get("http://localhost:8080/api/pets");
-        return response.data; // Deve ser um array igual ao exemplo que você mandou
+        return response.data;
     } catch (error) {
-        console.error("Erro ao buscar pets:", error);
-        return [];
+        console.error("Erro ao buscar Pets:", error.response || error.message);
+        throw error;
     }
 }
 
@@ -63,29 +65,29 @@ export async function getClientes() {
         const response = await axios.get("http://localhost:8080/api/clientes");
         return response.data;
     } catch (error) {
-        console.error("Erro ao buscar clientes:", error);
-        return [];
+        console.error("Erro ao buscar Clientes:", error.response || error.message);
+        throw error;
     }
 }
 
-    export async function getRacas() {
+export async function getRacas() {
     try {
         const response = await axios.get("http://localhost:8080/api/racas");
         return response.data;
     } catch (error) {
-        console.error("Erro ao buscar raças:", error);
-        return [];
+        console.error("Erro ao buscar Racas:", error.response || error.message);
+        throw error;
     }
 }
 
 export const getAgendas = async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/agendas");
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar todas as agendas:", error.response || error.message);
-    return [];
-  }
+    try {
+        const response = await axios.get("http://localhost:8080/api/agendas");
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar Agendas:", error.response || error.message);
+        throw error;
+    }
 };
 
 export async function getEndereco(cep) {
@@ -93,7 +95,7 @@ export async function getEndereco(cep) {
         const response = await axios.get(`http://localhost:8080/api/cep/${cep}`);
         return response.data;
     } catch (error) {
-        console.error("Erro ao buscar endereço:", error);
-        return null;
+        console.error("Erro ao buscar Endereco:", error.response || error.message);
+        throw error;
     }
 }

@@ -12,11 +12,7 @@ export const calcularServico = async (body) => {
     return response.data;
   } catch (error) {
     console.error("Erro ao calcular serviço:", error.response || error.message);
-    return {
-      success: false,
-      message: error.response?.data?.message || "Erro desconhecido",
-      status: error.response?.status || 500,
-    };
+    throw error;
   }
 };
 
@@ -26,11 +22,7 @@ export const filtrarAgendas = async (filtros) => {
     return response.data;
   } catch (error) {
     console.error("Erro ao filtrar agendas:", error.response || error.message);
-    return {
-      success: false,
-      message: error.response?.data?.message || "Erro desconhecido",
-      status: error.response?.status || 500,
-    };
+    throw error;
   }
 };
 
@@ -52,6 +44,6 @@ export async function exibirAgendas() {
     }));
   } catch (error) {
     console.error("Erro ao buscar agendas:", error);
-    return [];
+    throw error;
   }
 }

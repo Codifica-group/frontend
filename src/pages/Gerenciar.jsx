@@ -40,11 +40,10 @@ const Gerenciar = () => {
             setDados(Array.isArray(clientes) ? clientes : []);
             console.log("Clientes:", clientes);
         } catch (error) {
-            alert("Erro ao buscar dados:\n" + (error?.message || String(error)));
             setErro({
                 aberto: true,
                 mensagem: "Erro ao buscar dados.",
-                detalhe: error?.message || String(error)
+                detalhe: error?.response?.data?.message || error?.message || String(error)
             });
         } finally {
             setLoading(false);
@@ -66,11 +65,10 @@ const Gerenciar = () => {
             setDados(petsCompletos);
             console.log("Pets:", petsCompletos);
         } catch (error) {
-            alert("Erro ao buscar dados:\n" + (error?.message || String(error)));
             setErro({
                 aberto: true,
                 mensagem: "Erro ao buscar dados.",
-                detalhe: error?.message || String(error)
+                detalhe: error?.response?.data?.message || error?.message || String(error)
             });
         } finally {
             setLoading(false);

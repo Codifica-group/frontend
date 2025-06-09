@@ -286,6 +286,7 @@ export default function Agenda() {
             event={modalEvento}
             onClose={() => setModalEvento(null)}
             recarregarAgendas={carregarAgendas}
+            setErro={setErro}
           />
         )}
         {erro.aberto && (

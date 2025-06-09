@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import TableHistorico from "../components/TableHistorico";
 import { getHistorico, getPets, getClientes, getRacas } from "../utils/get";
-import { deleteAgenda } from "../utils/delete"; // <-- importe aqui
-import { putAgenda } from "../utils/put";       // <-- importe aqui
 import Select from "react-select";
 import ModalLoading from "../components/ModalLoading";
 import ModalGerenciarAgenda from "../components/ModalGerenciarAgenda";
+import AlertErro from "../components/AlertErro";
 
 const Historico = () => {
     useEffect(() => {
@@ -34,6 +33,7 @@ const Historico = () => {
 
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+    const [erro, setErro] = useState({ aberto: false, mensagem: "", detalhe: "" });
 
     // Função para buscar histórico com todos os filtros
     async function buscarHistorico(filtro) {
@@ -69,6 +69,13 @@ const Historico = () => {
             });
 
             setDados(mapearDadosParaTabela(filtrado));
+        } catch (error) {
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao buscar histórico",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
+            return;
         } finally {
             setLoading(false);
         }
@@ -119,19 +126,51 @@ const Historico = () => {
 
     // Buscar clientes e raças ao montar o componente
     useEffect(() => {
-        getPets().then(setPets);
-        getClientes().then(setClientes);
-        getRacas().then(res => {
-            // Se vier agrupado por porte, transforma em array único
-            if (Array.isArray(res)) setRacas(res);
-            else if (res && typeof res === "object") {
-                // Junta todos os arrays dos portes em um só
-                const todasRacas = Object.values(res).flat();
-                setRacas(todasRacas);
-            } else if (Array.isArray(res?.data)) setRacas(res.data);
-            else if (Array.isArray(res?.content)) setRacas(res.content);
-            else setRacas([]);
-        });
+        setLoadingMsg("Carregando dados...");
+        setLoading(true);
+        // getPets
+        try {
+            getPets().then(setPets)
+        } catch (error) {
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao buscar pets",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
+        }
+
+        // getClientes
+        try {
+            getClientes().then(setClientes)
+        } catch (error) {
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao buscar clientes",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
+        }
+
+        // getRacas
+        try {
+            getRacas().then(res => {
+                // Se vier agrupado por porte, transforma em array único
+                if (Array.isArray(res)) setRacas(res);
+                else if (res && typeof res === "object") {
+                    // Junta todos os arrays dos portes em um só
+                    const todasRacas = Object.values(res).flat();
+                    setRacas(todasRacas);
+                } else if (Array.isArray(res?.data)) setRacas(res.data);
+                else if (Array.isArray(res?.content)) setRacas(res.content);
+                else setRacas([]);
+            })
+        } catch (error) {
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao buscar raças",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
+        }
+        setLoading(false);
     }, []);
 
     // Para o Select de pets
@@ -149,49 +188,6 @@ const Historico = () => {
     const handleEdit = (item) => {
         setModalEditar({ aberto: true, agenda: item });
     };
-
-    async function salvarEdicao() {
-        if (!modalEditar.agenda) return;
-        setModalEditar({ aberto: false, agenda: null });
-        setLoadingMsg("Atualizando agenda...");
-        setLoading(true);
-        try {
-            // Monte o body conforme o esperado pelo backend
-            const body = {
-                petId: modalEditar.agenda.petId,
-                servicosId: modalEditar.agenda.servicosId,
-                dataHoraInicio: modalEditar.agenda.dataHoraInicio,
-                dataHoraFim: modalEditar.agenda.dataHoraFim,
-                valor: modalEditar.agenda.valor,
-            };
-            await putAgenda(modalEditar.agenda.id, body);
-            setModalEditar({ aberto: false, agenda: null });
-            buscarHistorico(filtros);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function confirmarApagar() {
-        if (!modalApagar.id) return;
-        setModalApagar({ aberto: false, id: null });
-        setLoadingMsg("Deletando agenda...");
-        setLoading(true);
-        try {
-            await deleteAgenda(modalApagar.id);
-            setModalApagar({ aberto: false, id: null });
-            buscarHistorico({
-                dataInicio: filtros.dataInicio,
-                dataFim: filtros.dataFim,
-                clienteId: filtros.clienteId || null,
-                petId: filtros.petId || null,
-                racaId: filtros.racaId || null,
-                servico: filtros.servico,
-            });
-        } finally {
-            setLoading(false);
-        }
-    }
 
     return (
         <div className="historico-root">
@@ -226,6 +222,7 @@ const Historico = () => {
                             placeholder="Nome Cliente"
                             value={clienteOptions.find(opt => opt.value === filtros.clienteId) || null}
                             onChange={selected => setFiltros({ ...filtros, clienteId: selected ? selected.value : null })}
+                            isClearable
                         />
 
                         <Select
@@ -233,6 +230,7 @@ const Historico = () => {
                             placeholder="Nome Pet"
                             value={petOptions.find(opt => opt.value === filtros.petId) || null}
                             onChange={selected => setFiltros({ ...filtros, petId: selected ? selected.value : null })}
+                            isClearable
                         />
 
                         <Select
@@ -240,6 +238,7 @@ const Historico = () => {
                             placeholder="Raça"
                             value={racaOptions.find(opt => opt.value === filtros.racaId) || null}
                             onChange={selected => setFiltros({ ...filtros, racaId: selected ? selected.value : null })}
+                            isClearable
                         />
 
                         <Select
@@ -252,7 +251,7 @@ const Historico = () => {
                                 servico: selected || []
                             })}
                             classNamePrefix="custom-select"
-
+                            isClearable
                         />
 
 
@@ -311,6 +310,14 @@ const Historico = () => {
                         event={modalEditar.agenda}
                         onClose={() => setModalEditar({ aberto: false, agenda: null })}
                         recarregarAgendas={() => buscarHistorico(filtros)}
+                        setErro={setErro}
+                    />
+                )}
+                {erro.aberto && (
+                    <AlertErro
+                        mensagem={erro.mensagem}
+                        erro={erro.detalhe}
+                        onClose={() => setErro({ aberto: false, mensagem: "", detalhe: "" })}
                     />
                 )}
 

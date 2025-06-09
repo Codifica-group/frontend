@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import { deleteAgenda } from "../utils/delete";
 import { putAgenda } from "../utils/put";
 import { NumericFormat } from "react-number-format";
-import { addHours, format, set } from "date-fns";
+import { addHours, format } from "date-fns";
 import ModalLoading from "./ModalLoading";
 import fecharIcon from "../assets/close.png";
 
-export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas }) {
+export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas, setErro }) {
     const [servicos, setServicos] = useState([]);
     const [total, setTotal] = useState("");
     const [form, setForm] = useState({
         dataInicio: "",
         dataFim: "",
     });
-    const [deslocamento, setDeslocamento] = useState(""); 
+    const [deslocamento, setDeslocamento] = useState("");
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
 
@@ -32,19 +32,19 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             dataFim: event.dataHoraFim ? event.dataHoraFim.slice(0, 16) : "",
         });
 
-        setDeslocamento(event.valorDeslocamento ?? ""); 
+        setDeslocamento(event.valorDeslocamento ?? "");
 
         if (typeof event.valorTotal === "number") {
             setTotal(event.valorTotal);
         } else {
             const somaServicos = servicosApi.reduce((acc, s) => acc + (Number(s.valor) || 0), 0);
-            setTotal(somaServicos + (Number(event.valorDeslocamento) || 0)); 
+            setTotal(somaServicos + (Number(event.valorDeslocamento) || 0));
         }
     }, [event]);
 
     useEffect(() => {
         const somaServicos = servicos.reduce((acc, s) => acc + (Number(s.valor) || 0), 0);
-        setTotal((Number(deslocamento) || 0) + somaServicos); 
+        setTotal((Number(deslocamento) || 0) + somaServicos);
     }, [servicos, deslocamento]);
 
     const handleServicoChange = (idx, value) => {
@@ -82,7 +82,7 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
                     id: s.id,
                     valor: s.valor
                 })),
-                valorDeslocamento: deslocamento, 
+                valorDeslocamento: deslocamento,
                 dataHoraInicio: form.dataInicio,
                 dataHoraFim: form.dataFim
             };
@@ -92,8 +92,11 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             }
             onClose();
         } catch (error) {
-            alert("Erro ao atualizar agendamento:\n" + (error?.message || String(error)));
-            console.error("Erro ao atualizar agendamento:", error);
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao atualizar Agenda.",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         } finally {
             setLoading(false);
         }
@@ -113,8 +116,11 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
             }
             onClose();
         } catch (error) {
-            alert("Erro ao deletar agendamento:\n" + (error?.message || String(error)));
-            console.error("Erro ao deletar agendamento: ", error);
+            setErro({
+                aberto: true,
+                mensagem: "Erro ao deletar Agenda.",
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         } finally {
             setLoading(false);
         }

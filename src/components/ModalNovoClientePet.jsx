@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import ModalLoading from "./ModalLoading";
-import AlertErro from "./AlertErro";
 import Select from "react-select";
 import { postCliente, postPet } from "../utils/post";
 import { getClientes, getRacas, getEndereco } from "../utils/get";
@@ -12,7 +11,6 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
     const [loadingMsg, setLoadingMsg] = useState("Salvando...");
     const [clientes, setClientes] = useState([]);
     const [racas, setRacas] = useState([]);
-    const [erroLocal, setErroLocal] = useState(null);
 
     useEffect(() => {
         if (tipo === "pet") {
@@ -43,9 +41,11 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
                         }));
                     }
                 } catch (error) {
-                    console.error("Erro ao buscar endereço:", error);
-                    setErroLocal("Erro ao buscar endereço pelo CEP.");
-                    setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
+                    setErro({
+                        aberto: true,
+                        mensagem: "Erro ao buscar endereço.",
+                        detalhe: error?.response?.data?.message || error?.message || String(error)
+                    });
                 } finally {
                     setLoading(false);
                 }
@@ -88,9 +88,11 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
             if (recarregar) await recarregar();
             onClose();
         } catch (error) {
-            alert("Erro ao cadastrar:\n" + (error?.message || String(error)));
-            setErroLocal(error?.message || "Erro ao cadastrar.");
-            setErro && setErro({ aberto: true, mensagem: "Erro ao cadastrar.", detalhe: error?.message || String(error) });
+            setErro({
+                aberto: true,
+                mensagem: `Erro ao cadastrar ${tipo === "cliente" ? 'cliente' : 'pet'}.`,
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         } finally {
             setLoading(false);
         }
@@ -227,7 +229,6 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
                                 <button type="button" className="btn-cancelar" onClick={onClose}>Cancelar</button>
                                 <button type="submit" className="btn-atualizar-agenda">Salvar</button>
                             </div>
-                            {erroLocal && <AlertErro mensagem={erroLocal} erro={erroLocal} onClose={() => setErroLocal(null)} />}
                         </form>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ export default function NoData() {
                 </g>
             </svg>
             <div className="text-lg text-gray-500 mt-2 font-medium tracking-wide text-center">
-                Nenhum dado encontrado para este tipo.
+                Nenhum dado encontrado.
             </div>
         </div>
     );

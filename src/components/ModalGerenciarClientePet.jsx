@@ -6,7 +6,6 @@ import Select from "react-select";
 import { putCliente, putPet } from "../utils/put";
 import { deleteCliente, deletePet } from "../utils/delete";
 import { getClientes, getRacas, getEndereco } from "../utils/get";
-import { set } from "date-fns";
 
 // Função para máscara de celular (formato: (99) 99999-9999)
 export function maskCelular(value) {
@@ -46,7 +45,6 @@ export default function ModalGerenciarClientePet({
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
     const [clientes, setClientes] = useState([]);
     const [racas, setRacas] = useState([]);
-    const [erroLocal, setErroLocal] = useState(null);
     const [lastCepBuscado, setLastCepBuscado] = useState("");
 
     // Aplica as máscaras ao carregar os dados
@@ -107,8 +105,11 @@ export default function ModalGerenciarClientePet({
                         setLastCepBuscado(cepLimpo);
                     })
                     .catch(error => {
-                        setErroLocal("Erro ao buscar endereço pelo CEP.");
-                        setErro && setErro({ aberto: true, mensagem: "Erro ao buscar endereço.", detalhe: error?.message || String(error) });
+                        setErro({
+                            aberto: true,
+                            mensagem: "Erro ao buscar endereço pelo CEP.",
+                            detalhe: error?.response?.data?.message || error?.message || String(error)
+                        });
                     })
                     .finally(() => setLoading(false));
             }
@@ -145,9 +146,11 @@ export default function ModalGerenciarClientePet({
             if (recarregar) await recarregar();
             onClose();
         } catch (error) {
-            alert("Erro ao atualizar:\n" + (error?.message || String(error)));
-            setErroLocal(error?.message || "Erro ao atualizar.");
-            setErro && setErro({ aberto: true, mensagem: "Erro ao atualizar.", detalhe: error?.message || String(error) });
+            setErro({
+                aberto: true,
+                mensagem: `Erro ao atualizar ${tipo === "cliente" ? 'cliente' : 'pet'}.`,
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         } finally {
             setLoading(false);
         }
@@ -167,9 +170,11 @@ export default function ModalGerenciarClientePet({
             if (recarregar) await recarregar();
             onClose();
         } catch (error) {
-            alert("Erro ao deletar:\n" + (error?.message || String(error)));
-            setErroLocal(error?.message || "Erro ao deletar.");
-            setErro && setErro({ aberto: true, mensagem: "Erro ao deletar.", detalhe: error?.message || String(error) });
+            setErro({
+                aberto: true,
+                mensagem: `Erro ao deletar ${tipo === "cliente" ? 'cliente' : 'pet'}.`,
+                detalhe: error?.response?.data?.message || error?.message || String(error)
+            });
         } finally {
             setLoading(false);
         }
@@ -310,7 +315,6 @@ export default function ModalGerenciarClientePet({
                                 </button>
                                 <button type="button" className="btn-atualizar-agenda" onClick={handleUpdate}>Atualizar</button>
                             </div>
-                            {erroLocal && <AlertErro mensagem={erroLocal} erro={erroLocal} onClose={() => setErroLocal(null)} />}
                         </form>
                     </div>
                 </div>

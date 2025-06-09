@@ -49,21 +49,21 @@
 }
 
 .tab-container {
-    width: 88%;
+    width: 85%;
     height: 55%;
     display: flex;
     gap: 0.5vw;
 }
 
 .button-group {
-    width: 12%;
+    width: 15%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .btn-novo {
-        min-width: 80%;
+        min-width: 75%;
         background: #307e95;
         border: none;
         color: white;
@@ -84,7 +84,7 @@
 }
 
 .button-table {
-    width: 9%;
+    width: 11%;
     background-color: #307d95a4;
     border-radius: 20px 20px 0 0;
     color: #fff;
@@ -92,7 +92,7 @@
 }
 
 .button-table-ativo {
-    width: 9%;
+    width: 11%;
     background-color: #307E95;
     border-radius: 20px 20px 0 0;
     color: #fff;

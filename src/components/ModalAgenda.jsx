@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { getPets, getServicos } from "../utils/get";
 import { exibirAgendas, calcularServico } from "../utils/agenda";
-import { addMinutes, addHours, format, parseISO, max, set } from "date-fns";
+import { addHours, format, parseISO, max, set } from "date-fns";
 import ModalValorAgenda from "./ModalValorAgenda";
 import { postAgenda } from "../utils/post";
 import ModalLoading from "./ModalLoading";
-import AlertErro from "./AlertErro";
 import "../styles/style-agenda.css";
 
 export default function ModalAgenda(props) {
@@ -36,8 +35,7 @@ export default function ModalAgenda(props) {
             );
             let inicio;
             if (eventosHoje.length > 0) {
-                const maiorFim = max(eventosHoje.map(ev => parseISO(ev.end)));
-                inicio = addMinutes(maiorFim, 1);
+                inicio = max(eventosHoje.map(ev => parseISO(ev.end)));
             } else {
                 inicio = hoje;
             }
@@ -145,13 +143,11 @@ export default function ModalAgenda(props) {
             });
             console.log("Calculo Serviço:", resultado);
         } catch (error) {
-            alert("Erro ao calcular serviço:\n" + (error?.message || String(error)));
             props.setErro({
                 aberto: true,
                 mensagem: "Erro ao calcular serviço.",
-                detalhe: error?.message || String(error)
+                detalhe: error?.response?.data?.message || error?.message || String(error)
             });
-            console.error("Erro ao calcular serviço:", error);
         } finally {
             setLoading(false);
         }
@@ -182,13 +178,11 @@ export default function ModalAgenda(props) {
                 props.recarregarAgendas();
             }
         } catch (error) {
-            alert("Erro ao salvar agendamento:\n" + (error?.message || String(error)));
             props.setErro({
                 aberto: true,
                 mensagem: "Erro ao salvar agendamento!",
-                detalhe: error?.message || String(error)
+                detalhe: error?.response?.data?.message || error?.message || String(error)
             });
-            console.error(error);
         } finally {
             setLoading(false);
         }

@@ -13,6 +13,7 @@ import saldoDisponivel from "../assets/saldo-disponivel.png";
 import info from "../assets/info.png";
 import lucroImage from "../assets/lucro.png";
 import ModalLoading from "../components/ModalLoading";
+import AlertErro from "../components/AlertErro";
 
 export default function DashboardEleve() {
     const [dataSelecionada, setDataSelecionada] = useState(getDataAtual());
@@ -31,7 +32,9 @@ export default function DashboardEleve() {
     const [servicos, setServicos] = useState([]);
     const [agendas, setAgendas] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+    const [erro, setErro] = useState({ aberto: false, mensagem: "", detalhe: "" });
+
+
     useEffect(() => {
         document.title = `Dashboard`;
         (async () => {
@@ -39,12 +42,16 @@ export default function DashboardEleve() {
                 setCategorias(await getCategorias());
                 setProdutos(await getProdutos());
                 setDespesas(await getDespesas());
-                setLucro(await postLucro({"dataInicio": dataSelecionada, "dataFim": dataSelecionada}))
-                setLucroMensal(await postLucro({"dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada}));
+                setLucro(await postLucro({ "dataInicio": dataSelecionada, "dataFim": dataSelecionada }))
+                setLucroMensal(await postLucro({ "dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada }));
                 setServicos(await getServicos());
                 setAgendas(await getAgendas());
             } catch (error) {
-                console.error("Erro ao carregar produtos:", error);
+                setErro({
+                    aberto: true,
+                    mensagem: "Erro ao carregar produtos.",
+                    detalhe: error?.response?.data?.message || error?.message || String(error)
+                });
             } finally {
                 setLoading(false);
             }
@@ -55,10 +62,14 @@ export default function DashboardEleve() {
         setLoading(true);
         (async () => {
             try {
-                setLucro(await postLucro({"dataInicio": dataSelecionada, "dataFim": dataSelecionada}))
-                setLucroMensal(await postLucro({"dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada}));
+                setLucro(await postLucro({ "dataInicio": dataSelecionada, "dataFim": dataSelecionada }))
+                setLucroMensal(await postLucro({ "dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada }));
             } catch (error) {
-                console.error("Erro ao carregar produtos:", error);
+                setErro({
+                    aberto: true,
+                    mensagem: "Erro ao carregar produtos.",
+                    detalhe: error?.response?.data?.message || error?.message || String(error)
+                });
             }
             finally {
                 setLoading(false);
@@ -82,7 +93,7 @@ export default function DashboardEleve() {
 
     return (
         <div className="dashboard">
-            {loading ? ( <ModalLoading /> ) : null}
+            {loading ? (<ModalLoading />) : null}
             <SideBar selecionado="dashboard" />
             <div className="main">
                 <header className="kpi-header-container">
@@ -119,6 +130,7 @@ export default function DashboardEleve() {
                                     <ModalComparar
                                         submit={handleSubmitComparar}
                                         showModal={setShowModalComparar}
+                                        setErro={setErro}
                                     />
                                 )} */}
                                 <button
@@ -167,20 +179,20 @@ export default function DashboardEleve() {
                                             {
                                                 label: "Saídas",
                                                 data: despesas.length === 0
-                                                ? []
-                                                : categorias.map(categoria => {
-                                                    const produtosDaCategoria = produtos.filter(
-                                                        p => p.categoria?.id === categoria.id
-                                                    );
-                                                    const idsProdutos = produtosDaCategoria.map(p => p.id);
-                                                    return despesas
-                                                        .filter(
-                                                            d =>
-                                                                d.data === dataSelecionada &&
-                                                                idsProdutos.includes(d.produto?.id)
-                                                        )
-                                                        .reduce((soma, d) => soma + Number(d.valor), 0);
-                                                }),
+                                                    ? []
+                                                    : categorias.map(categoria => {
+                                                        const produtosDaCategoria = produtos.filter(
+                                                            p => p.categoria?.id === categoria.id
+                                                        );
+                                                        const idsProdutos = produtosDaCategoria.map(p => p.id);
+                                                        return despesas
+                                                            .filter(
+                                                                d =>
+                                                                    d.data === dataSelecionada &&
+                                                                    idsProdutos.includes(d.produto?.id)
+                                                            )
+                                                            .reduce((soma, d) => soma + Number(d.valor), 0);
+                                                    }),
                                                 backgroundColor: ["#c26363", "#f97777", "#ffbcbc", "#ffdddd", "#b0c4de", "#ace58d"],
                                             },
                                         ],
@@ -215,6 +227,7 @@ export default function DashboardEleve() {
                                 produtos={produtos}
                                 setDespesas={setDespesas}
                                 setProdutos={setProdutos}
+                                setErro={setErro}
                             />
                         )}
                     </div>
@@ -237,12 +250,12 @@ export default function DashboardEleve() {
                                                 label: "Entradas",
                                                 data: servicos.map(servico =>
                                                     agendas.filter(agenda => agenda.dataHoraInicio.startsWith(dataSelecionada))
-                                                    .reduce((soma, agenda) => (
-                                                        soma +
-                                                        agenda.servicos
-                                                            .filter(s => s.id === servico.id)
-                                                            .reduce((acc, s) => acc + Number(s.valor), 0)
-                                                    ), 0)
+                                                        .reduce((soma, agenda) => (
+                                                            soma +
+                                                            agenda.servicos
+                                                                .filter(s => s.id === servico.id)
+                                                                .reduce((acc, s) => acc + Number(s.valor), 0)
+                                                        ), 0)
                                                 ),
                                                 backgroundColor: ["#58873e", "#7dac63", "#ace58d"],
                                             },
@@ -270,6 +283,13 @@ export default function DashboardEleve() {
                     </div>
                 </div>
             </div>
+            {erro.aberto && (
+                <AlertErro
+                    mensagem={erro.mensagem}
+                    erro={erro.detalhe}
+                    onClose={() => setErro({ aberto: false, mensagem: "", detalhe: "" })}
+                />
+            )}
         </div>
     );
 }

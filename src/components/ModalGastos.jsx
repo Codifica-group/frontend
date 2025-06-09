@@ -48,13 +48,18 @@ export default function ModalGastos(props) {
             }
 
             try {
-                if(props.tipo === "atualizar") {
+                if (props.tipo === "atualizar") {
                     await putDespesa(props.idDespesa, novaDespesa);
                 } else {
                     await postDespesa(novaDespesa);
                 }
             } catch (error) {
                 console.error("Erro ao criar/atualizar despesa:", error);
+                props.setErro({
+                    aberto: true,
+                    mensagem: "Erro ao criar/atualizar despesa.",
+                    detalhe: error?.response?.data?.message || error?.message || String(error)
+                });
             }
         } else {
             const novoProduto = [{
@@ -80,16 +85,26 @@ export default function ModalGastos(props) {
                     }];
                 }
                 try {
-                    if(props.tipo === "atualizar") {
+                    if (props.tipo === "atualizar") {
                         await putDespesa(props.idDespesa, novaDespesa);
                     } else {
                         await postDespesa(novaDespesa);
                     }
                 } catch (error) {
                     console.error("Erro ao criar despesa para o novo produto:", error);
+                    props.setErro({
+                    aberto: true,
+                    mensagem: "Erro ao criar despesa para o novo produto.",
+                    detalhe: error?.response?.data?.message || error?.message || String(error)
+                });
                 }
             } catch (error) {
                 console.error("Erro ao criar produto:", error);
+                props.setErro({
+                    aberto: true,
+                    mensagem: "Erro ao criar produto.",
+                    detalhe: error?.response?.data?.message || error?.message || String(error)
+                });
             }
         }
 
@@ -223,10 +238,10 @@ export default function ModalGastos(props) {
                             }}
                             thousandSeparator="."
                             decimalSeparator=","
-                        prefix="R$ "
-                        placeholder="R$ 0,00"
-                        className="form-control"
-                        required
+                            prefix="R$ "
+                            placeholder="R$ 0,00"
+                            className="form-control"
+                            required
                         />
                     </div>
 

@@ -85,3 +85,17 @@ export async function postPet(body) {
         throw error;
     }
 }
+
+export async function postRaca(body) {
+    try {
+        const response = await axios.post("http://localhost:8080/api/racas", body, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao criar Raça:", error.response || error.message);
+        throw error;
+    }
+}

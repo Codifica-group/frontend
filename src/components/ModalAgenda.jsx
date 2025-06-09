@@ -132,6 +132,24 @@ export default function ModalAgenda(props) {
             return;
         }
 
+        // Verifica datas
+        if (!form.dataInicio) {
+            setErro({
+                aberto: true,
+                mensagem: "Preencha a data de início do atendimento.",
+                detalhe: ""
+            });
+            return;
+        }
+        if (!form.dataFim) {
+            setErro({
+                aberto: true,
+                mensagem: "Preencha a data de fim do atendimento.",
+                detalhe: ""
+            });
+            return;
+        }
+
         setLoadingMsg("Calculando serviço...");
         setLoading(true);
         try {
@@ -194,6 +212,7 @@ export default function ModalAgenda(props) {
                 valores={modalValor}
                 onClose={() => setModalValor(null)}
                 onSalvar={handleSalvarAgendamento}
+                setErro={props.setErro}
             />
         );
     }

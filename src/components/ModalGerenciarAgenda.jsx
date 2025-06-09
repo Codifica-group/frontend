@@ -75,6 +75,73 @@ export default function ModalGerenciarAgenda({ event, onClose, recarregarAgendas
     // Função para atualizar Agenda
     const handleUpdate = async (e) => {
         e.preventDefault();
+
+        // Validação dos campos
+        // Verifica se algum serviço está vazio, null ou menor que 0
+        for (const servico of servicos) {
+            if (
+                servico.valor === null ||
+                servico.valor === "" ||
+                isNaN(servico.valor) ||
+                Number(servico.valor) < 0
+            ) {
+                setErro({
+                    aberto: true,
+                    mensagem: `Preencha corretamente o valor do serviço ${servico.nome}.`,
+                    detalhe: ""
+                });
+                return;
+            }
+        }
+
+        // Verifica deslocamento
+        if (
+            deslocamento === null ||
+            deslocamento === "" ||
+            isNaN(deslocamento) ||
+            Number(deslocamento) < 0
+        ) {
+            setErro({
+                aberto: true,
+                mensagem: "Preencha corretamente o valor do deslocamento.",
+                detalhe: ""
+            });
+            return;
+        }
+
+        // Verifica datas
+        if (!form.dataInicio) {
+            setErro({
+                aberto: true,
+                mensagem: "Preencha a data de início do atendimento.",
+                detalhe: ""
+            });
+            return;
+        }
+        if (!form.dataFim) {
+            setErro({
+                aberto: true,
+                mensagem: "Preencha a data de fim do atendimento.",
+                detalhe: ""
+            });
+            return;
+        }
+
+        // Verifica total
+        if (
+            total === null ||
+            total === "" ||
+            isNaN(total) ||
+            Number(total) < 0
+        ) {
+            setErro({
+                aberto: true,
+                mensagem: "O valor total não pode ser negativo ou vazio.",
+                detalhe: ""
+            });
+            return;
+        }
+
         setLoadingMsg("Atualizando agenda...");
         setLoading(true);
         try {

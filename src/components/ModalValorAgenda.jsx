@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
 
-export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
+export default function ModalValorAgenda({ valores, onClose, onSalvar, setErro }) {
     const [servicos, setServicos] = useState(
         Array.isArray(valores.servicos)
             ? valores.servicos.map(s => ({
@@ -34,16 +34,65 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
 
     // Chama o onSalvar do pai passando os serviços atualizados
     const handleSalvarClick = (e) => {
-        e.preventDefault();
-        if (onSalvar) {
-            onSalvar({
-                ...valores,
-                servicos,
-                deslocamento,
-                valor: total
+    e.preventDefault();
+
+    // Validação dos campos
+    // Verifica se algum serviço está vazio, null ou menor que 0
+    for (const servico of servicos) {
+        if (
+            servico.valor === null ||
+            servico.valor === "" ||
+            isNaN(servico.valor) ||
+            Number(servico.valor) < 0
+        ) {
+            setErro({
+                aberto: true,
+                mensagem: `Preencha corretamente o valor do serviço ${servico.nome}.`,
+                detalhe: ""
             });
+            return;
         }
-    };
+    }
+
+    // Verifica deslocamento
+    if (
+        deslocamento === null ||
+        deslocamento === "" ||
+        isNaN(deslocamento) ||
+        Number(deslocamento) < 0
+    ) {
+        setErro({
+            aberto: true,
+            mensagem: "Preencha corretamente o valor do deslocamento.",
+            detalhe: ""
+        });
+        return;
+    }
+
+    // Verifica total
+    if (
+        total === null ||
+        total === "" ||
+        isNaN(total) ||
+        Number(total) < 0
+    ) {
+        setErro({
+            aberto: true,
+            mensagem: "O valor total não pode ser negativo ou vazio.",
+            detalhe: ""
+        });
+        return;
+    }
+
+    if (onSalvar) {
+        onSalvar({
+            ...valores,
+            servicos,
+            deslocamento,
+            valor: total
+        });
+    }
+};
 
     return (
         <div className="modal-overlay">
@@ -109,7 +158,7 @@ export default function ModalValorAgenda({ valores, onClose, onSalvar }) {
                             className="btn-atualizar-agenda"
                             onClick={handleSalvarClick}
                         >
-                            Salvar Agenda
+                            Salvar
                         </button>
                     </div>
                 </form>

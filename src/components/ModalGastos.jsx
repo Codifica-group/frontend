@@ -19,6 +19,40 @@ export default function ModalGastos(props) {
     const handleSubmitSaida = async (e) => {
         e.preventDefault();
 
+        // Validação dos campos obrigatórios
+        if (!props.novoItem.produto || props.novoItem.produto.trim() === "") {
+            props.setErro({
+                aberto: true,
+                mensagem: "Preencha o nome do produto.",
+                detalhe: ""
+            });
+            return;
+        }
+        if (!props.novoItem.categoria || isNaN(Number(props.novoItem.categoria))) {
+            props.setErro({
+                aberto: true,
+                mensagem: "Selecione uma categoria.",
+                detalhe: ""
+            });
+            return;
+        }
+        if (!props.novoItem.valor || isNaN(Number(props.novoItem.valor.replace("R$ ", "").replace(".", "").replace(",", "."))) || Number(props.novoItem.valor.replace("R$ ", "").replace(".", "").replace(",", ".")) <= 0) {
+            props.setErro({
+                aberto: true,
+                mensagem: "Preencha corretamente o valor (deve ser maior que zero).",
+                detalhe: ""
+            });
+            return;
+        }
+        if (!props.novoItem.data) {
+            props.setErro({
+                aberto: true,
+                mensagem: "Selecione a data.",
+                detalhe: ""
+            });
+            return;
+        }
+
         const valorNumerico = parseFloat(
             props.novoItem.valor.replace("R$ ", "").replace(".", "").replace(",", ".")
         );
@@ -31,7 +65,6 @@ export default function ModalGastos(props) {
         const produtoExistente = props.produtos.find(
             (item) => item.nome.toLowerCase() === novaSaidaFormatada.produto.toLowerCase()
         );
-
 
         if (produtoExistente) {
             if (props.tipo === "atualizar") {

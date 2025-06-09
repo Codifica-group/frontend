@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import fecharIcon from "../assets/close.png";
 import ModalLoading from "./ModalLoading";
 import AlertDelete from "./AlertDelete";
+import ModalRaca from "./ModalRaca";
 import Select from "react-select";
 import { putCliente, putPet } from "../utils/put";
 import { deleteCliente, deletePet } from "../utils/delete";
@@ -47,6 +48,7 @@ export default function ModalGerenciarClientePet({
     const [clientes, setClientes] = useState([]);
     const [racas, setRacas] = useState([]);
     const [lastCepBuscado, setLastCepBuscado] = useState("");
+    const [showModalRaca, setShowModalRaca] = useState(false);
 
     // Aplica as máscaras ao carregar os dados
     useEffect(() => {
@@ -123,6 +125,79 @@ export default function ModalGerenciarClientePet({
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+
+        // Validação dos campos para cliente
+        if (tipo === "cliente") {
+            if (!form.nome || !form.numCelular || !form.cep || !form.rua || !form.bairro || !form.cidade || !form.numEndereco) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Preencha todos os campos obrigatórios do cliente.",
+                    detalhe: ""
+                });
+                return;
+            }
+            if (
+                isNaN(Number(unmaskNumber(form.numCelular))) ||
+                Number(unmaskNumber(form.numCelular)) <= 0 ||
+                unmaskNumber(form.numCelular).length < 11
+            ) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Preencha corretamente o número de celular (11 dígitos).",
+                    detalhe: ""
+                });
+                return;
+            }
+            if (
+                isNaN(Number(unmaskNumber(form.cep))) ||
+                Number(unmaskNumber(form.cep)) <= 0 ||
+                unmaskNumber(form.cep).length < 8
+            ) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Preencha corretamente o CEP (8 dígitos).",
+                    detalhe: ""
+                });
+                return;
+            }
+            if (isNaN(Number(form.numEndereco)) || Number(form.numEndereco) < 0) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Preencha corretamente o número do endereço.",
+                    detalhe: ""
+                });
+                return;
+            }
+        }
+
+        // Validação dos campos para pet
+        if (tipo === "pet") {
+            if (!form.nome) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Preencha o nome do pet.",
+                    detalhe: ""
+                });
+                return;
+            }
+            if (!form.racaId) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Selecione uma raça.",
+                    detalhe: ""
+                });
+                return;
+            }
+            if (!form.clienteId) {
+                setErro({
+                    aberto: true,
+                    mensagem: "Selecione um cliente.",
+                    detalhe: ""
+                });
+                return;
+            }
+        }
+
         setLoading(true);
         setLoadingMsg(`Atualizando ${tipo == "cliente" ? "Cliente" : "Pet"}...`);
         try {
@@ -187,6 +262,12 @@ export default function ModalGerenciarClientePet({
 
     const cancelDelete = () => {
         setShowDeleteAlert(false);
+    };
+
+    const handleSalvarRaca = async (novaRaca) => {
+        const novasRacas = await getRacas();
+        setRacas(novasRacas);
+        setForm(prev => ({ ...prev, racaId: novaRaca.id }));
     };
 
     // Options para selects
@@ -295,15 +376,25 @@ export default function ModalGerenciarClientePet({
                                             required
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Raça</label>
-                                        <Select
-                                            options={racaOptions}
-                                            value={racaOptions.find(opt => opt.value === form.racaId) || null}
-                                            onChange={opt => handleSelectChange("racaId", opt)}
-                                            placeholder="Selecione a raça"
-                                            isClearable
-                                        />
+                                    <div className="form-group" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <div style={{ flex: 1 }}>
+                                            <label>Raça</label>
+                                            <Select
+                                                options={racaOptions}
+                                                value={racaOptions.find(opt => opt.value === form.racaId) || null}
+                                                onChange={opt => handleSelectChange("racaId", opt)}
+                                                placeholder="Selecione a raça"
+                                                isClearable
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="btn-nova-raca"
+                                            onClick={() => setShowModalRaca(true)}
+                                            title="Adicionar nova raça"
+                                        >
+                                            + Nova Raça
+                                        </button>
                                     </div>
                                     <div className="form-group">
                                         <label>Cliente</label>
@@ -333,6 +424,13 @@ export default function ModalGerenciarClientePet({
                     item={form.nome || (tipo === "cliente" ? "cliente" : "pet")}
                     onConfirm={confirmDelete}
                     onCancel={cancelDelete}
+                />
+            )}
+            {showModalRaca && (
+                <ModalRaca
+                    onClose={() => setShowModalRaca(false)}
+                    onSalvar={handleSalvarRaca}
+                    setErro={setErro}
                 />
             )}
         </>

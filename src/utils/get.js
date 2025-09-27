@@ -2,7 +2,7 @@ import api from "./api";
 
 export async function getProdutos() {
     try {
-        const response = await api.get("/produtos");
+        const response = await api.get(`/produtos`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Produtos:", error.response || error.message);
@@ -12,7 +12,7 @@ export async function getProdutos() {
 
 export async function getCategorias() {
     try {
-        const response = await api.get("/categorias");
+        const response = await api.get(`/categorias`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Categorias:", error.response || error.message);
@@ -20,9 +20,9 @@ export async function getCategorias() {
     }
 }
 
-export async function getDespesas() {
+export async function getDespesas(offset = 0, size = 100) {
     try {
-        const response = await api.get("/despesas");
+        const response = await api.get(`/despesas?offset=${offset}&size=${size}`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Despesas:", error.response || error.message);
@@ -32,7 +32,7 @@ export async function getDespesas() {
 
 export async function getServicos() {
     try {
-        const response = await api.get("/servicos");
+        const response = await api.get(`/servicos`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Servicos:", error.response || error.message);
@@ -40,9 +40,9 @@ export async function getServicos() {
     }
 }
 
-export async function getHistorico(filtro) {
+export async function getHistorico(filtro, offset = 0, size = 100) {
     try {
-        const response = await api.post("/agendas/filtrar", filtro);
+        const response = await api.post(`/agendas/filtrar?offset=${offset}&size=${size}`, filtro);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Historico:", error.response || error.message);
@@ -50,9 +50,9 @@ export async function getHistorico(filtro) {
     }
 }
 
-export async function getPets() {
+export async function getPets(offset = 0, size = 100) {
     try {
-        const response = await api.get("/pets");
+        const response = await api.get(`/pets?offset=${offset}&size=${size}`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Pets:", error.response || error.message);
@@ -60,9 +60,9 @@ export async function getPets() {
     }
 }
 
-export async function getClientes() {
+export async function getClientes(offset = 0, size = 100) {
     try {
-        const response = await api.get("/clientes");
+        const response = await api.get(`/clientes?offset=${offset}&size=${size}`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Clientes:", error.response || error.message);
@@ -72,7 +72,7 @@ export async function getClientes() {
 
 export async function getRacas() {
     try {
-        const response = await api.get("/racas");
+        const response = await api.get(`/racas`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Racas:", error.response || error.message);
@@ -80,9 +80,9 @@ export async function getRacas() {
     }
 }
 
-export const getAgendas = async () => {
+export const getAgendas = async (offset = 0, size = 100) => {
     try {
-        const response = await api.get("/agendas");
+        const response = await api.get(`/agendas?offset=${offset}&size=${size}`);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar Agendas:", error.response || error.message);

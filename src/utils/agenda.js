@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./api";
 import { data } from "react-router-dom";
 import { getAgendas } from "./get";
 import { postAgenda } from "./post";
@@ -8,7 +8,7 @@ import { putAgenda } from "./put";
 const API_BASE = "http://localhost:8080/api/agendas";
 export const calcularServico = async (body) => {
   try {
-    const response = await axios.post(`${API_BASE}/calcular/servico`, body);
+    const response = await api.post(`/agendas/calcular/servico`, body);
     return response.data;
   } catch (error) {
     console.error("Erro ao calcular serviço:", error.response || error.message);
@@ -18,7 +18,7 @@ export const calcularServico = async (body) => {
 
 export const filtrarAgendas = async (filtros) => {
   try {
-    const response = await axios.post(`${API_BASE}/filtrar`, filtros);
+    const response = await api.post(`/agendas/filtrar`, filtros);
     return response.data;
   } catch (error) {
     console.error("Erro ao filtrar agendas:", error.response || error.message);

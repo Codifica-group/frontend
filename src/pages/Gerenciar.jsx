@@ -84,7 +84,7 @@ const Gerenciar = () => {
         return dados.map(c => ({
             id: c.id,
             Nome: c.nome,
-            "Celular": maskCelular(c.numCelular || ""),
+            "Celular": maskCelular(c.telefone || ""),
             CEP: maskCep(c.cep || ""),
             "Número": c.numEndereco,
             Complemento: c.complemento,

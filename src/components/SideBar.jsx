@@ -144,8 +144,8 @@ export default function SideBar(props) {
                     </Link>
 
                     {}
-                    <Link to="/solicitacoes">
-                        <li className={props.selecionado === "solicitacoes" ? "selecionado" : ""}>
+                    <Link to="/Solicitacao">
+                        <li className={props.selecionado === "Solicitacao" ? "selecionado" : ""}>
                             <i>
                                 <ClipboardList size={48} strokeWidth={1} color="#1F1F1F"/>
                             </i>

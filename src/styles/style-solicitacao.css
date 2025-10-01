@@ -1,0 +1,354 @@
+ :root {
+                        --sidebar-bg: #68C9E5;
+                        --sidebar-collapsed-width: 75px;
+                        --sidebar-expanded-width: 230px;
+                        --sidebar-icon-color: #fff;
+                        --sidebar-active-bg: #307E95;
+                        --main-bg: #f0f4f8;
+                        --status-aprovado-color: #28a745;
+                        --status-recusado-color: #dc3545;
+                        --btn-recusar-bg: #D9665B;
+                        --btn-enviar-bg: #2A8B9E;
+                    }
+
+                    body {
+                        font-family: 'Quicksand', sans-serif;
+                        margin: 0;
+                        background-color: var(--main-bg);
+                        overflow-x: hidden;
+                    }
+
+                    .sidebar .sidebar-link.active, .sidebar .sidebar-link:hover {
+                        background-color: var(--sidebar-active-bg);
+                    }
+                    
+                    .sidebar:hover {
+                        width: var(--sidebar-expanded-width);
+                    }
+                    
+                    .sidebar:hover .sidebar-link span {
+                       display: inline;
+                       opacity: 1;
+                    }
+
+                    .sidebar .sidebar-link span {
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                        display: none;
+                    }
+
+                    .solicitacao-container {
+                        display: flex;
+                        background-color: var(--main-bg);
+                        min-height: 100vh;
+                    }
+
+                    .solicitacao-main {
+                        flex-grow: 1;
+                        padding: 32px 40px;
+                        margin-left: var(--sidebar-collapsed-width);
+                        width: calc(100% - var(--sidebar-collapsed-width));
+                        transition: margin-left 0.3s cubic-bezier(.4, 0, .2, 1), width 0.3s cubic-bezier(.4, 0, .2, 1);
+                    }
+
+                    .sidebar:hover~.solicitacao-main {
+                        margin-left: var(--sidebar-expanded-width);
+                        width: calc(100% - var(--sidebar-expanded-width));
+                    }
+
+                    .page-title {
+                        font-size: 1.8rem;
+                        color: #3A4A5B;
+                        font-weight: 700;
+                        margin-bottom: 24px;
+                        text-transform: uppercase;
+                    }
+
+                    .tabs-container {
+                        display: flex;
+                        gap: 12px;
+                        margin-bottom: 24px;
+                        flex-wrap: wrap;
+                    }
+
+                    .tab-button {
+                        padding: 8px 18px;
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        color: #5A7184;
+                        background-color: transparent;
+                        border: 2px solid #DDE3E9;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    }
+
+                    .tab-button:hover {
+                        background-color: #E9EFF5;
+                        color: #3A4A5B;
+                    }
+
+                    .tab-button.active {
+                        color: #307E95;
+                        border: 2px solid #307E95;
+                        box-shadow: 0 0 5px rgba(48, 126, 149, 0.4);
+                    }
+
+                    .content-wrapper {
+                        background-color: #ffffff;
+                        border-radius: 16px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                        padding: 32px;
+                        height: calc(100vh - 160px);
+                        overflow-y: auto;
+                    }
+
+                    .cards-display-area {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 24px;
+                    }
+
+                    .service-card-new {
+                        cursor: pointer;
+                        background-color: #fff;
+                        border: 1px solid #EAEFF4;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                        display: flex;
+                        position: relative;
+                        padding: 20px;
+                        padding-left: 30px;
+                        width: calc(50% - 12px);
+                        box-sizing: border-box;
+                        transition: box-shadow 0.2s ease;
+                    }
+
+                    .service-card-new:hover {
+                        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+                    }
+
+                    .status-bar {
+                        position: absolute;
+                        left: 0;
+                        top: 0px;
+                        bottom: 0px;
+                        width: 7px;
+                        border-radius: 5px 0 0 5px;
+                    }
+
+                    .status-bar.status-aprovado {
+                        background-color: var(--status-aprovado-color);
+                    }
+
+                    .status-bar.status-recusado {
+                        background-color: var(--status-recusado-color);
+                    }
+
+                    .status-bar.status-pendente {
+                        background-color: #ffc107;
+                    }
+
+                    .card-main-content {
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        gap: 16px;
+                    }
+
+                    .card-status-header h3 {
+                        margin: 0;
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                    }
+
+                    .card-status-header .status-aprovado {
+                        color: var(--status-aprovado-color);
+                    }
+
+                    .card-status-header .status-recusado {
+                        color: var(--status-recusado-color);
+                    }
+
+                    .card-status-header .status-pendente {
+                        color: #ffc107;
+                    }
+
+                    .card-status-header p {
+                        margin: 4px 0 0 0;
+                        font-size: 0.9rem;
+                        color: #5A7184;
+                    }
+
+                    .card-details-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 8px 16px;
+                        font-size: 0.95rem;
+                        min-width: 38vw;
+                    }
+
+                    .detail-item {
+                        color: #3A4A5B;
+                    }
+
+                    .detail-item strong {
+                        color: #5A7184;
+                        margin-right: 5px;
+                    }
+
+                    .detail-item.full-span {
+                        grid-column: 1 / -1;
+                    }
+
+                    .no-data-message {
+                        width: 100%;
+                        text-align: center;
+                        font-size: 1.1rem;
+                        color: #888;
+                        padding: 40px;
+                    }
+
+                    /* Estilos do Modal */
+                    .solicitacao-modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1001;
+                    }
+
+                    .solicitacao-modal-content {
+                        background: white;
+                        padding: 24px;
+                        border-radius: 12px;
+                        width: 25vw;
+                    
+                        position: relative;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                    }
+
+                    .solicitacao-modal-close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: none;
+                        border: none;
+                        font-size: 1.8rem;
+                        color: #888;
+                        cursor: pointer;
+                    }
+
+                    .solicitacao-modal-header {
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+
+                    .solicitacao-modal-header h2 {
+                        font-size: 1.5rem;
+                        color: #333;
+                        margin: 0;
+                    }
+
+                    .solicitacao-modal-header p {
+                        font-size: 1rem;
+                        color: var(--btn-enviar-bg);
+                        margin: 5px 0 0 0;
+                    }
+
+                    .solicitacao-modal-body .form-group {
+                        margin-bottom: 12px;
+                    }
+
+                    .solicitacao-modal-body .form-group label {
+                        display: block;
+                        font-size: 0.9rem;
+                        color: #666;
+                        margin-bottom: 5px;
+                    }
+
+                    .solicitacao-modal-body .form-group input {
+                        width: 100%;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 6px;
+                        font-size: 1rem;
+                        box-sizing: border-box;
+                    }
+
+                    .datetime-inputs {
+                        display: flex;
+                        gap: 15px;
+                    }
+
+                    .datetime-inputs .form-group {
+                        flex: 1;
+                    }
+
+                    .total-display {
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        color: #333;
+                        text-align: right;
+                        margin-top: 15px;
+                        margin-bottom: 15px;
+                    }
+
+                    .checkbox-group {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                    .solicitacao-modal-body textarea {
+                        width: 100%;
+                        height: 80px;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 6px;
+                        resize: vertical;
+                        margin-top: 10px;
+                        box-sizing: border-box;
+                    }
+
+                    .solicitacao-modal-footer {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 15px;
+                        margin-top: 20px;
+                    }
+
+                    .solicitacao-modal-footer button {
+                        flex: 1;
+                        padding: 12px;
+                        border: none;
+                        border-radius: 8px;
+                        color: white;
+                        font-size: 1rem;
+                        font-weight: bold;
+                        cursor: pointer;
+                        transition: opacity 0.2s;
+                    }
+
+                    .solicitacao-modal-footer button:hover {
+                        opacity: 0.9;
+                    }
+
+                    .btn-recusar {
+                        background-color: var(--btn-recusar-bg);
+                    }
+
+                    .btn-enviar {
+                        background-color: var(--btn-enviar-bg);
+                    }
+
+                    @media (max-width: 1200px) {
+                        .service-card-new {
+                            width: 100%;
+                        }
+                    }

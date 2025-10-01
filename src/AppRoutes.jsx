@@ -7,6 +7,7 @@ import ErrorPage from "./pages/ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Comparacao from "./pages/Comparacao";
 import Gerenciar from "./pages/Gerenciar";
+import Solicitacao from "./pages/Solicitacao";
 
 export default function AppRoutes() {
     return (
@@ -18,6 +19,7 @@ export default function AppRoutes() {
                     <ProtectedRoute> 
                         <DashboardEleve />
                     </ProtectedRoute>
+                       
                 }
             />
             <Route
@@ -25,6 +27,14 @@ export default function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <Historico />
+                    </ProtectedRoute>
+                }
+            />
+             <Route
+                path="/solicitacao"
+                element={
+                    <ProtectedRoute>
+                        <Solicitacao />
                     </ProtectedRoute>
                 }
             />

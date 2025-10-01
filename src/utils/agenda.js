@@ -1,14 +1,11 @@
-import axios from "axios";
-import { data } from "react-router-dom";
+import api from "./api";
 import { getAgendas } from "./get";
-import { postAgenda } from "./post";
-import { putAgenda } from "./put";
 
 // REQUISIÇÕES PARA A API DE AGENDAS
 const API_BASE = "http://localhost:8080/api/agendas";
 export const calcularServico = async (body) => {
   try {
-    const response = await axios.post(`${API_BASE}/calcular/servico`, body);
+    const response = await api.post(`/agendas/calcular/servico`, body);
     return response.data;
   } catch (error) {
     console.error("Erro ao calcular serviço:", error.response || error.message);
@@ -16,9 +13,9 @@ export const calcularServico = async (body) => {
   }
 };
 
-export const filtrarAgendas = async (filtros) => {
+export const filtrarAgendas = async (filtros, offset = 0, size = 100) => {
   try {
-    const response = await axios.post(`${API_BASE}/filtrar`, filtros);
+    const response = await api.post(`/agendas/filtrar?offset=${offset}&size=${size}`, filtros);
     return response.data;
   } catch (error) {
     console.error("Erro ao filtrar agendas:", error.response || error.message);
@@ -27,9 +24,9 @@ export const filtrarAgendas = async (filtros) => {
 };
 
 // FUNÇÕES PARA AGENDA
-export async function exibirAgendas() {
+export async function exibirAgendas(offset = 0, size = 100) {
   try {
-    const response = await getAgendas();
+    const response = await getAgendas(offset, size);
     const data = Array.isArray(response)
       ? response
       : response.content || response.data || [];

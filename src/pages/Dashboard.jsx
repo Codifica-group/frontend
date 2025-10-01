@@ -7,7 +7,7 @@ import ChartComponent from "../components/ChartComponent";
 import ModalGastos from "../components/ModalGastos";
 import ModalComparar from "../components/ModalComparar";
 import { getDataAtual } from "../utils/util";
-import { postLucro, postVerificacao } from "../utils/post";
+import { postLucro } from "../utils/post";
 import { subDays, format, set } from "date-fns";
 import saldoDisponivel from "../assets/saldo-disponivel.png";
 import info from "../assets/info.png";

@@ -10,10 +10,17 @@ import { Link } from "react-router-dom";
 import { ClipboardList } from 'lucide-react';
 
 export default function SideBar(props) {
+    const navigate = useNavigate();
 
-    const onLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("senha");
+    const onLogout = async () => {
+        try {
+            await logoutUser();
+        } catch (error) {
+            console.error("Falha no logout do backend, limpando sessão localmente.", error);
+        } finally {
+            sessionStorage.removeItem("token");
+            navigate("/");
+        }
     }
 
     return (
@@ -67,7 +74,7 @@ export default function SideBar(props) {
                             <span>Finanças</span>
                         </li>
                     </Link>
-                    <Link to="/historico">
+                    <Link to="/Historico">
                         <li className={props.selecionado === "historico" ? "selecionado" : ""}>
                             <i>
                                 <svg
@@ -89,7 +96,7 @@ export default function SideBar(props) {
                             <span>Histórico</span>
                         </li>
                     </Link>
-                    <Link to="/gerenciar">
+                    <Link to="/Gerenciar">
                         <li className={props.selecionado === "gerenciar" ? "selecionado" : ""}>
                             <i>
                                 {/* <svg
@@ -155,30 +162,28 @@ export default function SideBar(props) {
                 </ul>
             </div>
 
-            <Link to="/">
-                <ul className="mb-4">
-                    <li onClick={onLogout} className="cursor-pointer flex items-center gap-2">
-                        <i>
-                            <svg
-                                width="45"
-                                height="45"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#353535"
-                                strokeWidth={props.selecionado === "sair" ? "5" : "2"}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                <polyline points="16 17 21 12 16 7" />
-                                <line x1="21" y1="12" x2="9" y2="12" />
-                            </svg>
-                        </i>
-                        <span style={{ color: "#1F1F1F" }}>Sair</span>
-                    </li>
-                </ul>
-            </Link>
+            <ul className="mb-4">
+                <li onClick={onLogout} className="cursor-pointer flex items-center gap-2">
+                    <i>
+                        <svg
+                            width="45"
+                            height="45"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#353535"
+                            strokeWidth={props.selecionado === "sair" ? "5" : "2"}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </i>
+                    <span style={{ color: "#1F1F1F" }}>Sair</span>
+                </li>
+            </ul>
 
         </div>
     );

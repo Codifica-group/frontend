@@ -1,7 +1,8 @@
 import "../styles/style-login.css";
 import logo from "../assets/logo.png";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ModalLoading from "../components/ModalLoading";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function LoginPage() {
     const [showModal, setShowModal] = useState(false);
     const [messageModal, setMessageModal] = useState("");
     const [titleModal, setTitleModal] = useState(null);
+    const [loading, setLoading] = useState(false);
     
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
@@ -16,12 +18,10 @@ export default function LoginPage() {
 
     useEffect(() => {
         const emailStorage = localStorage.getItem("email");
-        const senhaStorage = localStorage.getItem("senha");
         const lembrarStorage = localStorage.getItem("lembrar") === "true";
 
         if (lembrarStorage) {
             setEmail(emailStorage);
-            setSenha(senhaStorage);
             setLembrar(lembrarStorage);
         }
     }, []);
@@ -29,14 +29,12 @@ export default function LoginPage() {
     useEffect(() => {
         if (lembrar) {
             localStorage.setItem("email", email);
-            localStorage.setItem("senha", senha);
         }
-    }, [email, senha, lembrar]);
+    }, [email, lembrar]);
 
     useEffect(() => {
         if (!lembrar){
             localStorage.removeItem("email");
-            localStorage.removeItem("senha");
             localStorage.removeItem("lembrar");
         }
         else {
@@ -46,6 +44,7 @@ export default function LoginPage() {
     }, [lembrar]);
 
     function logar() {
+        setLoading(true);
         const usuario = {
             email: email,
             senha: senha
@@ -53,7 +52,6 @@ export default function LoginPage() {
 
         const usuarioString = JSON.stringify(usuario);
 
-        setShowModal(true);
         fetch("http://localhost:8080/api/usuarios/login", {
             method: "POST",
             headers: {
@@ -62,24 +60,28 @@ export default function LoginPage() {
             body: usuarioString
         })
         .then(async (response) => {
+            setLoading(false);
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem("token", data.token);
-                setMessageModal(data.mensagem + " Direcionando para o dashboard...");
+                sessionStorage.setItem("token", data.token);
+                setMessageModal(data.mensagem);
                 setTitleModal(true)
 
             } else {
                 const errorData = await response.json();
-                localStorage.removeItem("token");
-                setMessageModal(errorData.message + "Credenciais incorretas.");
+                sessionStorage.removeItem("token");
+                setMessageModal(errorData.message);
                 setTitleModal(false)
             }
+            setShowModal(true);
         })
         .catch((error) => {
+            setLoading(false);
             console.error("Erro:", error);
-            localStorage.removeItem("token");
+            sessionStorage.removeItem("token");
             setMessageModal("Erro ao fazer login. Tente novamente mais tarde." + error.message);
             setTitleModal(false)
+            setShowModal(true);
         });
     }
 
@@ -92,6 +94,7 @@ export default function LoginPage() {
 
     return (
         <div className="conteiner">
+            {loading && <ModalLoading />}
             <div className="secao-login">
                 <div className="conteiner-logo">
                     <img src={logo} alt="Eleve Pet Shop" className="logo" />
@@ -131,4 +134,4 @@ export default function LoginPage() {
             </div>
         </div>
     );
-} 
+}

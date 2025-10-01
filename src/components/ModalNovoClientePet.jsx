@@ -145,7 +145,7 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
             if (tipo === "cliente") {
                 await postCliente({
                     nome: form.nome,
-                    numCelular: unmaskNumber(form.numCelular),
+                    telefone: unmaskNumber(form.numCelular),
                     cep: unmaskNumber(form.cep),
                     rua: form.rua,
                     bairro: form.bairro,

@@ -55,7 +55,7 @@ export default function ModalGerenciarClientePet({
         if (tipo === "cliente" && dados) {
             setForm({
                 ...dados,
-                numCelular: maskCelular(dados.numCelular || ""),
+                numCelular: maskCelular(dados.telefone || ""),
                 cep: maskCep(dados.cep || "")
             });
         } else if (tipo === "pet" && dados) {
@@ -204,7 +204,7 @@ export default function ModalGerenciarClientePet({
             if (tipo === "cliente") {
                 await putCliente(form.id, {
                     nome: form.nome,
-                    numCelular: unmaskNumber(form.numCelular),
+                    telefone: unmaskNumber(form.numCelular),
                     cep: unmaskNumber(form.cep),
                     rua: form.rua,
                     numEndereco: form.numEndereco,

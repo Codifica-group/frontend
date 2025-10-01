@@ -74,11 +74,11 @@ export default function ModalGastos(props) {
                     data: novaSaidaFormatada.data,
                 };
             } else {
-                novaDespesa = [{
+                novaDespesa = {
                     produtoId: produtoExistente.id,
                     valor: novaSaidaFormatada.valor,
                     data: novaSaidaFormatada.data,
-                }];
+                };
             }
 
             try {

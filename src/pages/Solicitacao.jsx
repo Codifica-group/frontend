@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import "../styles/style-solicitacao.css";
 
-
-
-
-
-
 const mockSolicitacoes = [
     { id: 1, status: 'Aprovado', dataHora: '16/09/2025 - 08:24h', servicos: 'Banho, Tosa e Hidratação', pet: 'Thor', raca: 'Pug', cliente: 'Mariana Sousa', celular: '(11) 90000-0002', etapa: 'Finalizado' },
     { id: 2, status: 'Recusado', dataHora: '16/09/2025 - 08:24h', servicos: 'Banho, Tosa e Hidratação', pet: 'Thor', raca: 'Pug', cliente: 'Mariana Sousa', celular: '(11) 90000-0002', etapa: 'Finalizado' },

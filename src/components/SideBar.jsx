@@ -1,12 +1,5 @@
-
-
-
-
-
-
-import React from "react";
 import logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ClipboardList } from 'lucide-react';
 
 export default function SideBar(props) {

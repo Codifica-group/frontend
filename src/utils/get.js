@@ -99,3 +99,23 @@ export async function getEndereco(cep) {
         throw error;
     }
 }
+
+export async function getSolicitacoes(offset = 0, size = 100) {
+    try {
+        const response = await api.get(`/solicitacoes-agenda?offset=${offset}&size=${size}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar Solicitações:", error.response || error.message);
+        throw error;
+    }
+}
+
+export async function getSolicitacaoById(id) {
+    try {
+        const response = await api.get(`/solicitacoes-agenda/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar Solicitação:", error.response || error.message);
+        throw error;
+    }
+}

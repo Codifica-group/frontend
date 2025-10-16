@@ -7,6 +7,8 @@
             --main-bg: #f0f4f8;
             --status-aprovado-color: #28a745;
             --status-recusado-color: #dc3545;
+            --status-aguardando-orcamento-color: #6c757d;
+            --status-aguardando-aprovacao-color: #ffc107;
             --btn-recusar-bg: #D9665B;
             --btn-enviar-bg: #2A8B9E;
         }
@@ -128,16 +130,21 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 32px;
             height: calc(100vh - 220px);
-            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .cards-display-area {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 24px;
             flex-grow: 1;
+            width: 100%;
+            min-width: 80%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .service-card-new {
@@ -150,7 +157,8 @@
             position: relative;
             padding: 20px;
             padding-left: 30px;
-            width: calc(50% - 12px);
+            width: 100%;
+            min-height: 150px;
             box-sizing: border-box;
             transition: box-shadow 0.2s ease;
         }
@@ -180,6 +188,14 @@
             background-color: #ffc107;
         }
 
+        .status-bar.status-aguardando-orcamento {
+            background-color: var(--status-aguardando-orcamento-color);
+        }
+
+        .status-bar.status-aguardando-aprovacao {
+            background-color: var(--status-aguardando-aprovacao-color);
+        }
+
         .card-main-content {
             display: flex;
             flex-direction: column;
@@ -203,6 +219,52 @@
 
         .card-status-header .status-pendente {
             color: #ffc107;
+        }
+
+        .card-status-header .status-aguardando-orcamento {
+            color: var(--status-aguardando-orcamento-color);
+        }
+
+        .card-status-header .status-aguardando-aprovacao {
+            color: var(--status-aguardando-aprovacao-color);
+        }
+
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .error-message {
+            color: #dc3545;
+        }
+
+        .status-info {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Cores para status no modal */
+        .modal-status-aguardando-orcamento {
+            color: var(--status-aguardando-orcamento-color);
+            font-weight: bold;
+        }
+
+        .modal-status-aguardando-aprovacao {
+            color: var(--status-aguardando-aprovacao-color);
+            font-weight: bold;
+        }
+
+        .modal-status-aprovado {
+            color: var(--status-aprovado-color);
+            font-weight: bold;
+        }
+
+        .modal-status-recusado {
+            color: var(--status-recusado-color);
+            font-weight: bold;
         }
 
         .card-status-header p {
@@ -379,8 +441,29 @@
         }
 
         @media (max-width: 1200px) {
+            .cards-display-area {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                min-width: 90%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cards-display-area {
+                grid-template-columns: 1fr;
+                min-width: 95%;
+                padding: 0 10px;
+            }
+            
             .service-card-new {
-                width: 100%;
+                min-height: 120px;
+                padding: 16px;
+                padding-left: 26px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-display-area {
+                gap: 16px;
             }
         }
 

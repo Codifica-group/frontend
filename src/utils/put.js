@@ -51,3 +51,13 @@ export async function putPet(id, body) {
         throw error;
     }
 }
+
+export async function putSolicitacao(id, body) {
+    try {
+        const response = await api.put(`/solicitacoes-agenda/${id}`, body);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao atualizar solicitação:", error.response || error.message);
+        throw error;
+    }
+}

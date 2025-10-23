@@ -107,10 +107,10 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             let mensagemSucesso;
             
             if (solicitacao.status === 'Aguardando orçamento') {
-                novoStatus = 'ACEITO_PELO_USUARIO';
+                novoStatus = 'ACEITO_PELO_PETSHOP';
                 mensagemSucesso = "Oferta enviada com sucesso!";
             } else if (solicitacao.status === 'Aguardando Aprovação') {
-                novoStatus = 'APROVADO';
+                novoStatus = 'ACEITO_PELO_CLIENTE';
                 mensagemSucesso = "Solicitação aprovada com sucesso!";
             } else {
                 showNotification('warning', "Status não permite esta ação.");

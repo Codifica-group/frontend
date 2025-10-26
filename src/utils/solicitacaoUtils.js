@@ -67,24 +67,17 @@ export const formatServices = (servicos) => {
 
 // Função para transformar dados do back-end para formato do front-end
 export const transformSolicitacaoData = (backendData) => {
-    // Debug: log do status original para verificar os dados
-    console.log('🔄 Transformando dados do back-end:', {
-        id: backendData.id,
-        statusOriginal: backendData.status,
-        statusMapeado: mapStatusFromBackend(backendData.status)
-    });
-    
     const transformedData = {
         id: backendData.id,
         status: mapStatusFromBackend(backendData.status),
-        dataHora: formatDateTime(backendData.dataHoraSolicitacao),
+        dataHora: formatDateTime(backendData.dataHoraInicio), // Data do atendimento (ao invés de solicitação)
         servicos: formatServices(backendData.servicos),
         pet: backendData.pet?.nome || '',
         raca: backendData.pet?.raca?.nome || '',
+        dataSolicitacao: formatDateTime(backendData.dataHoraSolicitacao), // Data da solicitação
         cliente: backendData.cliente?.nome || '',
         celular: backendData.cliente?.telefone || '',
         etapa: mapStatusFromBackend(backendData.status),
-        // Dados originais para o modal
         originalData: backendData
     };
     

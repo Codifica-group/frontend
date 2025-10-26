@@ -18,6 +18,11 @@ const ServiceCard = ({ solicitacao, onClick }) => {
                     <div className="detail-item"><strong>Pet:</strong> {solicitacao.pet}</div>
                     <div className="detail-item"><strong>Raça:</strong> {solicitacao.raca}</div>
                 </div>
+                {solicitacao.dataSolicitacao && (
+                    <div className="card-footer-date">
+                        <p>Solicitado em: {solicitacao.dataSolicitacao}</p>
+                    </div>
+                )}
             </div>
         </div>
     );

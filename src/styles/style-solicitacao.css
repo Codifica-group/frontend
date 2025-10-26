@@ -129,7 +129,6 @@
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 32px;
-            height: calc(100vh - 220px);
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -273,6 +272,20 @@
             color: #5A7184;
         }
 
+        .card-footer-date {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+        }
+
+        .card-footer-date p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #5A7184;
+            font-style: italic;
+        }
+
         .card-details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -320,9 +333,13 @@
             background: white;
             padding: 24px;
             border-radius: 12px;
-            width: 25vw;
-        
+            min-width: 25vw;
+            width: fit-content;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
+            box-sizing: border-box;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
@@ -343,44 +360,71 @@
         }
 
         .solicitacao-modal-header h2 {
+            color: #307E95;
+            margin-top: 0;
+            margin-bottom: 0;
             font-size: 1.5rem;
-            color: #333;
-            margin: 0;
+            text-align: center;
         }
 
         .solicitacao-modal-header p {
             font-size: 1rem;
-            color: var(--btn-enviar-bg);
-            margin: 5px 0 0 0;
+            margin: 5px 0;
+        }
+
+        .solicitacao-modal-header p strong {
+            color: #4a4a4a;
+            font-weight: 600;
+        }
+
+        .solicitacao-modal-header p:not(.modal-status) {
+            color: #7a7a7a;
+        }
+
+        .solicitacao-modal-header .modal-status strong {
+            color: #4a4a4a;
+            font-weight: 600;
         }
 
         .solicitacao-modal-body .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 1rem;
+            position: relative;
         }
 
         .solicitacao-modal-body .form-group label {
             display: block;
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
         }
 
-        .solicitacao-modal-body .form-group input {
+        .solicitacao-modal-body .form-group input,
+        .solicitacao-modal-body .form-group .form-control {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 1rem;
             box-sizing: border-box;
+            min-width: 0;
         }
 
         .datetime-inputs {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .datetime-inputs .form-group {
             flex: 1;
+            min-width: 0;
+        }
+
+        .datetime-inputs .form-group input[type="datetime-local"] {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .total-display {
@@ -390,6 +434,13 @@
             text-align: right;
             margin-top: 15px;
             margin-bottom: 15px;
+        }
+
+        .total-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #307E95;
+            margin-top: 1vh;
         }
 
         .checkbox-group {
@@ -573,4 +624,31 @@
 
         .pagination-go-button:hover {
             opacity: 0.9;
+        }
+
+        /* Responsividade para o modal */
+        @media (max-width: 1400px) {
+            .solicitacao-modal-content {
+                width: 35vw;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .solicitacao-modal-content {
+                width: 50vw;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .solicitacao-modal-content {
+                width: 85vw;
+            }
+
+            .datetime-inputs {
+                flex-direction: column;
+            }
+
+            .datetime-inputs .form-group {
+                width: 100%;
+            }
         }

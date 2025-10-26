@@ -1,0 +1,89 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-sucesso {
+    position: relative;
+    min-width: 23%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.btn-fechar {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.btn-fechar:hover {
+    opacity: 1;
+}
+
+.btn-fechar img {
+    width: 20px;
+    height: 20px;
+}
+
+.modal-sucesso__mensagem {
+    font-weight: 600;
+    font-size: 22px;
+    color: #333;
+    text-align: center;
+}
+
+.sucesso-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-sucesso {
+        min-width: 80%;
+        padding: 24px 32px;
+    }
+
+    .modal-sucesso__mensagem {
+        font-size: 18px;
+    }
+
+    .sucesso-icon svg {
+        width: 60px;
+        height: 60px;
+    }
+}

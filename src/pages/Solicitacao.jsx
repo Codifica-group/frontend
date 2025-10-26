@@ -4,43 +4,131 @@ import { SolicitacoesTabs } from "../components/solicitacoes";
 import { putSolicitacao } from "../utils/put";
 import { canPerformActions } from "../utils/solicitacaoUtils";
 import NotificationModal from "../components/NotificationModal";
+import AlertSucesso from "../components/AlertSucesso";
+import { NumericFormat } from "react-number-format";
 import "../styles/style-solicitacao.css";
 
 const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotification }) => {
-    const [valores] = useState({
-        banho: '35,00',
-        tosa: '50,00',
-        hidratacao: '15,00',
-        deslocamento: '5,00',
-    });
-    const [mensagemPersonalizada, setMensagemPersonalizada] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    const dadosOriginais = solicitacao.originalData || {};
+    const servicos = dadosOriginais.servicos || [];
+    const valorDeslocamento = dadosOriginais.valorDeslocamento || 0;
+    const dataHoraInicio = dadosOriginais.dataHoraInicio || '';
+    const dataHoraFim = dadosOriginais.dataHoraFim || '';
+    
+    const calcularDataHoraFim = (dataInicio) => {
+        if (!dataInicio) return '';
+        const [datePart, timePart] = dataInicio.split('T');
+        const [hours, minutes] = timePart.split(':');
+        
+        let novaHora = parseInt(hours, 10) + 1;
+        
+        if (novaHora >= 24) {
+            const data = new Date(datePart);
+            data.setDate(data.getDate() + 1);
+            novaHora = novaHora - 24;
+            const novaData = data.toISOString().split('T')[0];
+            return `${novaData}T${String(novaHora).padStart(2, '0')}:${minutes}`;
+        }
+        
+        return `${datePart}T${String(novaHora).padStart(2, '0')}:${minutes}`;
+    };
+    
+    const formatarDataParaInput = (dataISO) => {
+        if (!dataISO) return '';
+        if (dataISO.length === 16 && dataISO.includes('T')) {
+            return dataISO;
+        }
+        return dataISO.replace('Z', '').slice(0, 16);
+    };
+    
+    const [dataInicio, setDataInicio] = useState(
+        formatarDataParaInput(dataHoraInicio)
+    );
+    const [dataFim, setDataFim] = useState(() => {
+        if (dataHoraFim) {
+            return formatarDataParaInput(dataHoraFim);
+        }
+        if (dataHoraInicio) {
+            return calcularDataHoraFim(formatarDataParaInput(dataHoraInicio));
+        }
+        return '';
+    });
 
-    const calcularTotal = () => {
-        return Object.values(valores).reduce((total, valor) => {
-            const numero = parseFloat(valor.replace(',', '.')) || 0;
-            return total + numero;
-        }, 0);
+    const [valoresServicos, setValoresServicos] = useState(
+        servicos.map(s => ({ id: s.id, nome: s.nome, valor: s.valor }))
+    );
+    
+    const [deslocamento, setDeslocamento] = useState(valorDeslocamento);
+
+    const valoresOriginais = {
+        dataInicio: formatarDataParaInput(dataHoraInicio),
+        dataFim: dataHoraFim ? formatarDataParaInput(dataHoraFim) : calcularDataHoraFim(formatarDataParaInput(dataHoraInicio)),
+        servicos: servicos.map(s => ({ id: s.id, valor: s.valor })),
+        deslocamento: valorDeslocamento
     };
 
-    const prepareUpdateData = (originalData, newStatus, valorTotal = null) => {
-        // Preparar dados minimos necessários para o PUT
+    const [foiAlterado, setFoiAlterado] = useState(false);
+
+    useEffect(() => {
+        let alterado = false;
+        
+        if (dataInicio !== valoresOriginais.dataInicio) alterado = true;
+        if (dataFim !== valoresOriginais.dataFim) alterado = true;
+        
+        if (deslocamento !== valoresOriginais.deslocamento) alterado = true;
+        
+        for (let i = 0; i < valoresServicos.length; i++) {
+            if (valoresServicos[i].valor !== valoresOriginais.servicos[i]?.valor) {
+                alterado = true;
+                break;
+            }
+        }
+        
+        setFoiAlterado(alterado);
+    }, [dataInicio, dataFim, valoresServicos, deslocamento, valoresOriginais.dataInicio, valoresOriginais.dataFim, valoresOriginais.deslocamento, valoresOriginais.servicos]);
+
+    const handleDataInicioChange = (e) => {
+        const value = e.target.value;
+        setDataInicio(value);
+        setDataFim(value ? calcularDataHoraFim(value) : '');
+    };
+
+    const handleValorServicoChange = (index, value) => {
+        const novosValores = [...valoresServicos];
+        novosValores[index].valor = value.value === undefined ? "" : value.floatValue;
+        setValoresServicos(novosValores);
+        setFoiAlterado(true);
+    };
+
+    const handleDeslocamentoChange = (value) => {
+        setDeslocamento(value.value === undefined ? "" : value.floatValue);
+        setFoiAlterado(true);
+    };
+
+    const calcularTotal = () => {
+        const totalServicos = valoresServicos.reduce((total, servico) => {
+            return total + (servico.valor || 0);
+        }, 0);
+        return totalServicos + (deslocamento || 0);
+    };
+
+    const prepareUpdateData = (originalData, newStatus, valorTotal = null, novaDataInicio = null, novaDataFim = null) => {
         const updateData = {
             chatId: originalData.chatId,
             petId: originalData.petId || originalData.pet?.id,
             valorDeslocamento: originalData.valorDeslocamento || 0,
-            dataHoraInicio: originalData.dataHoraInicio,
-            dataHoraFim: originalData.dataHoraFim || null,
+            dataHoraInicio: novaDataInicio || originalData.dataHoraInicio,
+            dataHoraFim: novaDataFim || originalData.dataHoraFim || null,
             dataHoraSolicitacao: originalData.dataHoraSolicitacao,
             status: newStatus
         };
 
-        // Adicionar valorTotal se fornecido
         if (valorTotal !== null) {
             updateData.valorTotal = valorTotal;
         }
 
-        // Simplificar servicos para apenas os dados essenciais
         if (originalData.servicos && Array.isArray(originalData.servicos)) {
             updateData.servicos = originalData.servicos.map(servico => {
                 if (typeof servico === 'object' && servico.id) {
@@ -66,28 +154,56 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             setLoading(true);
             const novoStatus = 'RECUSADO_PELO_USUARIO';
             
-            // Debug: ver os dados originais
-            console.log('Dados originais da solicitação:', solicitacao.originalData);
-            
-            // Preparar dados no formato correto
             const updateData = prepareUpdateData(solicitacao.originalData, novoStatus);
-            
-            console.log('Dados sendo enviados para recusar:', updateData);
 
-            const response = await putSolicitacao(solicitacao.id, updateData);
-            console.log('✅ PUT realizado com sucesso:', response);
+            await putSolicitacao(solicitacao.id, updateData);
             
-            // Notificar o componente pai sobre a atualização
             if (onStatusUpdate) {
                 onStatusUpdate();
             }
             
             showNotification('success', "Solicitação recusada com sucesso!");
             onClose();
-        } catch (error) {
-            console.error("Erro ao recusar solicitação:", error);
-            console.error("Detalhes do erro:", error.response?.data);
+        } catch {
             showNotification('error', "Erro ao recusar solicitação. Tente novamente.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAtualizarValores = async () => {
+        try {
+            setLoading(true);
+            
+            const dataInicioISO = dataInicio ? new Date(dataInicio).toISOString() : null;
+            const dataFimISO = dataFim ? new Date(dataFim).toISOString() : null;
+            
+            const updateData = {
+                chatId: dadosOriginais.chatId,
+                petId: dadosOriginais.petId || dadosOriginais.pet?.id,
+                servicos: valoresServicos.map(s => ({
+                    id: s.id,
+                    valor: s.valor
+                })),
+                valorDeslocamento: deslocamento,
+                dataHoraInicio: dataInicioISO,
+                dataHoraFim: dataFimISO,
+                dataHoraSolicitacao: dadosOriginais.dataHoraSolicitacao,
+                status: dadosOriginais.status
+            };
+
+            await putSolicitacao(solicitacao.id, updateData);
+            
+            showNotification('success', "Valores atualizados com sucesso!");
+            
+            setFoiAlterado(false);
+            
+            if (onStatusUpdate) {
+                onStatusUpdate();
+            }
+            onClose();
+        } catch {
+            showNotification('error', "Erro ao atualizar valores. Tente novamente.");
         } finally {
             setLoading(false);
         }
@@ -102,7 +218,6 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         try {
             setLoading(true);
             
-            // Determinar o próximo status baseado no status atual
             let novoStatus;
             let mensagemSucesso;
             
@@ -117,29 +232,32 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                 return;
             }
             
-            // Debug: ver os dados originais
-            console.log('Dados originais da solicitação:', solicitacao.originalData);
-            console.log('Status atual:', solicitacao.status);
-            console.log('Novo status será:', novoStatus);
+            let dataFimFinal = dataFim;
+            if (!dataFimFinal && dataInicio) {
+                dataFimFinal = calcularDataHoraFim(dataInicio);
+                setDataFim(dataFimFinal);
+            }
             
-            // Preparar dados no formato correto incluindo o valor total
-            const updateData = prepareUpdateData(solicitacao.originalData, novoStatus, calcularTotal());
+            const dataInicioISO = dataInicio ? new Date(dataInicio).toISOString() : null;
+            const dataFimISO = dataFimFinal ? new Date(dataFimFinal).toISOString() : null;
             
-            console.log('Dados sendo enviados para aceitar:', updateData);
+            const updateData = prepareUpdateData(
+                solicitacao.originalData, 
+                novoStatus, 
+                calcularTotal(),
+                dataInicioISO,
+                dataFimISO
+            );
 
-            const response = await putSolicitacao(solicitacao.id, updateData);
-            console.log('✅ PUT realizado com sucesso:', response);
+            await putSolicitacao(solicitacao.id, updateData);
             
-            // Notificar o componente pai sobre a atualização
             if (onStatusUpdate) {
                 onStatusUpdate();
             }
             
             showNotification('success', mensagemSucesso);
             onClose();
-        } catch (error) {
-            console.error("Erro ao enviar oferta:", error);
-            console.error("Detalhes do erro:", error.response?.data);
+        } catch {
             showNotification('error', "Erro ao enviar oferta. Tente novamente.");
         } finally {
             setLoading(false);
@@ -148,9 +266,12 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
 
     const showActionButtons = canPerformActions(solicitacao.status);
     
-    // Determinar o texto do botão baseado no status
     const getButtonText = () => {
         if (loading) return "Processando...";
+        
+        if (foiAlterado) {
+            return "Atualizar";
+        }
         
         if (solicitacao.status === 'Aguardando orçamento') {
             return "Enviar oferta";
@@ -160,7 +281,14 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         return "Aceitar";
     };
 
-    // Função para obter a classe CSS do status no modal
+    const handleBotaoPrincipal = () => {
+        if (foiAlterado) {
+            handleAtualizarValores();
+        } else {
+            handleEnviarOferta();
+        }
+    };
+
     const getModalStatusClass = (status) => {
         const statusMap = {
             'Aguardando orçamento': 'modal-status-aguardando-orcamento',
@@ -176,48 +304,91 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             <div className="solicitacao-modal-content">
                 <button className="solicitacao-modal-close-button" onClick={onClose}>&times;</button>
                 <div className="solicitacao-modal-header">
-                    <h2>Valor Agendamento</h2>
-                    <p>{solicitacao.pet} - {solicitacao.servicos}</p>
-                    <p className={`modal-status ${getModalStatusClass(solicitacao.status)}`}>
-                        <strong>Status atual:</strong> {solicitacao.status}
+                    <h2>Gerenciar Agendamento</h2>
+                    <p>
+                        <strong>Cliente:</strong> {dadosOriginais.cliente?.nome || solicitacao.cliente || 'Não informado'}
+                    </p>
+                    <p>
+                        <strong>Pet:</strong> {dadosOriginais.pet?.nome || solicitacao.pet || 'Não informado'} 
+                        {dadosOriginais.pet?.raca?.nome && ` - ${dadosOriginais.pet.raca.nome}`}
+                    </p>
+                    <p className="modal-status">
+                        <strong>Status atual:</strong> <span className={getModalStatusClass(solicitacao.status)}>{solicitacao.status}</span>
                     </p>
                 </div>
                 <div className="solicitacao-modal-body">
                     <div className="datetime-inputs">
                         <div className="form-group">
                             <label>Início do Atendimento</label>
-                            <input type="datetime-local" defaultValue="2025-09-15T14:00" />
+                            <input 
+                                type="datetime-local" 
+                                value={dataInicio}
+                                onChange={(e) => {
+                                    handleDataInicioChange(e);
+                                    setFoiAlterado(true);
+                                }}
+                                disabled={!canPerformActions(solicitacao.status)}
+                            />
                         </div>
                         <div className="form-group">
                             <label>Fim do Atendimento</label>
-                            <input type="datetime-local" defaultValue="2025-09-15T15:00" />
+                            <input 
+                                type="datetime-local" 
+                                value={dataFim}
+                                onChange={(e) => {
+                                    setDataFim(e.target.value);
+                                    setFoiAlterado(true);
+                                }}
+                                disabled={!canPerformActions(solicitacao.status)}
+                            />
                         </div>
                     </div>
-                    {Object.keys(valores).map(servico => (
-                        <div className="form-group" key={servico}>
-                            <label>Valor do {servico.charAt(0).toUpperCase() + servico.slice(1)}</label>
-                            <input 
-                                type="text" 
-                                value={`R$ ${valores[servico]}`}
-                                readOnly
+                    
+                    {/* Exibir serviços reais da solicitação com valores editáveis */}
+                    {valoresServicos.map((servico, index) => (
+                        <div className="form-group" key={servico.id}>
+                            <label>Valor do {servico.nome}</label>
+                            <NumericFormat
+                                value={servico.valor}
+                                thousandSeparator="."
+                                decimalSeparator=","
+                                prefix="R$ "
+                                allowNegative={false}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                onValueChange={val => handleValorServicoChange(index, val)}
+                                className="form-control"
+                                placeholder="R$ 0,00"
+                                disabled={!canPerformActions(solicitacao.status)}
                             />
                         </div>
                     ))}
-                    <div className="total-display">
-                        Total: R$ {calcularTotal().toFixed(2).replace('.', ',')}
-                    </div>
-                    <div className="checkbox-group">
-                        <input 
-                            type="checkbox" 
-                            id="msg-personalizada" 
-                            checked={mensagemPersonalizada}
-                            onChange={() => setMensagemPersonalizada(!mensagemPersonalizada)}
-                        />
-                        <label htmlFor="msg-personalizada">Mensagem personalizada</label>
-                    </div>
-                    {mensagemPersonalizada && (
-                        <textarea placeholder="..."></textarea>
+                    
+                    {/* Exibir valor de deslocamento se houver */}
+                    {valorDeslocamento >= 0 && (
+                        <div className="form-group">
+                            <label>Valor do Deslocamento</label>
+                            <NumericFormat
+                                value={deslocamento}
+                                thousandSeparator="."
+                                decimalSeparator=","
+                                prefix="R$ "
+                                allowNegative={false}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                onValueChange={handleDeslocamentoChange}
+                                className="form-control"
+                                placeholder="R$ 0,00"
+                                disabled={!canPerformActions(solicitacao.status)}
+                            />
+                        </div>
                     )}
+                    
+                    <div className="form-group">
+                        <div className="total-value">
+                            Total: R$ {Number(calcularTotal()).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                    </div>
                 </div>
                 {showActionButtons && (
                     <div className="solicitacao-modal-footer">
@@ -230,7 +401,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                         </button>
                         <button 
                             className="btn-enviar" 
-                            onClick={handleEnviarOferta}
+                            onClick={handleBotaoPrincipal}
                             disabled={loading}
                         >
                             {getButtonText()}
@@ -352,11 +523,15 @@ export default function Solicitacao() {
     const [currentPage, setCurrentPage] = useState(1);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     
-    // Estados para modal de notificação
     const [notificationModal, setNotificationModal] = useState({
         isOpen: false,
         type: 'info',
         message: ''
+    });
+
+    const [alertSucesso, setAlertSucesso] = useState({
+        isOpen: false,
+        mensagem: ''
     });
     
     useEffect(() => {
@@ -374,18 +549,23 @@ export default function Solicitacao() {
     };
 
     const handleStatusUpdate = () => {
-        // Trigger refresh of all components
         setRefreshTrigger(prev => prev + 1);
         handleCloseModal();
     };
 
-    // Funções para modal de notificação
     const showNotification = (type, message) => {
-        setNotificationModal({
-            isOpen: true,
-            type,
-            message
-        });
+        if (type === 'success') {
+            setAlertSucesso({
+                isOpen: true,
+                mensagem: message
+            });
+        } else {
+            setNotificationModal({
+                isOpen: true,
+                type,
+                message
+            });
+        }
     };
 
     const closeNotification = () => {
@@ -396,7 +576,13 @@ export default function Solicitacao() {
         });
     };
 
-    // Usar o componente de tabs
+    const closeAlertSucesso = () => {
+        setAlertSucesso({
+            isOpen: false,
+            mensagem: ''
+        });
+    };
+
     const tabsData = SolicitacoesTabs({
         onCardClick: handleCardClick,
         currentPage,
@@ -406,7 +592,6 @@ export default function Solicitacao() {
 
     const totalPages = tabsData.totalPages;
 
-    // Lógica de Paginação
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const nextPage = () => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev));
     const prevPage = () => setCurrentPage(prev => (prev > 1 ? prev - 1 : prev));
@@ -447,6 +632,12 @@ export default function Solicitacao() {
                 message={notificationModal.message}
                 onClose={closeNotification}
             />
+            {alertSucesso.isOpen && (
+                <AlertSucesso
+                    mensagem={alertSucesso.mensagem}
+                    onClose={closeAlertSucesso}
+                />
+            )}
         </>
     );
 }

@@ -122,16 +122,16 @@ export default function LoginPage() {
 
                     <button type="submit" className="botao-primario">Entrar</button>
                 </form>
-                {showModal && (
-                    <div className="modal-overlay">
-                        <div className="modal-login">
-                            <h2 className={titleModal ? "sucesso" : "fracasso"}>{titleModal == null ? "Carregando" : titleModal ? "Login bem-sucedido" : "Erro ao fazer login"}</h2>
-                            <p>{messageModal}</p>
-                            <button onClick={() =>redirecionar(titleModal)}>OK</button>
-                        </div>
-                    </div>
-                )}
             </div>
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-login">
+                        <h2 className={titleModal ? "sucesso" : "fracasso"}>{titleModal == null ? "Carregando" : titleModal ? "Login bem-sucedido" : "Erro ao fazer login"}</h2>
+                        <p>{messageModal}</p>
+                        <button onClick={() =>redirecionar(titleModal)}>OK</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -3,11 +3,11 @@ import "../styles/style-Gerenciar.css";
 import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import TableHistorico from "../components/TableHistorico";
-import { getClientes, getPets, getEndereco } from "../utils/get";
+import { getClientes, getPets } from "../utils/get";
 import ModalLoading from "../components/ModalLoading";
 import AlertErro from "../components/AlertErro";
 import NoData from "../components/NoData";
-import ModalGerenciarClientePet, { maskCelular, maskCep } from "../components/ModalGerenciarClientePet"; // Importe as máscaras
+import ModalGerenciarClientePet, { maskCelular, maskCep } from "../components/ModalGerenciarClientePet";
 import ModalNovoClientePet from "../components/ModalNovoClientePet";
 
 const Gerenciar = () => {
@@ -22,15 +22,20 @@ const Gerenciar = () => {
     const [modalNovo, setModalNovo] = useState({ aberto: false, tipo: null });
     const [modalEditar, setModalEditar] = useState({ aberto: false, tipo: null, dados: null });
 
+    // Paginação
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const [paginaInput, setPaginaInput] = useState("");
+    const itensPorPagina = 10;
+
     useEffect(() => {
         if (tipo === "cliente") {
             carregarClientes();
-        } if (tipo === "pet") {
+        } else if (tipo === "pet") {
             carregarPets();
         }
     }, [tipo]);
 
-        async function carregarClientes() {
+    async function carregarClientes() {
         setLoading(true);
         setErro({ aberto: false, mensagem: "", detalhe: "" });
         setColunas(["Nome", "Celular", "CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade"]);
@@ -38,7 +43,7 @@ const Gerenciar = () => {
         try {
             const clientes = await getClientes();
             setDados(Array.isArray(clientes) ? clientes : []);
-            console.log("Clientes:", clientes);
+            setPaginaAtual(1);
         } catch (error) {
             setErro({
                 aberto: true,
@@ -63,7 +68,7 @@ const Gerenciar = () => {
                 clienteNome: pet.cliente?.nome || "",
             }));
             setDados(petsCompletos);
-            console.log("Pets:", petsCompletos);
+            setPaginaAtual(1);
         } catch (error) {
             setErro({
                 aberto: true,
@@ -80,38 +85,52 @@ const Gerenciar = () => {
     }
 
     function mapearDadosParaTabela() {
-    if (tipo === "cliente") {
-        return dados.map(c => ({
-            id: c.id,
-            Nome: c.nome,
-            "Celular": maskCelular(c.telefone || ""),
-            CEP: maskCep(c.cep || ""),
-            "Número": c.numEndereco,
-            Complemento: c.complemento,
-            Rua: c.rua || "",
-            Bairro: c.bairro || "",
-            Cidade: c.cidade || "",
-            _original: c
-        }));
-    } else {
-        return dados.map(p => ({
-            id: p.id,
-            Nome: p.nome,
-            Raça: p.racaNome,
-            Cliente: p.clienteNome,
-            _original: p
-        }));
+        if (tipo === "cliente") {
+            return dados.map(c => ({
+                id: c.id,
+                Nome: c.nome,
+                Celular: maskCelular(c.telefone || ""),
+                CEP: maskCep(c.cep || ""),
+                Número: c.numEndereco,
+                Complemento: c.complemento,
+                Rua: c.rua || "",
+                Bairro: c.bairro || "",
+                Cidade: c.cidade || "",
+                _original: c
+            }));
+        } else {
+            return dados.map(p => ({
+                id: p.id,
+                Nome: p.nome,
+                Raça: p.racaNome,
+                Cliente: p.clienteNome,
+                _original: p
+            }));
+        }
     }
-}
+
+    // Dados da página
+    const totalPaginas = Math.ceil(dados.length / itensPorPagina);
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const dadosPagina = mapearDadosParaTabela().slice(inicio, inicio + itensPorPagina);
+
+    const irParaPagina = () => {
+        const numero = parseInt(paginaInput);
+        if (!isNaN(numero) && numero >= 1 && numero <= totalPaginas) {
+            setPaginaAtual(numero);
+            setPaginaInput("");
+        } else {
+            alert(`Digite um número entre 1 e ${totalPaginas}`);
+        }
+    };
 
     return (
         <div className="historico-root">
             <SideBar selecionado="gerenciar" />
 
             <div className="content">
-                <h1 className="titulo">
-                    Gerenciar {tipo === "cliente" ? "Clientes" : "Pets"}
-                </h1>
+                <h1 className="titulo">Gerenciar {tipo === "cliente" ? "Clientes" : "Pets"}</h1>
+
                 <div className="button-container">
                     <div className="tab-container">
                         <button
@@ -127,6 +146,7 @@ const Gerenciar = () => {
                             Pet
                         </button>
                     </div>
+
                     <div className="button-group">
                         <button
                             className="btn-novo"
@@ -140,13 +160,82 @@ const Gerenciar = () => {
                 <TableHistorico
                     columns={[...colunas, "Editar"]}
                     columnWidths={tamanhoColunas}
-                    data={mapearDadosParaTabela()}
+                    data={dadosPagina}
                     onEdit={handleEditar}
                     tipo={tipo}
                     rounded
                 />
 
+                {/* PAGINAÇÃO */}
+                {dados.length > 0 && (
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px", gap: "8px", alignItems: "center" }}>
+                        <button
+                            onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
+                            disabled={paginaAtual === 1}
+                            style={{
+                                background: "#307E95",
+                                color: "#fff",
+                                border: "none",
+                                padding: "6px 14px",
+                                borderRadius: "6px",
+                                cursor: paginaAtual === 1 ? "not-allowed" : "pointer"
+                            }}
+                        >
+                            {"<"}
+                        </button>
+
+                        <span style={{ fontWeight: "600" }}>Página {paginaAtual} de {totalPaginas}</span>
+
+                        <button
+                            onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
+                            disabled={paginaAtual === totalPaginas}
+                            style={{
+                                background: "#307E95",
+                                color: "#fff",
+                                border: "none",
+                                padding: "6px 14px",
+                                borderRadius: "6px",
+                                cursor: paginaAtual === totalPaginas ? "not-allowed" : "pointer"
+                            }}
+                        >
+                            {">"}
+                        </button>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginLeft: "10px" }}>
+                            <label style={{ fontWeight: "600" }}>Ir para:</label>
+                            <input
+                                type="number"
+                                min="1"
+                                max={totalPaginas}
+                                value={paginaInput}
+                                onChange={(e) => setPaginaInput(e.target.value)}
+                                style={{
+                                    width: "60px",
+                                    padding: "4px",
+                                    textAlign: "center",
+                                    borderRadius: "6px",
+                                    border: "1px solid #ccc"
+                                }}
+                            />
+                            <button
+                                onClick={irParaPagina}
+                                style={{
+                                    background: "#307E95",
+                                    color: "#fff",
+                                    border: "none",
+                                    padding: "6px 10px",
+                                    borderRadius: "6px",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                Ir
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {dados.length === 0 && !loading && <NoData />}
+
                 {modalNovo.aberto && (
                     <ModalNovoClientePet
                         tipo={modalNovo.tipo}
@@ -155,6 +244,7 @@ const Gerenciar = () => {
                         setErro={setErro}
                     />
                 )}
+
                 {modal.aberto && (
                     <ModalGerenciarClientePet
                         tipo={modal.tipo}
@@ -164,6 +254,7 @@ const Gerenciar = () => {
                         setErro={setErro}
                     />
                 )}
+
                 {modalEditar.aberto && (
                     <ModalGerenciarClientePet
                         tipo={modalEditar.tipo}
@@ -173,9 +264,8 @@ const Gerenciar = () => {
                         setErro={setErro}
                     />
                 )}
-                {loading && (
-                    <ModalLoading mensagem={loadingMsg} />
-                )}
+
+                {loading && <ModalLoading mensagem={loadingMsg} />}
                 {erro.aberto && (
                     <AlertErro
                         mensagem={erro.mensagem}

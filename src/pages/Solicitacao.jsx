@@ -603,7 +603,7 @@ export default function Solicitacao() {
             <div className="solicitacao-container">
                 <SideBar selecionado="solicitacao" />
                 <main className="solicitacao-main">
-                    <h1 className="page-title">SOLICITAÇÕES DE SERVIÇO</h1>
+                    <h1 className="page-title">SOLICITAÇÕES DE SERVIÇOS</h1>
                     {totalPages > 1 && (
                         <Pagination
                             totalPages={totalPages}

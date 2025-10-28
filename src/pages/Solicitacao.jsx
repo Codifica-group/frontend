@@ -265,24 +265,26 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
     };
 
     const showActionButtons = canPerformActions(solicitacao.status);
+    const isAguardandoOrcamento = solicitacao.status === 'Aguardando orçamento';
+    const isAguardandoAprovacao = solicitacao.status === 'Aguardando Aprovação';
     
     const getButtonText = () => {
         if (loading) return "Processando...";
         
-        if (foiAlterado) {
+        if (foiAlterado && isAguardandoOrcamento) {
             return "Atualizar";
         }
         
-        if (solicitacao.status === 'Aguardando orçamento') {
+        if (isAguardandoOrcamento) {
             return "Enviar oferta";
-        } else if (solicitacao.status === 'Aguardando Aprovação') {
+        } else if (isAguardandoAprovacao) {
             return "Aprovar oferta";
         }
         return "Aceitar";
     };
 
     const handleBotaoPrincipal = () => {
-        if (foiAlterado) {
+        if (foiAlterado && isAguardandoOrcamento) {
             handleAtualizarValores();
         } else {
             handleEnviarOferta();
@@ -327,7 +329,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                     handleDataInicioChange(e);
                                     setFoiAlterado(true);
                                 }}
-                                disabled={!canPerformActions(solicitacao.status)}
+                                disabled={!isAguardandoOrcamento}
                             />
                         </div>
                         <div className="form-group">
@@ -339,7 +341,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                     setDataFim(e.target.value);
                                     setFoiAlterado(true);
                                 }}
-                                disabled={!canPerformActions(solicitacao.status)}
+                                disabled={!isAguardandoOrcamento}
                             />
                         </div>
                     </div>
@@ -359,7 +361,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                 onValueChange={val => handleValorServicoChange(index, val)}
                                 className="form-control"
                                 placeholder="R$ 0,00"
-                                disabled={!canPerformActions(solicitacao.status)}
+                                disabled={!isAguardandoOrcamento}
                             />
                         </div>
                     ))}
@@ -379,7 +381,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                 onValueChange={handleDeslocamentoChange}
                                 className="form-control"
                                 placeholder="R$ 0,00"
-                                disabled={!canPerformActions(solicitacao.status)}
+                                disabled={!isAguardandoOrcamento}
                             />
                         </div>
                     )}

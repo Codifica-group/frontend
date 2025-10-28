@@ -13,8 +13,8 @@ const Recusados = ({ onCardClick, currentPage, refreshTrigger }) => {
             try {
                 setLoading(true);
                 setError(null);
-                const data = await getSolicitacoes(0, 1000);
-                const transformedData = data.map(transformSolicitacaoData);
+                const { dados } = await getSolicitacoes(0, 1000);
+                const transformedData = dados.map(transformSolicitacaoData);
                 setSolicitacoes(transformedData);
             } catch (err) {
                 console.error("Erro ao carregar solicitações:", err);

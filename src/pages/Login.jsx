@@ -99,7 +99,7 @@ export default function LoginPage() {
                 <div className="conteiner-logo">
                     <img src={logo} alt="Eleve Pet Shop" className="logo" />
                 </div>
-                <h2>Acesse e aproveite!</h2>
+                <h2>Bem-vindo!</h2>
                 <form id="login" onSubmit={(e) => { e.preventDefault(); logar(); }}>
                     <div className="grupo-formulario">
                         <label>Email</label>

@@ -68,8 +68,8 @@ export default function ModalGerenciarClientePet({
             setForm(dados || {});
         }
         if (tipo === "pet") {
-            getClientes().then(setClientes);
-            getRacas().then(setRacas);
+            getClientes().then(res => setClientes(Array.isArray(res.dados) ? res.dados : []));
+            getRacas().then(res => setRacas(Array.isArray(res) ? res : (res.dados || [])));
         }
     }, [dados, tipo]);
 
@@ -265,9 +265,9 @@ export default function ModalGerenciarClientePet({
     };
 
     const handleSalvarRaca = async (novaRaca) => {
-        const novasRacas = await getRacas();
-        setRacas(novasRacas);
-        setForm(prev => ({ ...prev, racaId: novaRaca.id }));
+    const novasRacasRes = await getRacas();
+    setRacas(Array.isArray(novasRacasRes) ? novasRacasRes : (novasRacasRes.dados || []));
+    setForm(prev => ({ ...prev, racaId: novaRaca.id }));
     };
 
     // Options para selects

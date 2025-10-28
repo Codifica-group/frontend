@@ -5,15 +5,19 @@ import { putSolicitacao } from "../utils/put";
 import { canPerformActions } from "../utils/solicitacaoUtils";
 import NotificationModal from "../components/NotificationModal";
 import AlertSucesso from "../components/AlertSucesso";
+import ModalLoading from "../components/ModalLoading";
 import { NumericFormat } from "react-number-format";
 import "../styles/style-solicitacao.css";
 
 const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotification }) => {
     const [loading, setLoading] = useState(false);
+    const [loadingMsg, setLoadingMsg] = useState("Carregando...");
     
     const dadosOriginais = solicitacao.originalData || {};
     const servicos = dadosOriginais.servicos || [];
     const valorDeslocamento = dadosOriginais.valorDeslocamento || 0;
+    const [deslocamento, setDeslocamento] = useState(solicitacao.originalData?.valorDeslocamento || 0);
+    const deslocamentoInfo = solicitacao.originalData?.deslocamento || {};
     const dataHoraInicio = dadosOriginais.dataHoraInicio || '';
     const dataHoraFim = dadosOriginais.dataHoraFim || '';
     
@@ -60,8 +64,6 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         servicos.map(s => ({ id: s.id, nome: s.nome, valor: s.valor }))
     );
     
-    const [deslocamento, setDeslocamento] = useState(valorDeslocamento);
-
     const valoresOriginais = {
         dataInicio: formatarDataParaInput(dataHoraInicio),
         dataFim: dataHoraFim ? formatarDataParaInput(dataHoraFim) : calcularDataHoraFim(formatarDataParaInput(dataHoraInicio)),
@@ -364,10 +366,20 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                         </div>
                     ))}
                     
-                    {/* Exibir valor de deslocamento se houver */}
-                    {valorDeslocamento >= 0 && (
-                        <div className="form-group">
-                            <label>Valor do Deslocamento</label>
+                    <div className="form-group">
+                        <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
+                        {Number(deslocamentoInfo?.distanciaKm) > 0 && Number(deslocamentoInfo?.tempo) > 0 && (
+                            <span style={{ display: 'block', fontSize: '0.9em', color: '#555', marginBottom: '5px' }}>
+                                Distancia: {Number(deslocamentoInfo.distanciaKm).toLocaleString("pt-BR", { maximumFractionDigits: 2 })} KM | Tempo: {
+                                    (() => {
+                                        const tempo = Number(deslocamentoInfo.tempo) || 0;
+                                        const minutos = Math.floor(tempo);
+                                        const segundos = Math.round((tempo - minutos) * 60);
+                                        return `${minutos}:${segundos.toString().padStart(2, "0")} ${minutos !== 1 ? "Minutos" : "Minuto"}`;
+                                    })()
+                                }
+                            </span>
+                        )}
                             <NumericFormat
                                 value={deslocamento}
                                 thousandSeparator="."
@@ -380,9 +392,9 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                 className="form-control"
                                 placeholder="R$ 0,00"
                                 disabled={!canPerformActions(solicitacao.status)}
+                                style={{ marginTop: '1vh' }}
                             />
                         </div>
-                    )}
                     
                     <div className="form-group">
                         <div className="total-value">
@@ -522,7 +534,9 @@ export default function Solicitacao() {
     const [selectedSolicitacao, setSelectedSolicitacao] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    
+    const [loading, setLoading] = useState(false);
+    const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+
     const [notificationModal, setNotificationModal] = useState({
         isOpen: false,
         type: 'info',
@@ -539,8 +553,43 @@ export default function Solicitacao() {
     }, []);
 
     const handleCardClick = (solicitacao) => {
-        setSelectedSolicitacao(solicitacao);
-        setIsModalOpen(true);
+        (async () => {
+            if (solicitacao.status === 'Aguardando orçamento') {
+                setLoadingMsg("Calculando serviço...");
+                setLoading(true);
+                try {
+                // Chama calcularServico para preencher os campos de valores
+                const petId = solicitacao.pet?.id || solicitacao.originalData?.pet?.id;
+                const servicos = (solicitacao.originalData?.servicos || solicitacao.servicos || []).map(s => ({ id: s.id }));
+                if (petId && servicos.length > 0) {
+                    const { calcularServico } = await import("../utils/agenda");
+                    const resultado = await calcularServico({ petId, servicos });
+                    // Preenche os campos do modal com os valores recebidos
+                    setSelectedSolicitacao({
+                        ...solicitacao,
+                        valorDeslocamento: resultado.deslocamento?.valor ?? 0,
+                        valorTotal: resultado.valor ?? 0,
+                        servicos: resultado.servico || [],
+                        originalData: {
+                            ...solicitacao.originalData,
+                            valorDeslocamento: resultado.deslocamento?.valor ?? 0,
+                            valorTotal: resultado.valor ?? 0,
+                            servicos: resultado.servico || [],
+                        }
+                    });
+                } else {
+                    setSelectedSolicitacao(solicitacao);
+                }
+            } catch (error) {
+                setSelectedSolicitacao(solicitacao);
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setSelectedSolicitacao(solicitacao);
+        }
+            setIsModalOpen(true);
+        })();
     };
 
     const handleCloseModal = () => {
@@ -638,6 +687,7 @@ export default function Solicitacao() {
                     onClose={closeAlertSucesso}
                 />
             )}
+            {loading && <ModalLoading mensagem={loadingMsg} />}
         </>
     );
 }

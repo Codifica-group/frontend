@@ -39,9 +39,9 @@ export default function Agenda() {
     setLoading(true);
     try {
       const response = await getAgendas();
-      const lista = Array.isArray(response)
-        ? response
-        : response.content || response.data || [];
+      const lista = Array.isArray(response.dados)
+        ? response.dados
+        : [];
       setAgendas(lista);
       return lista;
     } finally {

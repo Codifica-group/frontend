@@ -33,7 +33,7 @@ export default function ContainerCategorias(props) {
         try {
             await deleteDespesa(idDespesa);
             const despesasAtualizadas = await getDespesas();
-            props.setDespesas(despesasAtualizadas);
+            props.setDespesas(despesasAtualizadas.dados);
             setShowModalSaida(false);
             console.log("Despesas atualizadas:", despesasAtualizadas);
         } catch (error) {

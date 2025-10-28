@@ -104,7 +104,8 @@ export default function ModalGastos(props) {
                 const responseProduto = await postProduto(novoProduto);
                 const produtoCriado = Array.isArray(responseProduto) ? responseProduto[0] : responseProduto;
                 await props.setProdutos(await getProdutos());
-                await props.setDespesas(await getDespesas());
+                const resDespesas = await getDespesas();
+                await props.setDespesas(resDespesas.dados);
                 if (props.tipo === "atualizar") {
                     novaDespesa = {
                         produtoId: responseProduto.id,
@@ -142,7 +143,8 @@ export default function ModalGastos(props) {
             }
         }
 
-        props.setDespesas(await getDespesas());
+        const resDespesas = await getDespesas();
+        props.setDespesas(resDespesas.dados);
         console.log("Produtos atualizados:", props.produtos);
         console.log("Despesas atualizadas:", props.despesas);
         props.showModal(false);

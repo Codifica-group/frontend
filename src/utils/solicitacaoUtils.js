@@ -1,20 +1,20 @@
 // Mapeamento dos status do back-end para status do front-end
 export const STATUS_MAPPING = {
     // Status do back-end → Status do front-end
-    'AGUARDANDO_RESPOSTA_SOLICITACAO_PETSHOP': 'Aguardando orçamento',
+    'AGUARDANDO_RESPOSTA_PETSHOP': 'Aguardando orçamento',
     'ACEITO_PELO_PETSHOP': 'Aguardando Aprovação',
     'RECUSADO_PELO_USUARIO': 'Recusado',
     'RECUSADO_PELO_CLIENTE': 'Recusado',
-    'ACEITO_PELO_CLIENTE': 'Aprovado',
+    'CONFIRMADO': 'Aprovado',
     'FINALIZADO': 'Aprovado'
 };
 
 // Mapeamento reverso para enviar ao back-end
 export const REVERSE_STATUS_MAPPING = {
-    'Aguardando orçamento': 'AGUARDANDO_RESPOSTA_SOLICITACAO_PETSHOP',
+    'Aguardando orçamento': 'AGUARDANDO_RESPOSTA_PETSHOP',
     'Aguardando Aprovação': 'ACEITO_PELO_PETSHOP',
     'Recusado': 'RECUSADO_PELO_PETSHOP' || 'RECUSADO_PELO_CLIENTE',
-    'Aprovado': 'ACEITO_PELO_CLIENTE'
+    'Aprovado': 'CONFIRMADO'
 };
 
 // Cores dos cards conforme status

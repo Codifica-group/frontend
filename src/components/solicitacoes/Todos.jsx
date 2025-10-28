@@ -13,8 +13,8 @@ const Todos = ({ onCardClick, currentPage, refreshTrigger }) => {
             try {
                 setLoading(true);
                 setError(null);
-                const data = await getSolicitacoes(0, 1000); // Buscar todas as solicitações
-                const transformedData = data.map(transformSolicitacaoData);
+                const { dados, totalPaginas } = await getSolicitacoes(0, 1000);
+                const transformedData = dados.map(transformSolicitacaoData);
                 setSolicitacoes(transformedData);
             } catch (err) {
                 console.error("Erro ao carregar solicitações:", err);

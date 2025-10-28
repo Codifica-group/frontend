@@ -61,7 +61,7 @@ const Historico = () => {
                 ? filtro.servico.map(s => Number(s.value))
                 : null;
 
-            const resultado = await getHistorico({
+            const { dados, totalPaginas } = await getHistorico({
                 dataInicio: filtro.dataInicio,
                 dataFim: filtro.dataFim,
                 clienteId: filtro.clienteId || null,
@@ -70,9 +70,9 @@ const Historico = () => {
                 servicoId: servicoId,
             });
 
-            const lista = Array.isArray(resultado)
-                ? resultado
-                : resultado.content || resultado.data || [];
+            const lista = Array.isArray(dados)
+                ? dados
+                : [];
 
             const filtrado = lista.filter(item => {
                 const clienteOk = !filtros.cliente || item.cliente?.nome?.toLowerCase().includes(filtros.cliente?.toLowerCase() || "");
@@ -126,8 +126,8 @@ const Historico = () => {
         setLoadingMsg("Carregando dados...");
         setLoading(true);
         try {
-            getPets().then(setPets);
-            getClientes().then(setClientes);
+            getPets().then(res => setPets(res.dados));
+            getClientes().then(res => setClientes(res.dados));
             getRacas().then(res => {
                 if (Array.isArray(res)) setRacas(res);
                 else if (res && typeof res === "object") {

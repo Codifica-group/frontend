@@ -3,29 +3,30 @@ import ServiceCard from "../ServiceCard";
 
 const SolicitacoesBase = ({ solicitacoes, activeTab, onCardClick, currentPage, itemsPerPage = 10 }) => {
     const parseDate = (dateString) => {
-        // Se já é um objeto Date ou timestamp, usar diretamente
         if (dateString instanceof Date) return dateString;
         if (typeof dateString === 'string' && dateString.includes('T')) {
             return new Date(dateString);
         }
-        
-        // Formato antigo para compatibilidade
-        const [datePart, timePart] = dateString.split(' - ');
-        const [day, month, year] = datePart.split('/');
-        const [hour, minute] = timePart.replace('h', '').split(':');
-        return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
+
+        const parts = dateString?.split(' - ');
+        if (!parts || parts.length < 2) return new Date(0);
+        const [datePart, timePart] = parts;
+        const dateParts = datePart?.split('/');
+        const timeParts = timePart?.replace('h', '')?.split(':');
+        if (!dateParts || dateParts.length < 3 || !timeParts || timeParts.length < 2) return new Date(0);
+
+        const [day, month, year] = dateParts;
+        const [hour, minute] = timeParts;
+        return new Date(year, month - 1, day, hour, minute);
     };
+
 
     const filteredSolicitacoes = useMemo(() => {
         let filtered;
 
         switch (activeTab) {
             case 'Todos':
-                filtered = [...solicitacoes].sort((a, b) => {
-                    const dateA = parseDate(a.dataHora || a.dataHoraSolicitacao);
-                    const dateB = parseDate(b.dataHora || b.dataHoraSolicitacao);
-                    return dateB - dateA;
-                });
+                filtered = [...solicitacoes];
                 break;
             case 'Aprovados':
                 filtered = solicitacoes.filter(s => s.status === 'Aprovado');
@@ -42,39 +43,46 @@ const SolicitacoesBase = ({ solicitacoes, activeTab, onCardClick, currentPage, i
             default:
                 filtered = solicitacoes;
         }
-        
-        return filtered;
+
+        return filtered.sort((a, b) => {
+            const dateA = parseDate(a.dataHora || a.dataSolicitacao || '');
+            const dateB = parseDate(b.dataHora || b.dataSolicitacao || '');
+            return dateB - dateA;
+        });
+
     }, [solicitacoes, activeTab]);
 
-    // Aplicar paginação
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredSolicitacoes.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitacoes.length / itemsPerPage);
+
+     const cardsAreaStyle = currentItems.length > 0
+        ? {}
+        : { display: 'flex', flexDirection: 'column', flexGrow: 1 };
 
     return {
         currentItems,
         totalPages,
         totalItems: filteredSolicitacoes.length,
         component: (
-            <div className="cards-display-area">
+            <div className="cards-display-area" style={cardsAreaStyle}>
                 {currentItems.length > 0 ? (
                     currentItems.map(solicitacao => (
-                        <ServiceCard 
-                            key={solicitacao.id} 
-                            solicitacao={solicitacao} 
-                            onClick={() => onCardClick(solicitacao)} 
+                        <ServiceCard
+                            key={solicitacao.id}
+                            solicitacao={solicitacao}
+                            onClick={() => onCardClick(solicitacao)}
                         />
                     ))
                 ) : (
-                    <div className="flex flex-col items-center justify-center" style={{ marginTop: "5%" }}>
+                     <div className="no-data-container">
                         {/* Animação SVG */}
                         <svg
                             width="120"
                             height="120"
                             viewBox="0 0 24 24"
                             fill="none"
-                            className="mb-4"
                         >
                             <g>
                                 <ellipse cx="12" cy="19" rx="7" ry="2" fill="#e0e0e0">

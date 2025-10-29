@@ -3,6 +3,8 @@ import logo from "../assets/logo.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalLoading from "../components/ModalLoading";
+import api from "../utils/api";
+
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -50,39 +52,22 @@ export default function LoginPage() {
             senha: senha
         };
 
-        const usuarioString = JSON.stringify(usuario);
-
-        fetch("http://localhost:8080/api/usuarios/login", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-              },
-            body: usuarioString
-        })
-        .then(async (response) => {
-            setLoading(false);
-            if (response.ok) {
-                const data = await response.json();
+        api.post("/usuarios/login", usuario)
+            .then((response) => {
+                setLoading(false);
+                const data = response.data;
                 sessionStorage.setItem("token", data.token);
                 setMessageModal(data.mensagem);
-                setTitleModal(true)
-
-            } else {
-                const errorData = await response.json();
+                setTitleModal(true);
+                setShowModal(true);
+            })
+            .catch((error) => {
+                setLoading(false);
                 sessionStorage.removeItem("token");
-                setMessageModal(errorData.message);
-                setTitleModal(false)
-            }
-            setShowModal(true);
-        })
-        .catch((error) => {
-            setLoading(false);
-            console.error("Erro:", error);
-            sessionStorage.removeItem("token");
-            setMessageModal("Erro ao fazer login. Tente novamente mais tarde." + error.message);
-            setTitleModal(false)
-            setShowModal(true);
-        });
+                setMessageModal(error.response?.data?.mensagem || "Erro ao fazer login. Tente novamente mais tarde.");
+                setTitleModal(false);
+                setShowModal(true);
+            });
     }
 
     function redirecionar(sucesso) {
@@ -99,7 +84,7 @@ export default function LoginPage() {
                 <div className="conteiner-logo">
                     <img src={logo} alt="Eleve Pet Shop" className="logo" />
                 </div>
-                <h2>Acesse e aproveite!</h2>
+                <h2>Bem-vindo!</h2>
                 <form id="login" onSubmit={(e) => { e.preventDefault(); logar(); }}>
                     <div className="grupo-formulario">
                         <label>Email</label>

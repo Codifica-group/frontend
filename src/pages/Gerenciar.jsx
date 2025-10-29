@@ -41,8 +41,8 @@ const Gerenciar = () => {
         setColunas(["Nome", "Celular", "CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade"]);
         setTamanhoColunas(["14.5%", "7.1%", "3.1%", "7%", "1%", "5%", "4%", "2%"]);
         try {
-            const clientes = await getClientes();
-            setDados(Array.isArray(clientes) ? clientes : []);
+            const res = await getClientes();
+            setDados(Array.isArray(res.dados) ? res.dados : []);
             setPaginaAtual(1);
         } catch (error) {
             setErro({
@@ -61,8 +61,8 @@ const Gerenciar = () => {
         setColunas(["Nome", "Raça", "Cliente"]);
         setTamanhoColunas(["20%", "10%", "15%"]);
         try {
-            const pets = await getPets();
-            const petsCompletos = (Array.isArray(pets) ? pets : []).map(pet => ({
+            const res = await getPets();
+            const petsCompletos = (Array.isArray(res.dados) ? res.dados : []).map(pet => ({
                 ...pet,
                 racaNome: pet.raca?.nome || "",
                 clienteNome: pet.cliente?.nome || "",

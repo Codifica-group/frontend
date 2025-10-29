@@ -27,8 +27,8 @@
     /* Removido position: relative para não interferir no modal */
 }
 
-.secao-login:hover {
-    transform: translateY(-5px);
+.secao-login:hover { 
+    /* transform: scale(1.005); */
     box-shadow: 0 25px 70px rgba(48, 126, 149, 0.2), 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -170,7 +170,7 @@
 
 .botao-primario:hover {
     background: linear-gradient(135deg, #2A8B9E 0%, #307E95 100%);
-    transform: translateY(-3px);
+    transform: scale(1.02);
     box-shadow: 0 8px 25px rgba(48, 126, 149, 0.4);
 }
 

@@ -2,7 +2,6 @@ import api from "./api";
 import { getAgendas } from "./get";
 
 // REQUISIÇÕES PARA A API DE AGENDAS
-const API_BASE = "http://localhost:8080/api/agendas";
 export const calcularServico = async (body) => {
   try {
     const response = await api.post(`/agendas/calcular/servico`, body);
@@ -26,13 +25,10 @@ export const filtrarAgendas = async (filtros, offset = 0, size = 100) => {
 // FUNÇÕES PARA AGENDA
 export async function exibirAgendas(offset = 0, size = 100) {
   try {
-    const response = await getAgendas(offset, size);
-    const data = Array.isArray(response)
-      ? response
-      : response.content || response.data || [];
-    console.log("Agendas:", data);
+    const { dados, totalPaginas } = await getAgendas(offset, size);
+    console.log("Agendas:", dados);
 
-    return data.map((item) => ({
+    return dados.map((item) => ({
       id: item.id,
       title: `${Array.isArray(item.servicos) ? item.servicos.map(s => s.nome).join(", ") : (item.servicos?.nome || "")} - ${item.pet?.nome || ""}`,
       start: item.dataHoraInicio,

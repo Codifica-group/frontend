@@ -16,8 +16,8 @@ export default function ModalNovoClientePet({ tipo, onClose, recarregar, setErro
 
     useEffect(() => {
         if (tipo === "pet") {
-            getClientes().then(setClientes);
-            getRacas().then(setRacas);
+            getClientes().then(res => setClientes(res.dados));
+            getRacas().then(res => setRacas(Array.isArray(res) ? res : (res.dados || [])));
         }
         setForm({});
     }, [tipo]);

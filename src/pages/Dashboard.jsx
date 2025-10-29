@@ -41,11 +41,13 @@ export default function DashboardEleve() {
             try {
                 setCategorias(await getCategorias());
                 setProdutos(await getProdutos());
-                setDespesas(await getDespesas());
+                const despesasRes = await getDespesas();
+                setDespesas(despesasRes.dados);
                 setLucro(await postLucro({ "dataInicio": dataSelecionada, "dataFim": dataSelecionada }))
                 setLucroMensal(await postLucro({ "dataInicio": format(subDays(new Date(dataSelecionada), 29), "yyyy-MM-dd"), "dataFim": dataSelecionada }));
                 setServicos(await getServicos());
-                setAgendas(await getAgendas());
+                const agendasRes = await getAgendas();
+                setAgendas(agendasRes.dados);
             } catch (error) {
                 setErro({
                     aberto: true,

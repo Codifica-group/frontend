@@ -47,8 +47,8 @@ export default function ModalAgenda(props) {
                 dataFim: fimStr,
             }));
         }
-        getPets().then(res => setPets(res));
-        getServicos().then(res => setServicos(res));
+    getPets().then(res => setPets(Array.isArray(res.dados) ? res.dados : []));
+    getServicos().then(res => setServicos(Array.isArray(res) ? res : []));
         preencherHorariosIniciais();
     }, []);
 

@@ -149,13 +149,14 @@
     }
 
     .cards-display-area {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 20px;
+        display: flex; /* Alterado para flex */
+        flex-wrap: wrap; /* Permite que os cards quebrem para a próxima linha */
+        gap: 20px; /* Define o espaçamento entre os cards */
         flex-grow: 1;
         width: 100%;
         margin: 0 auto;
         padding: 0;
+        /* Remove grid-template-columns */
     }
 
     .service-card-new {
@@ -170,6 +171,11 @@
         padding-left: 25px;
         box-sizing: border-box;
         transition: box-shadow 0.2s ease;
+        width: 400px; /* Largura fixa */
+        height: 380px; /* Altura fixa */
+        overflow: hidden; /* Mantém o overflow hidden */
+        /* Remove max-width e max-height */
+        flex-direction: column; /* Garante que o conteúdo interno se organize verticalmente */
     }
 
     .service-card-new:hover {

@@ -2,32 +2,34 @@ import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import { SolicitacoesTabs } from "../components/solicitacoes";
 import { putSolicitacao } from "../utils/put";
-import { canPerformActions } from "../utils/solicitacaoUtils";
+import { canPerformActions, formatServices } from "../utils/solicitacaoUtils";
 import NotificationModal from "../components/NotificationModal";
 import AlertSucesso from "../components/AlertSucesso";
 import ModalLoading from "../components/ModalLoading";
 import { NumericFormat } from "react-number-format";
 import "../styles/style-solicitacao.css";
 
+
 const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotification }) => {
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
-    
+
     const dadosOriginais = solicitacao.originalData || {};
     const servicos = dadosOriginais.servicos || [];
-    const valorDeslocamento = dadosOriginais.valorDeslocamento || 0;
-    const [deslocamento, setDeslocamento] = useState(solicitacao.originalData?.valorDeslocamento || 0);
-    const deslocamentoInfo = solicitacao.originalData?.deslocamento || {};
+    const valorDeslocamentoOriginal = dadosOriginais.valorDeslocamento ?? 0;
+
+    const [deslocamento, setDeslocamento] = useState(valorDeslocamentoOriginal);
+    const deslocamentoInfo = dadosOriginais.deslocamento || {};
     const dataHoraInicio = dadosOriginais.dataHoraInicio || '';
     const dataHoraFim = dadosOriginais.dataHoraFim || '';
-    
+
     const calcularDataHoraFim = (dataInicio) => {
         if (!dataInicio) return '';
         const [datePart, timePart] = dataInicio.split('T');
         const [hours, minutes] = timePart.split(':');
-        
+
         let novaHora = parseInt(hours, 10) + 1;
-        
+
         if (novaHora >= 24) {
             const data = new Date(datePart);
             data.setDate(data.getDate() + 1);
@@ -35,10 +37,10 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             const novaData = data.toISOString().split('T')[0];
             return `${novaData}T${String(novaHora).padStart(2, '0')}:${minutes}`;
         }
-        
+
         return `${datePart}T${String(novaHora).padStart(2, '0')}:${minutes}`;
     };
-    
+
     const formatarDataParaInput = (dataISO) => {
         if (!dataISO) return '';
         if (dataISO.length === 16 && dataISO.includes('T')) {
@@ -46,7 +48,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         }
         return dataISO.replace('Z', '').slice(0, 16);
     };
-    
+
     const [dataInicio, setDataInicio] = useState(
         formatarDataParaInput(dataHoraInicio)
     );
@@ -61,35 +63,9 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
     });
 
     const [valoresServicos, setValoresServicos] = useState(
-        servicos.map(s => ({ id: s.id, nome: s.nome, valor: s.valor }))
+        servicos.map(s => ({ id: s.id, nome: s.nome, valor: s.valor ?? "" }))
     );
-    
-    const valoresOriginais = {
-        dataInicio: formatarDataParaInput(dataHoraInicio),
-        dataFim: dataHoraFim ? formatarDataParaInput(dataHoraFim) : calcularDataHoraFim(formatarDataParaInput(dataHoraInicio)),
-        servicos: servicos.map(s => ({ id: s.id, valor: s.valor })),
-        deslocamento: valorDeslocamento
-    };
 
-    const [foiAlterado, setFoiAlterado] = useState(false);
-
-    useEffect(() => {
-        let alterado = false;
-        
-        if (dataInicio !== valoresOriginais.dataInicio) alterado = true;
-        if (dataFim !== valoresOriginais.dataFim) alterado = true;
-        
-        if (deslocamento !== valoresOriginais.deslocamento) alterado = true;
-        
-        for (let i = 0; i < valoresServicos.length; i++) {
-            if (valoresServicos[i].valor !== valoresOriginais.servicos[i]?.valor) {
-                alterado = true;
-                break;
-            }
-        }
-        
-        setFoiAlterado(alterado);
-    }, [dataInicio, dataFim, valoresServicos, deslocamento, valoresOriginais.dataInicio, valoresOriginais.dataFim, valoresOriginais.deslocamento, valoresOriginais.servicos]);
 
     const handleDataInicioChange = (e) => {
         const value = e.target.value;
@@ -101,12 +77,10 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         const novosValores = [...valoresServicos];
         novosValores[index].valor = value.value === undefined ? "" : value.floatValue;
         setValoresServicos(novosValores);
-        setFoiAlterado(true);
     };
 
     const handleDeslocamentoChange = (value) => {
         setDeslocamento(value.value === undefined ? "" : value.floatValue);
-        setFoiAlterado(true);
     };
 
     const calcularTotal = () => {
@@ -120,7 +94,11 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         const updateData = {
             chatId: originalData.chatId,
             petId: originalData.petId || originalData.pet?.id,
-            valorDeslocamento: originalData.valorDeslocamento || 0,
+            servicos: valoresServicos.map(s => ({
+                id: s.id,
+                valor: s.valor !== undefined ? s.valor : 0
+            })),
+            valorDeslocamento: deslocamento !== undefined ? deslocamento : 0,
             dataHoraInicio: novaDataInicio || originalData.dataHoraInicio,
             dataHoraFim: novaDataFim || originalData.dataHoraFim || null,
             dataHoraSolicitacao: originalData.dataHoraSolicitacao,
@@ -131,39 +109,28 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             updateData.valorTotal = valorTotal;
         }
 
-        if (originalData.servicos && Array.isArray(originalData.servicos)) {
-            updateData.servicos = originalData.servicos.map(servico => {
-                if (typeof servico === 'object' && servico.id) {
-                    return {
-                        id: servico.id,
-                        valor: servico.valor || 0
-                    };
-                }
-                return servico;
-            });
-        }
-
         return updateData;
     };
 
+
     const handleRecusar = async () => {
-        if (!canPerformActions(solicitacao.status)) {
+        if (!canPerformActions(solicitacao.status) || solicitacao.status === 'Aguardando Aprovação') {
             showNotification('warning', "Esta solicitação não pode ser recusada no status atual.");
             return;
         }
 
         try {
             setLoading(true);
-            const novoStatus = 'RECUSADO_PELO_USUARIO';
-            
+            const novoStatus = 'RECUSADO_PELO_PETSHOP';
+
             const updateData = prepareUpdateData(solicitacao.originalData, novoStatus);
 
             await putSolicitacao(solicitacao.id, updateData);
-            
+
             if (onStatusUpdate) {
                 onStatusUpdate();
             }
-            
+
             showNotification('success', "Solicitação recusada com sucesso!");
             onClose();
         } catch {
@@ -173,124 +140,60 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         }
     };
 
-    const handleAtualizarValores = async () => {
-        try {
-            setLoading(true);
-            
-            const dataInicioISO = dataInicio ? new Date(dataInicio).toISOString() : null;
-            const dataFimISO = dataFim ? new Date(dataFim).toISOString() : null;
-            
-            const updateData = {
-                chatId: dadosOriginais.chatId,
-                petId: dadosOriginais.petId || dadosOriginais.pet?.id,
-                servicos: valoresServicos.map(s => ({
-                    id: s.id,
-                    valor: s.valor
-                })),
-                valorDeslocamento: deslocamento,
-                dataHoraInicio: dataInicioISO,
-                dataHoraFim: dataFimISO,
-                dataHoraSolicitacao: dadosOriginais.dataHoraSolicitacao,
-                status: dadosOriginais.status
-            };
-
-            await putSolicitacao(solicitacao.id, updateData);
-            
-            showNotification('success', "Valores atualizados com sucesso!");
-            
-            setFoiAlterado(false);
-            
-            if (onStatusUpdate) {
-                onStatusUpdate();
-            }
-            onClose();
-        } catch {
-            showNotification('error', "Erro ao atualizar valores. Tente novamente.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleEnviarOferta = async () => {
-        if (!canPerformActions(solicitacao.status)) {
-            showNotification('warning', "Esta solicitação não pode ser aceita no status atual.");
+         if (!canPerformActions(solicitacao.status) || solicitacao.status === 'Aguardando Aprovação') {
+            showNotification('warning', "Esta solicitação não pode ser processada no status atual.");
             return;
         }
 
         try {
             setLoading(true);
-            
-            let novoStatus;
-            let mensagemSucesso;
-            
-            if (solicitacao.status === 'Aguardando orçamento') {
-                novoStatus = 'ACEITO_PELO_PETSHOP';
-                mensagemSucesso = "Oferta enviada com sucesso!";
-            } else if (solicitacao.status === 'Aguardando Aprovação') {
-                novoStatus = 'ACEITO_PELO_CLIENTE';
-                mensagemSucesso = "Solicitação aprovada com sucesso!";
-            } else {
-                showNotification('warning', "Status não permite esta ação.");
-                return;
-            }
-            
+
+            const novoStatus = 'ACEITO_PELO_PETSHOP';
+            const mensagemSucesso = "Oferta enviada com sucesso!";
+
             let dataFimFinal = dataFim;
             if (!dataFimFinal && dataInicio) {
                 dataFimFinal = calcularDataHoraFim(dataInicio);
                 setDataFim(dataFimFinal);
             }
-            
+
             const dataInicioISO = dataInicio ? new Date(dataInicio).toISOString() : null;
             const dataFimISO = dataFimFinal ? new Date(dataFimFinal).toISOString() : null;
-            
+
             const updateData = prepareUpdateData(
-                solicitacao.originalData, 
-                novoStatus, 
+                solicitacao.originalData,
+                novoStatus,
                 calcularTotal(),
                 dataInicioISO,
                 dataFimISO
             );
 
+            console.log("Dados enviados para putSolicitacao:", updateData);
+
             await putSolicitacao(solicitacao.id, updateData);
-            
+
             if (onStatusUpdate) {
                 onStatusUpdate();
             }
-            
+
             showNotification('success', mensagemSucesso);
             onClose();
-        } catch {
-            showNotification('error', "Erro ao enviar oferta. Tente novamente.");
+        } catch (error) {
+            console.error("Erro ao enviar oferta:", error.response || error);
+            showNotification('error', `Erro ao enviar oferta: ${error.response?.data?.message || error.message || 'Tente novamente.'}`);
         } finally {
             setLoading(false);
         }
     };
 
-    const showActionButtons = canPerformActions(solicitacao.status);
+    const showActionButtons = canPerformActions(solicitacao.status) && solicitacao.status !== 'Aguardando Aprovação';
     const isAguardandoOrcamento = solicitacao.status === 'Aguardando orçamento';
-    const isAguardandoAprovacao = solicitacao.status === 'Aguardando Aprovação';
-    
+
     const getButtonText = () => {
         if (loading) return "Processando...";
-        
-        if (foiAlterado && isAguardandoOrcamento) {
-            return "Atualizar";
-        }
-        
-        if (isAguardandoOrcamento) {
-            return "Enviar oferta";
-        } else if (isAguardandoAprovacao) {
-            return "Aprovar oferta";
-        }
-        return "Aceitar";
-    };
-
-    const handleBotaoPrincipal = () => {
-        if (foiAlterado && isAguardandoOrcamento) {
-            handleAtualizarValores();
-        } else {
-            handleEnviarOferta();
-        }
+        return "Enviar oferta";
     };
 
     const getModalStatusClass = (status) => {
@@ -303,7 +206,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         return statusMap[status] || '';
     };
 
-    return (
+     return (
         <div className="solicitacao-modal-overlay">
             <div className="solicitacao-modal-content">
                 <button className="solicitacao-modal-close-button" onClick={onClose}>&times;</button>
@@ -313,7 +216,7 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                         <strong>Cliente:</strong> {dadosOriginais.cliente?.nome || solicitacao.cliente || 'Não informado'}
                     </p>
                     <p>
-                        <strong>Pet:</strong> {dadosOriginais.pet?.nome || solicitacao.pet || 'Não informado'} 
+                        <strong>Pet:</strong> {dadosOriginais.pet?.nome || solicitacao.pet || 'Não informado'}
                         {dadosOriginais.pet?.raca?.nome && ` - ${dadosOriginais.pet.raca.nome}`}
                     </p>
                     <p className="modal-status">
@@ -324,31 +227,24 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                     <div className="datetime-inputs">
                         <div className="form-group">
                             <label>Início do Atendimento</label>
-                            <input 
-                                type="datetime-local" 
+                            <input
+                                type="datetime-local"
                                 value={dataInicio}
-                                onChange={(e) => {
-                                    handleDataInicioChange(e);
-                                    setFoiAlterado(true);
-                                }}
+                                onChange={handleDataInicioChange}
                                 disabled={!isAguardandoOrcamento}
                             />
                         </div>
                         <div className="form-group">
                             <label>Fim do Atendimento</label>
-                            <input 
-                                type="datetime-local" 
+                            <input
+                                type="datetime-local"
                                 value={dataFim}
-                                onChange={(e) => {
-                                    setDataFim(e.target.value);
-                                    setFoiAlterado(true);
-                                }}
+                                onChange={(e) => setDataFim(e.target.value)}
                                 disabled={!isAguardandoOrcamento}
                             />
                         </div>
                     </div>
-                    
-                    {/* Exibir serviços reais da solicitação com valores editáveis */}
+
                     {valoresServicos.map((servico, index) => (
                         <div className="form-group" key={servico.id}>
                             <label>Valor do {servico.nome}</label>
@@ -367,10 +263,10 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                             />
                         </div>
                     ))}
-                    
+
                     <div className="form-group">
                         <label style={{ marginBottom: 0 }}>Valor do Deslocamento</label>
-                        {Number(deslocamentoInfo?.distanciaKm) > 0 && Number(deslocamentoInfo?.tempo) > 0 && (
+                         {Number(deslocamentoInfo?.distanciaKm) > 0 && Number(deslocamentoInfo?.tempo) > 0 && (
                             <span style={{ display: 'block', fontSize: '0.9em', color: '#555', marginBottom: '5px' }}>
                                 Distancia: {Number(deslocamentoInfo.distanciaKm).toLocaleString("pt-BR", { maximumFractionDigits: 2 })} KM | Tempo: {
                                     (() => {
@@ -382,21 +278,21 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                                 }
                             </span>
                         )}
-                            <NumericFormat
-                                value={deslocamento}
-                                thousandSeparator="."
-                                decimalSeparator=","
-                                prefix="R$ "
-                                allowNegative={false}
-                                decimalScale={2}
-                                fixedDecimalScale
-                                onValueChange={handleDeslocamentoChange}
-                                className="form-control"
-                                placeholder="R$ 0,00"
-                                disabled={!isAguardandoOrcamento}
-                            />
-                        </div>
-                    
+                        <NumericFormat
+                            value={deslocamento}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="R$ "
+                            allowNegative={false}
+                            decimalScale={2}
+                            fixedDecimalScale
+                            onValueChange={handleDeslocamentoChange}
+                            className="form-control"
+                            placeholder="R$ 0,00"
+                            disabled={!isAguardandoOrcamento}
+                        />
+                    </div>
+
                     <div className="form-group">
                         <div className="total-value">
                             Total: R$ {Number(calcularTotal()).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -405,16 +301,16 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                 </div>
                 {showActionButtons && (
                     <div className="solicitacao-modal-footer">
-                        <button 
-                            className="btn-recusar" 
+                        <button
+                            className="btn-recusar"
                             onClick={handleRecusar}
                             disabled={loading}
                         >
                             {loading ? "Processando..." : "Recusar"}
                         </button>
-                        <button 
-                            className="btn-enviar" 
-                            onClick={handleBotaoPrincipal}
+                        <button
+                            className="btn-enviar"
+                            onClick={handleEnviarOferta}
                             disabled={loading}
                         >
                             {getButtonText()}
@@ -427,9 +323,11 @@ const AgendamentoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
                     </div>
                 )}
             </div>
+             {loading && <ModalLoading mensagem={loadingMsg} />}
         </div>
     );
 };
+
 
 const Pagination = ({ totalPages, currentPage, paginate, nextPage, prevPage, firstPage, lastPage }) => {
     const [inputValue, setInputValue] = useState(currentPage);
@@ -450,13 +348,13 @@ const Pagination = ({ totalPages, currentPage, paginate, nextPage, prevPage, fir
             setInputValue(currentPage);
         }
     };
-    
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             goToPage();
         }
     };
-    
+
     const pageNumbers = [];
     let startPage, endPage;
     if (totalPages <= 5) {
@@ -508,7 +406,7 @@ const Pagination = ({ totalPages, currentPage, paginate, nextPage, prevPage, fir
                         &gt;
                     </button>
                 </li>
-                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                     <button onClick={lastPage} className="page-link" disabled={currentPage === totalPages}>
                         &gt;&gt;
                     </button>
@@ -530,6 +428,7 @@ const Pagination = ({ totalPages, currentPage, paginate, nextPage, prevPage, fir
     );
 };
 
+
 export default function Solicitacao() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSolicitacao, setSelectedSolicitacao] = useState(null);
@@ -537,6 +436,7 @@ export default function Solicitacao() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
+
 
     const [notificationModal, setNotificationModal] = useState({
         isOpen: false,
@@ -548,7 +448,7 @@ export default function Solicitacao() {
         isOpen: false,
         mensagem: ''
     });
-    
+
     useEffect(() => {
         document.title = "Solicitação de Serviços";
     }, []);
@@ -559,36 +459,44 @@ export default function Solicitacao() {
                 setLoadingMsg("Calculando serviço...");
                 setLoading(true);
                 try {
-                // Chama calcularServico para preencher os campos de valores
-                const petId = solicitacao.pet?.id || solicitacao.originalData?.pet?.id;
-                const servicos = (solicitacao.originalData?.servicos || solicitacao.servicos || []).map(s => ({ id: s.id }));
-                if (petId && servicos.length > 0) {
-                    const { calcularServico } = await import("../utils/agenda");
-                    const resultado = await calcularServico({ petId, servicos });
-                    // Preenche os campos do modal com os valores recebidos
-                    setSelectedSolicitacao({
-                        ...solicitacao,
-                        valorDeslocamento: resultado.deslocamento?.valor ?? 0,
-                        valorTotal: resultado.valor ?? 0,
-                        servicos: resultado.servico || [],
-                        originalData: {
+                    const petId = solicitacao.originalData?.pet?.id || solicitacao.pet?.id;
+                    const servicosBase = solicitacao.originalData?.servicos || [];
+                    const servicosIds = servicosBase.map(s => ({ id: s.id }));
+
+                    if (petId && servicosIds.length > 0) {
+                        const { calcularServico } = await import("../utils/agenda");
+                        const resultado = await calcularServico({ petId, servicos: servicosIds });
+
+                        const updatedOriginalData = {
                             ...solicitacao.originalData,
                             valorDeslocamento: resultado.deslocamento?.valor ?? 0,
                             valorTotal: resultado.valor ?? 0,
-                            servicos: resultado.servico || [],
-                        }
-                    });
-                } else {
+                            servicos: (resultado.servico || []).map(serv => ({
+                                id: serv.id,
+                                nome: serv.nome || servicosBase.find(s => s.id === serv.id)?.nome || '',
+                                valor: serv.valor ?? 0
+                            })),
+                            deslocamento: resultado.deslocamento
+                        };
+
+                        setSelectedSolicitacao({
+                            ...solicitacao,
+                            originalData: updatedOriginalData
+                        });
+
+                    } else {
+                        setSelectedSolicitacao(solicitacao);
+                    }
+                } catch (error) {
+                    console.error("Erro ao calcular serviço:", error);
+                    showNotification('error', `Erro ao calcular valores: ${error.message}`);
                     setSelectedSolicitacao(solicitacao);
+                } finally {
+                    setLoading(false);
                 }
-            } catch (error) {
+            } else {
                 setSelectedSolicitacao(solicitacao);
-            } finally {
-                setLoading(false);
             }
-        } else {
-            setSelectedSolicitacao(solicitacao);
-        }
             setIsModalOpen(true);
         })();
     };
@@ -603,7 +511,7 @@ export default function Solicitacao() {
         handleCloseModal();
     };
 
-    const showNotification = (type, message) => {
+     const showNotification = (type, message) => {
         if (type === 'success') {
             setAlertSucesso({
                 isOpen: true,
@@ -618,22 +526,16 @@ export default function Solicitacao() {
         }
     };
 
+
     const closeNotification = () => {
-        setNotificationModal({
-            isOpen: false,
-            type: 'info',
-            message: ''
-        });
+        setNotificationModal({ isOpen: false, type: 'info', message: '' });
     };
 
     const closeAlertSucesso = () => {
-        setAlertSucesso({
-            isOpen: false,
-            mensagem: ''
-        });
+        setAlertSucesso({ isOpen: false, mensagem: '' });
     };
 
-    const tabsData = SolicitacoesTabs({
+     const tabsData = SolicitacoesTabs({
         onCardClick: handleCardClick,
         currentPage,
         setCurrentPage,
@@ -648,13 +550,14 @@ export default function Solicitacao() {
     const firstPage = () => setCurrentPage(1);
     const lastPage = () => setCurrentPage(totalPages);
 
+
     return (
         <>
             <div className="solicitacao-container">
                 <SideBar selecionado="solicitacao" />
                 <main className="solicitacao-main">
                     <h1 className="page-title">SOLICITAÇÕES DE SERVIÇOS</h1>
-                    {totalPages > 1 && (
+                      {totalPages > 1 && (
                         <Pagination
                             totalPages={totalPages}
                             currentPage={currentPage}
@@ -669,14 +572,15 @@ export default function Solicitacao() {
                 </main>
             </div>
             {isModalOpen && selectedSolicitacao && (
-                <AgendamentoModal 
-                    solicitacao={selectedSolicitacao} 
-                    onClose={handleCloseModal} 
+                <AgendamentoModal
+                    solicitacao={selectedSolicitacao}
+                    onClose={handleCloseModal}
                     onStatusUpdate={handleStatusUpdate}
                     showNotification={showNotification}
                 />
             )}
-            <NotificationModal
+            {loading && <ModalLoading mensagem={loadingMsg} />}
+             <NotificationModal
                 isOpen={notificationModal.isOpen}
                 type={notificationModal.type}
                 message={notificationModal.message}
@@ -688,7 +592,6 @@ export default function Solicitacao() {
                     onClose={closeAlertSucesso}
                 />
             )}
-            {loading && <ModalLoading mensagem={loadingMsg} />}
         </>
     );
 }

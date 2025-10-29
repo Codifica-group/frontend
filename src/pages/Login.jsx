@@ -3,6 +3,8 @@ import logo from "../assets/logo.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalLoading from "../components/ModalLoading";
+import api from "../utils/api";
+
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -50,15 +52,7 @@ export default function LoginPage() {
             senha: senha
         };
 
-        const usuarioString = JSON.stringify(usuario);
-
-        fetch("http://localhost:8080/api/usuarios/login", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-              },
-            body: usuarioString
-        })
+        api.post("/usuarios/login", usuario)
         .then(async (response) => {
             setLoading(false);
             if (response.ok) {

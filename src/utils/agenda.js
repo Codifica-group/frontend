@@ -2,7 +2,6 @@ import api from "./api";
 import { getAgendas } from "./get";
 
 // REQUISIÇÕES PARA A API DE AGENDAS
-const API_BASE = "http://localhost:8080/api/agendas";
 export const calcularServico = async (body) => {
   try {
     const response = await api.post(`/agendas/calcular/servico`, body);

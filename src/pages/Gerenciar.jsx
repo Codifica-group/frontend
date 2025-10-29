@@ -14,7 +14,6 @@ const Gerenciar = () => {
     const [tipo, setTipo] = useState("cliente");
     const [dados, setDados] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingMsg, setLoadingMsg] = useState("Carregando Dados...");
     const [erro, setErro] = useState({ aberto: false, mensagem: "", detalhe: "" });
     const [colunas, setColunas] = useState([]);
     const [tamanhoColunas, setTamanhoColunas] = useState([]);
@@ -24,26 +23,38 @@ const Gerenciar = () => {
 
     // Paginação
     const [paginaAtual, setPaginaAtual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
     const [paginaInput, setPaginaInput] = useState("");
     const itensPorPagina = 10;
 
     useEffect(() => {
         if (tipo === "cliente") {
-            carregarClientes();
+            carregarClientes(1);
         } else if (tipo === "pet") {
-            carregarPets();
+            carregarPets(1);
         }
     }, [tipo]);
 
-    async function carregarClientes() {
+    useEffect(() => {
+        if (tipo === "cliente") {
+            carregarClientes(paginaAtual);
+        } else if (tipo === "pet") {
+            carregarPets(paginaAtual);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paginaAtual]);
+
+    async function carregarClientes(pagina = 1) {
         setLoading(true);
         setErro({ aberto: false, mensagem: "", detalhe: "" });
         setColunas(["Nome", "Celular", "CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade"]);
         setTamanhoColunas(["14.5%", "7.1%", "3.1%", "7%", "1%", "5%", "4%", "2%"]);
         try {
-            const res = await getClientes();
+            const offset = pagina - 1;
+            const res = await getClientes(offset, itensPorPagina);
             setDados(Array.isArray(res.dados) ? res.dados : []);
-            setPaginaAtual(1);
+            setTotalPaginas(res.totalPaginas || 1);
+            setPaginaAtual(pagina);
         } catch (error) {
             setErro({
                 aberto: true,
@@ -55,20 +66,22 @@ const Gerenciar = () => {
         }
     }
 
-    async function carregarPets() {
+    async function carregarPets(pagina = 1) {
         setLoading(true);
         setErro({ aberto: false, mensagem: "", detalhe: "" });
         setColunas(["Nome", "Raça", "Cliente"]);
         setTamanhoColunas(["20%", "10%", "15%"]);
         try {
-            const res = await getPets();
+            const offset = pagina - 1;
+            const res = await getPets(offset, itensPorPagina);
             const petsCompletos = (Array.isArray(res.dados) ? res.dados : []).map(pet => ({
                 ...pet,
                 racaNome: pet.raca?.nome || "",
                 clienteNome: pet.cliente?.nome || "",
             }));
             setDados(petsCompletos);
-            setPaginaAtual(1);
+            setTotalPaginas(res.totalPaginas || 1);
+            setPaginaAtual(pagina);
         } catch (error) {
             setErro({
                 aberto: true,
@@ -109,10 +122,8 @@ const Gerenciar = () => {
         }
     }
 
-    // Dados da página
-    const totalPaginas = Math.ceil(dados.length / itensPorPagina);
-    const inicio = (paginaAtual - 1) * itensPorPagina;
-    const dadosPagina = mapearDadosParaTabela().slice(inicio, inicio + itensPorPagina);
+    // Dados da página - agora já vem paginados do backend
+    const dadosPagina = mapearDadosParaTabela();
 
     const irParaPagina = () => {
         const numero = parseInt(paginaInput);
@@ -265,7 +276,7 @@ const Gerenciar = () => {
                     />
                 )}
 
-                {loading && <ModalLoading mensagem={loadingMsg} />}
+                {loading && <ModalLoading mensagem="Carregando Dados..." />}
                 {erro.aberto && (
                     <AlertErro
                         mensagem={erro.mensagem}

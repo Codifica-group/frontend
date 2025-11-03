@@ -32,7 +32,7 @@ const SolicitacoesBase = ({ solicitacoes, activeTab, onCardClick, currentPage, i
                 filtered = solicitacoes.filter(s => s.status === 'Aprovado');
                 break;
             case 'Recusados':
-                filtered = solicitacoes.filter(s => s.status === 'Recusado');
+                filtered = solicitacoes.filter(s => s.status === 'Recusado' || s.status === 'Recusado pelo Cliente');
                 break;
             case 'Aguardando orçamento':
                 filtered = solicitacoes.filter(s => s.status === 'Aguardando orçamento');
@@ -44,9 +44,27 @@ const SolicitacoesBase = ({ solicitacoes, activeTab, onCardClick, currentPage, i
                 filtered = solicitacoes;
         }
 
+        const statusPriority = {
+            'Aguardando orçamento': 1,
+            'Aguardando Aprovação': 2,
+            'Aprovado': 3,
+            'Recusado': 4,
+            'Recusado pelo Cliente': 4
+        };
+
         return filtered.sort((a, b) => {
             const dateA = parseDate(a.dataHora || a.dataSolicitacao || '');
             const dateB = parseDate(b.dataHora || b.dataSolicitacao || '');
+
+            if (activeTab === 'Todos') {
+                const priorityA = statusPriority[a.status] || 5;
+                const priorityB = statusPriority[b.status] || 5;
+
+                if (priorityA !== priorityB) {
+                    return priorityA - priorityB;
+                }
+            }
+            
             return dateB - dateA;
         });
 
@@ -77,7 +95,6 @@ const SolicitacoesBase = ({ solicitacoes, activeTab, onCardClick, currentPage, i
                     ))
                 ) : (
                      <div className="no-data-container">
-                        {/* Animação SVG */}
                         <svg
                             width="120"
                             height="120"

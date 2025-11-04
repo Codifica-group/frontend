@@ -13,11 +13,11 @@ const ServiceCard = ({ solicitacao, onClick }) => {
                 </div>
 
                 <div className="card-details-vertical">
-                    <div className="detail-item"><strong>Cliente:</strong> {solicitacao.cliente || 'Não informado'}</div>
-                    <div className="detail-item"><strong>Celular:</strong> {solicitacao.celular || 'Não informado'}</div>
-                    <div className="detail-item"><strong>Serviços:</strong> {solicitacao.servicos || 'Não informado'}</div>
-                    <div className="detail-item"><strong>Pet:</strong> {solicitacao.pet || 'Não informado'}</div>
-                    <div className="detail-item"><strong>Raça:</strong> {solicitacao.raca || 'Não informado'}</div>
+                    <div><span className="detail-item-title">Cliente</span> {solicitacao.cliente || 'Não informado'}</div>
+                    <div><span className="detail-item-title">Celular</span> {solicitacao.celular || 'Não informado'}</div>
+                    <div><span className="detail-item-title">Serviços</span> {solicitacao.servicos || 'Não informado'}</div>
+                    <div><span className="detail-item-title">Pet</span> {solicitacao.pet || 'Não informado'}</div>
+                    <div><span className="detail-item-title">Raça</span> {solicitacao.raca || 'Não informado'}</div>
                 </div>
                 {solicitacao.dataSolicitacao && (
                     <div className="card-footer-date">

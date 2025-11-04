@@ -3,6 +3,7 @@ import { putSolicitacao } from "../../utils/put";
 import { canPerformActions } from "../../utils/solicitacaoUtils";
 import ModalLoading from "../ModalLoading";
 import { NumericFormat } from "react-number-format";
+import fecharIcon from "../../assets/close.png";
 
 const calcularDataHoraFim = (dataInicio) => {
     if (!dataInicio) return '';
@@ -154,7 +155,8 @@ const SolicitacaoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
             'Aguardando orçamento': 'modal-status-aguardando-orcamento',
             'Aguardando Aprovação': 'modal-status-aguardando-aprovacao',
             'Aprovado': 'modal-status-aprovado',
-            'Recusado': 'modal-status-recusado'
+            'Recusado': 'modal-status-recusado',
+            'Recusado pelo Cliente': 'modal-status-recusado'
         };
         return statusMap[status] || '';
     };
@@ -163,7 +165,7 @@ const SolicitacaoModal = ({ solicitacao, onClose, onStatusUpdate, showNotificati
         <div className="solicitacao-modal-overlay">
             <div className="solicitacao-modal-content">
                 {loading && <ModalLoading mensagem={loadingMsg} />}
-                <button className="solicitacao-modal-close-button" onClick={onClose}>&times;</button>
+                <button className="btn-fechar" onClick={onClose}><img src={fecharIcon} alt="Fechar" /></button>
                 <div className="solicitacao-modal-header">
                     <h2>Gerenciar Agendamento</h2>
                     <h3>{dadosOriginais.cliente?.nome || solicitacao.cliente} - {dadosOriginais.pet?.nome || solicitacao.pet} - <span className={getModalStatusClass(solicitacao.status)}>{solicitacao.status}</span></h3>

@@ -529,7 +529,7 @@ body {
     text-align: center;
 }
 
-.modal-agenda, .solicitacao-modal-header h3 {
+.modal-agenda h3 {
     color: #307E95;
     margin-bottom: 1rem;
     font-size: 1.2rem;

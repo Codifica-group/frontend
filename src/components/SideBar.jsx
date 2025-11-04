@@ -132,7 +132,7 @@ export default function SideBar(props) {
                                         <path
                                             d="M1,14h6"
                                             stroke={props.selecionado === "gerenciar" ? "#1F1F1F" : "#353535"}
-                                            strokeWidth={props.selecionado === "gerenciar" ? "5" : "3"}
+                                            strokeWidth={props.selecionado === "gerenciar" ? "2" : "1"}
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                         />
@@ -145,9 +145,9 @@ export default function SideBar(props) {
 
                     {}
                     <Link to="/Solicitacao">
-                        <li className={props.selecionado === "Solicitacao" ? "selecionado" : ""}>
+                        <li className={props.selecionado === "solicitacao" ? "selecionado" : ""}>
                             <i>
-                                <ClipboardList size={48} strokeWidth={1} color="#1F1F1F"/>
+                                <ClipboardList size={48} strokeWidth={props.selecionado === "solicitacao" ? "2" : "1"} color="#1F1F1F"/>
                             </i>
                             <span>Solicitações</span>
                         </li>

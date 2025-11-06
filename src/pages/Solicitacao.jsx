@@ -1,15 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import SideBar from "../components/SideBar";
 import SolicitacaoModal from "../components/solicitacoes/SolicitacaoModal";
-import Pagination from "../components/common/Pagination";
 import NotificationModal from "../components/NotificationModal";
 import AlertSucesso from "../components/AlertSucesso";
 import ModalLoading from "../components/ModalLoading";
 import { calcularServico } from "../utils/agenda";
 import "../styles/style-solicitacao.css";
-import { usePagination } from "../hooks/usePagination";
 import { useNotifications } from "../hooks/useNotifications";
-
 import SolicitacoesTabs from "../components/solicitacoes/SolicitacoesTabs";
 import { Todos, AguardandoOrcamento, AguardandoAprovacao, Aprovados, Recusados } from "../components/solicitacoes";
 
@@ -19,9 +16,13 @@ export default function Solicitacao() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [loading, setLoading] = useState(false);
     const [loadingMsg, setLoadingMsg] = useState("Carregando...");
-    
     const [activeTab, setActiveTab] = useState('Todos');
     const [activeTotalPages, setActiveTotalPages] = useState(1);
+
+    // Paginação (igual à da tela Gerenciar)
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const [paginaInput, setPaginaInput] = useState("");
 
     const {
         notificationModal,
@@ -30,17 +31,6 @@ export default function Solicitacao() {
         closeNotification,
         closeAlertSucesso
     } = useNotifications();
-
-    const {
-        currentPage,
-        totalPages,
-        paginate,
-        nextPage,
-        prevPage,
-        firstPage,
-        lastPage,
-        setCurrentPage
-    } = usePagination(activeTotalPages);
 
     const handleCardClick = useCallback(async (solicitacao) => {
         setLoadingMsg("Calculando serviço...");
@@ -90,22 +80,23 @@ export default function Solicitacao() {
         handleCloseModal();
     };
 
-    const handleTotalPagesChange = useCallback((totalPages) => {
-        setActiveTotalPages(totalPages || 1);
+    const handleTotalPagesChange = useCallback((total) => {
+        setActiveTotalPages(total || 1);
+        setTotalPaginas(total || 1);
     }, []);
-    
+
     const handleTabChange = useCallback(() => {
-        setCurrentPage(1);
-    }, [setCurrentPage]);
+        setPaginaAtual(1);
+    }, []);
 
     const renderActiveTabComponent = () => {
         const props = {
             onCardClick: handleCardClick,
-            currentPage: currentPage,
+            currentPage: paginaAtual,
             refreshTrigger: refreshTrigger,
             onTotalPagesChange: handleTotalPagesChange
         };
-        
+
         switch (activeTab) {
             case 'Todos':
                 return <Todos {...props} />;
@@ -122,33 +113,100 @@ export default function Solicitacao() {
         }
     };
 
+    const irParaPagina = () => {
+        const numero = parseInt(paginaInput);
+        if (!isNaN(numero) && numero >= 1 && numero <= totalPaginas) {
+            setPaginaAtual(numero);
+            setPaginaInput("");
+        } else {
+            alert(`Digite um número entre 1 e ${totalPaginas}`);
+        }
+    };
+
     return (
         <>
             <div className="solicitacao-container">
                 <SideBar selecionado="solicitacao" />
                 <main className="solicitacao-main">
                     <h1 className="page-title">SOLICITAÇÕES DE SERVIÇOS</h1>
-                    {totalPages > 1 && (
-                        <Pagination
-                            totalPages={totalPages}
-                            currentPage={currentPage}
-                            paginate={paginate}
-                            nextPage={nextPage}
-                            prevPage={prevPage}
-                            firstPage={firstPage}
-                            lastPage={lastPage}
-                        />
-                    )}
-                    
+
                     <SolicitacoesTabs
                         activeTab={activeTab}
                         setActiveTab={setActiveTab}
                         onTabChange={handleTabChange}
                     />
-                    
+
                     <div className="content-wrapper">
                         {renderActiveTabComponent()}
                     </div>
+
+          
+                    {activeTotalPages > 1 && (
+                        <div className="pagination-container">
+                            <button
+                                onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
+                                disabled={paginaAtual === 1}
+                                style={{
+                                    background: "#307E95",
+                                    color: "#fff",
+                                    border: "none",
+                                    padding: "6px 14px",
+                                    borderRadius: "6px",
+                                    cursor: paginaAtual === 1 ? "not-allowed" : "pointer"
+                                }}
+                            >
+                                {"<"}
+                            </button>
+
+                            <span style={{ fontWeight: "600" }}>Página {paginaAtual} de {totalPaginas}</span>
+
+                            <button
+                                onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
+                                disabled={paginaAtual === totalPaginas}
+                                style={{
+                                    background: "#307E95",
+                                    color: "#fff",
+                                    border: "none",
+                                    padding: "6px 14px",
+                                    borderRadius: "6px",
+                                    cursor: paginaAtual === totalPaginas ? "not-allowed" : "pointer"
+                                }}
+                            >
+                                {">"}
+                            </button>
+
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginLeft: "10px" }}>
+                                <label style={{ fontWeight: "600" }}>Ir para:</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max={totalPaginas}
+                                    value={paginaInput}
+                                    onChange={(e) => setPaginaInput(e.target.value)}
+                                    style={{
+                                        width: "60px",
+                                        padding: "4px",
+                                        textAlign: "center",
+                                        borderRadius: "6px",
+                                        border: "1px solid #ccc"
+                                    }}
+                                />
+                                <button
+                                    onClick={irParaPagina}
+                                    style={{
+                                        background: "#307E95",
+                                        color: "#fff",
+                                        border: "none",
+                                        padding: "6px 10px",
+                                        borderRadius: "6px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Ir
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </main>
             </div>
 
@@ -169,6 +227,7 @@ export default function Solicitacao() {
                 message={notificationModal.message}
                 onClose={closeNotification}
             />
+
             {alertSucesso.isOpen && (
                 <AlertSucesso
                     mensagem={alertSucesso.mensagem}

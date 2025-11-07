@@ -64,7 +64,7 @@ export default function LoginPage() {
             .catch((error) => {
                 setLoading(false);
                 sessionStorage.removeItem("token");
-                setMessageModal(error.response?.data?.mensagem || "Erro ao fazer login. Tente novamente mais tarde.");
+                setMessageModal(error.response?.data?.message || error.message);
                 setTitleModal(false);
                 setShowModal(true);
             });

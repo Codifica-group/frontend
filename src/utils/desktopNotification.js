@@ -1,4 +1,6 @@
-export function showDesktopNotification(title, body, icon = '/favicon.ico') {
+import appIcon from '/public/favicon.ico';
+
+export function showDesktopNotification(title, body, icon = appIcon) {
     if (!("Notification" in window)) {
         console.warn("Este navegador não suporta notificações desktop.");
         return;

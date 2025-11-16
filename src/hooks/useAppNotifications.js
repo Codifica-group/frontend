@@ -40,7 +40,7 @@ export const useAppNotifications = () => {
                                 showDesktopNotification(payload.titulo, payload.mensagem);
                             }
 
-                            if (window.location.pathname.includes('/solicitacao')) {
+                            if (window.location.pathname.toLowerCase().includes('/solicitacao')) {
                                 window.location.reload(); 
                             }
 
